@@ -3,3 +3,11 @@ bazel-mlir-tutorial
 bazel-out
 bazel-testlogs
 build
+/tools/bin/
+/artifacts/
+*.ll
+*.bc
+*.o
+*.so
+*.a
+*.exe
