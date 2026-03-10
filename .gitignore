@@ -11,3 +11,4 @@ build
 *.so
 *.a
 *.exe
+*.out
