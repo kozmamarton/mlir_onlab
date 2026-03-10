@@ -3,7 +3,7 @@
 #map2 = affine_map<(d0) -> (d0 + 1)>
 #map3 = affine_map<(d0) -> (d0 + 2)>
 module  {
-  func @jit(%arg0: memref<?x?x?xf64>, %arg1: memref<?x?x?xf64>) {
+  func.func @jit(%arg0: memref<?x?x?xf64>, %arg1: memref<?x?x?xf64>) {
     %c0 = constant 0 : index
     %c10 = constant 10 : index
     %c1 = constant 1 : index

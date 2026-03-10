@@ -29,6 +29,7 @@ passes=(
   "--lower-affine"
   "--convert-scf-to-cf"
   "--convert-cf-to-llvm"
+  "--llvm-request-c-wrappers"
   "--convert-func-to-llvm"
   "--convert-arith-to-llvm"
   "--reconcile-unrealized-casts"

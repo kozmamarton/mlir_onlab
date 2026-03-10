@@ -2,8 +2,8 @@
 // RUN: FileCheck %s < %t
 
 func.func @just_power_of_two(%arg: i32) -> i32 {
-  %0 = arith.constant 3 : i32 //3 because we want to multiply with 8, which is 2^3
-  %1 = arith.shli %arg, %0 : i32
+  %0 = arith.constant 100 : i32 //3 because we want to multiply with 8, which is 2^3
+  %1 = arith.muli %arg, %0 : i32
   func.return %1 : i32
 }
 
