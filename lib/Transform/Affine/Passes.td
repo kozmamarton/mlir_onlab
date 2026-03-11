@@ -1,6 +1,6 @@
 #ifndef LIB_TRANSFORM_AFFINE_PASSES_TD_
 #define LIB_TRANSFORM_AFFINE_PASSES_TD_
-
+include "mlir/IR/OpBase.td"
 include "mlir/Pass/PassBase.td"
 
 def AffineFullUnroll : Pass<"affine-full-unroll">{

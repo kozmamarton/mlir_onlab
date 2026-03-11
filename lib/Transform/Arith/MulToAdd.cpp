@@ -8,7 +8,8 @@ namespace mlir
 {
   namespace tutorial
   {
-
+    #define GEN_PASS_DEF_MULTOADD
+    #include "lib/Transform/Affine/Arith/Passes.h.inc"
     using arith::AddIOp;
     using arith::ConstantOp;
     using arith::MulIOp;
@@ -76,14 +77,17 @@ namespace mlir
         return success();
       }
     };
+  
+    struct MulToAdd : impl::MulToAddBase<MulToAdd>{
 
-    void MulToAddPass::runOnOperation()
-    {
-      mlir::RewritePatternSet patterns(&getContext());
-      patterns.add<PowerOfTwoExpand>(&getContext());
-      patterns.add<PeelFromMul>(&getContext());
-      (void)applyPatternsGreedily(getOperation(), std::move(patterns));
-    }
+      void runOnOperation(){
+        mlir::RewritePatternSet patterns(&getContext());
+        patterns.add<PowerOfTwoExpand>(&getContext());
+        patterns.add<PeelFromMul>(&getContext());
+        (void)applyPatternsGreedily(getOperation(), std::move(patterns));
+      }
+    };
+    
 
   } // namespace tutorial
 } // namespace mlir

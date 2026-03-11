@@ -1,9 +1,9 @@
 add_mlir_library(AffineFullUnroll
     AffineFullUnroll.cpp
     AffineFullUnrollPatternRewrite.cpp
+    Passes.h
     ADDITIONAL_HEADER_DIRS
     ${PROJECT_SOURCE_DIR}/lib/Transform/Affine/
-
     DEPENDS
     MLIRAffineFullUnrollPasses
 

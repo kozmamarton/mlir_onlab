@@ -8,6 +8,7 @@ namespace mlir {
 namespace tutorial {
 
 #define GEN_PASS_REGISTRATION
+#define GEN_PASS_DECL_AFFINEFULLUNROLL
 #include "lib/Transform/Affine/Passes.h.inc"
 
 }  // namespace tutorial

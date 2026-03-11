@@ -6,19 +6,9 @@
 
 namespace mlir {
 namespace tutorial {
+  #define GEN_PASS_DECL_MULTOADD
+  #include "lib/Transform/Affine/Arith/Passes.h.inc"
 
-class MulToAddPass
-    : public PassWrapper<MulToAddPass,
-                         OperationPass<mlir::func::FuncOp>> {
-private:
-  void runOnOperation() override;
-
-  StringRef getArgument() const final { return "mul-to-add"; }
-
-  StringRef getDescription() const final {
-    return "Convert multiplicatoins to repeated additions";
-  }
-};
 
 } // namespace tutorial
 } // namespace mlir
