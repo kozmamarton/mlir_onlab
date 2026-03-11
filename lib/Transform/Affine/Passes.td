@@ -3,10 +3,10 @@
 
 include "mlir/Pass/PassBase.td"
 
-def AffineFullUnroll : Pass<"affine-full-unroll"> {
-  let summary = "Fully unroll all affine loops";
+def AffineFullUnroll : Pass<"affine-full-unroll">{
+  let summary = "Fully unroll all affine loops.";
   let description = [{
-    Fully unroll all affine loops.
+    Fully unroll all affine loops. (could add more docs here like code examples)
   }];
   let dependentDialects = ["mlir::affine::AffineDialect"];
 }
