@@ -22,6 +22,6 @@ cmake -G Ninja -S "$PROJECT_ROOT" -B "$BUILD_DIR" \
   -DCMAKE_C_COMPILER=clang \
   -DCMAKE_CXX_COMPILER=clang++ \
   -DLLVM_ENABLE_LLD=ON \
-  -DLLVM_CCACHE_BUILD=OFF
+  -DLLVM_CCACHE_BUILD=ON
 
 cmake --build "$BUILD_DIR" --target tutorial-opt -j12
