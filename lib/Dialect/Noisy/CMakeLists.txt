@@ -1,6 +1,6 @@
 # Inlining `add_mlir_dialect(Noisy noisy)` commands so that
 # we can custom name `*.inc` generated files.
-set(LLVM_TARGET_DEFINITIONS NoisyOps.td)
+set(LLVM_TARGET_DEFINITIONS ${PROJECT_INCLUDE_DIR}/Dialect/Noisy/NoisyOps.td)
 mlir_tablegen(NoisyOps.h.inc -gen-op-decls)
 mlir_tablegen(NoisyOps.cpp.inc -gen-op-defs)
 mlir_tablegen(NoisyTypes.h.inc -gen-typedef-decls -typedefs-dialect=noisy)
@@ -17,5 +17,5 @@ add_mlir_dialect_library(MLIRNoisy
     NoisyOps.cpp
 
     ADDITIONAL_HEADER_DIRS
-    ${PROJECT_SOURCE_DIR}/lib/Dialect/Noisy
+    ${PROJECT_SOURCE_DIR}/include/Dialect/Noisy
     )

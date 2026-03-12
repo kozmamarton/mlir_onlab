@@ -1,7 +1,7 @@
-#include "lib/Conversion/PolyToStandard/PolyToStandard.h"
+#include "include/Conversion/PolyToStandard/PolyToStandard.h"
 
-#include "lib/Dialect/Poly/PolyOps.h"
-#include "lib/Dialect/Poly/PolyTypes.h"
+#include "include/Dialect/Poly/PolyOps.h"
+#include "include/Dialect/Poly/PolyTypes.h"
 #include "llvm/include/llvm/ADT/SmallVector.h"          // from @llvm-project
 #include "mlir/Dialect/SCF/IR/SCF.h"                    // from @llvm-project
 #include "mlir/include/mlir/Dialect/Func/IR/FuncOps.h"  // from @llvm-project
@@ -14,7 +14,7 @@ namespace tutorial {
 namespace poly {
 
 #define GEN_PASS_DEF_POLYTOSTANDARD
-#include "lib/Conversion/PolyToStandard/PolyToStandard.h.inc"
+#include "include/Conversion/PolyToStandard/PolyToStandard.h.inc"
 
 class PolyToStandardTypeConverter : public TypeConverter {
  public:

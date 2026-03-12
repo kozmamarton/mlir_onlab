@@ -21,6 +21,7 @@ find_package(MLIR REQUIRED CONFIG)
 # Prevent repeated evaluation in subdirectories
 set(MLIR_DIR ${MLIR_DIR} CACHE INTERNAL "")
 set(LLVM_DIR ${LLVM_DIR} CACHE INTERNAL "")
+set(PROJECT_INCLUDE_DIR ${PROJECT_SOURCE_DIR}/include)
 
 message(STATUS "Using MLIRConfig.cmake in: ${MLIR_DIR}")
 message(STATUS "Using LLVMConfig.cmake in: ${LLVM_DIR}")
@@ -36,6 +37,10 @@ include_directories(${MLIR_INCLUDE_DIRS})
 include_directories(${PROJECT_SOURCE_DIR})
 include_directories(${PROJECT_SOURCE_DIR}/externals/llvm-project)
 include_directories(${PROJECT_BINARY_DIR})
+include_directories(${PROJECT_SOURCE_DIR}/include)
+list(APPEND MLIR_TABLEGEN_FLAGS
+  -I${PROJECT_SOURCE_DIR}/include
+)
 
 if(BUILD_DEPS)
   include(FetchContent)

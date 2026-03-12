@@ -1,7 +1,7 @@
 #ifndef LIB_DIALECT_POLY_POLYPATTERNS_TD_
 #define LIB_DIALECT_POLY_POLYPATTERNS_TD_
 
-include "PolyOps.td"
+include "Dialect/Poly/PolyOps.td"
 include "mlir/Dialect/Complex/IR/ComplexOps.td"
 include "mlir/IR/PatternBase.td"
 

@@ -1,8 +1,8 @@
-#include "lib/Analysis/ReduceNoiseAnalysis/ReduceNoiseAnalysis.h"
+#include "include/Analysis/ReduceNoiseAnalysis/ReduceNoiseAnalysis.h"
 
 #include <string>
 
-#include "lib/Dialect/Noisy/NoisyOps.h"
+#include "include/Dialect/Noisy/NoisyOps.h"
 #include "mlir/include/mlir/IR/Operation.h"
 #include "mlir/include/mlir/IR/Value.h"
 #include "ortools/linear_solver/linear_solver.h"

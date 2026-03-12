@@ -1,8 +1,8 @@
 #ifndef LIB_DIALECT_POLY_POLYOPS_TD_
 #define LIB_DIALECT_POLY_POLYOPS_TD_
 
-include "PolyDialect.td"
-include "PolyTypes.td"
+include "Dialect/Poly/PolyDialect.td"
+include "Dialect/Poly/PolyTypes.td"
 include "mlir/IR/BuiltinAttributes.td"
 include "mlir/IR/OpBase.td"
 include "mlir/Interfaces/InferTypeOpInterface.td"

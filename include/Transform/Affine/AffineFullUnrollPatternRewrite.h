@@ -7,7 +7,7 @@ namespace mlir {
 namespace tutorial {
 
 #define GEN_PASS_DECL_AFFINEFULLUNROLLPATTERNREWRITE
-#include "lib/Transform/Affine/Passes.h.inc"
+#include "include/Transform/Affine/Passes.h.inc"
 
 }  // namespace tutorial
 }  // namespace mlir

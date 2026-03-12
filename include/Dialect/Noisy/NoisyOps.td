@@ -1,8 +1,8 @@
 #ifndef LIB_DIALECT_NOISY_NOISYOPS_TD_
 #define LIB_DIALECT_NOISY_NOISYOPS_TD_
 
-include "NoisyDialect.td"
-include "NoisyTypes.td"
+include "Dialect/Noisy/NoisyDialect.td"
+include "Dialect/Noisy/NoisyTypes.td"
 include "mlir/IR/BuiltinAttributes.td"
 include "mlir/IR/CommonTypeConstraints.td"
 include "mlir/IR/OpBase.td"

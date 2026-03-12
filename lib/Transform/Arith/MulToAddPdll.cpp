@@ -1,4 +1,4 @@
-#include "lib/Transform/Arith/MulToAddPdll.h"
+#include "include/Transform/Arith/MulToAddPdll.h"
 #include "mlir/Dialect/Arith/IR/Arith.h"
 #include "mlir/Dialect/PDLInterp/IR/PDLInterp.h"
 #include "mlir/IR/PatternMatch.h"
@@ -9,7 +9,7 @@ namespace mlir {
 namespace tutorial {
 
 #define GEN_PASS_DEF_MULTOADDPDLL
-#include "lib/Transform/Arith/Passes.h.inc"
+#include "include/Transform/Arith/Passes.h.inc"
 
 LogicalResult halveImpl(PatternRewriter &rewriter, PDLResultList &results,
                         ArrayRef<PDLValue> args) {

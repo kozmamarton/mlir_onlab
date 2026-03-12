@@ -1,7 +1,7 @@
 add_mlir_library(NoisyPasses
     ReduceNoiseOptimizer.cpp
 
-    ${PROJECT_SOURCE_DIR}/lib/Transform/Noisy/
+    ${PROJECT_SOURCE_DIR}/include/Transform/Noisy/
     ADDITIONAL_HEADER_DIRS
 
     DEPENDS
@@ -12,7 +12,7 @@ add_mlir_library(NoisyPasses
     ReduceNoiseAnalysis
 )
 
-set(LLVM_TARGET_DEFINITIONS Passes.td)
+set(LLVM_TARGET_DEFINITIONS ${PROJECT_INCLUDE_DIR}/Transform/Noisy/Passes.td)
 mlir_tablegen(Passes.h.inc -gen-pass-decls -name Noisy)
 add_public_tablegen_target(MLIRNoisyPasses)
 add_mlir_doc(Passes NoisyPasses ./ -gen-pass-doc)

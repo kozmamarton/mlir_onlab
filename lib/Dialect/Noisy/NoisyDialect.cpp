@@ -1,15 +1,15 @@
-#include "lib/Dialect/Noisy/NoisyDialect.h"
+#include "include/Dialect/Noisy/NoisyDialect.h"
 
-#include "lib/Dialect/Noisy/NoisyOps.h"
-#include "lib/Dialect/Noisy/NoisyTypes.h"
+#include "include/Dialect/Noisy/NoisyOps.h"
+#include "include/Dialect/Noisy/NoisyTypes.h"
 #include "mlir/include/mlir/IR/Builders.h"
 #include "llvm/include/llvm/ADT/TypeSwitch.h"
 
-#include "lib/Dialect/Noisy/NoisyDialect.cpp.inc"
+#include "include/Dialect/Noisy/NoisyDialect.cpp.inc"
 #define GET_TYPEDEF_CLASSES
-#include "lib/Dialect/Noisy/NoisyTypes.cpp.inc"
+#include "include/Dialect/Noisy/NoisyTypes.cpp.inc"
 #define GET_OP_CLASSES
-#include "lib/Dialect/Noisy/NoisyOps.cpp.inc"
+#include "include/Dialect/Noisy/NoisyOps.cpp.inc"
 
 namespace mlir {
 namespace tutorial {

@@ -7,7 +7,7 @@
 namespace mlir {
 namespace tutorial {
   #define GEN_PASS_DECL_MULTOADD
-  #include "lib/Transform/Affine/Arith/Passes.h.inc"
+  #include "include/Transform/Affine/Arith/Passes.h.inc"
 
 
 } // namespace tutorial

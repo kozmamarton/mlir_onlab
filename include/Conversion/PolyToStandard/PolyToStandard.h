@@ -12,10 +12,10 @@ namespace tutorial {
 namespace poly {
 
 #define GEN_PASS_DECL
-#include "lib/Conversion/PolyToStandard/PolyToStandard.h.inc"
+#include "Conversion/PolyToStandard/PolyToStandard.h.inc"
 
 #define GEN_PASS_REGISTRATION
-#include "lib/Conversion/PolyToStandard/PolyToStandard.h.inc"
+#include "Conversion/PolyToStandard/PolyToStandard.h.inc"
 
 }  // namespace poly
 }  // namespace tutorial

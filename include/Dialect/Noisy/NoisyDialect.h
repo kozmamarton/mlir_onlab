@@ -5,7 +5,7 @@
 // have any includes.
 #include "mlir/include/mlir/IR/DialectImplementation.h"
 
-#include "lib/Dialect/Noisy/NoisyDialect.h.inc"
+#include "include/Dialect/Noisy/NoisyDialect.h.inc"
 
 
 constexpr int INITIAL_NOISE = 12;

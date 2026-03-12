@@ -1,7 +1,7 @@
 #ifndef LIB_DIALECT_NOISY_NOISYTYPES_TD_
 #define LIB_DIALECT_NOISY_NOISYTYPES_TD_
 
-include "NoisyDialect.td"
+include "Dialect/Noisy/NoisyDialect.td"
 include "mlir/IR/AttrTypeBase.td"
 
 class Noisy_Type<string name, string typeMnemonic> : TypeDef<Noisy_Dialect, name> {
