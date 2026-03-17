@@ -25,8 +25,8 @@ BUILD_DIR="$PROJECT_ROOT/build"
 
 cmake -G Ninja -S "$PROJECT_ROOT" -B "$BUILD_DIR" \
   -DLLVM_ENABLE_PROJECTS=mlir \
-  -DMLIR_DIR=/home/marton/uni/onlab/llvm-project/build/lib/cmake/mlir \
-  -DLLVM_DIR=/home/marton/uni/onlab/llvm-project/build/lib/cmake/llvm \
+  -DMLIR_DIR=$PROJECT_ROOT/externals/llvm-project/build/lib/cmake/mlir \
+  -DLLVM_DIR=$PROJECT_ROOT/externals/llvm-project/build/lib/cmake/llvm \
   -DLLVM_BUILD_EXAMPLES=ON \
   -DLLVM_TARGETS_TO_BUILD="Native;NVPTX;AMDGPU" \
   -DCMAKE_BUILD_TYPE=Release \
