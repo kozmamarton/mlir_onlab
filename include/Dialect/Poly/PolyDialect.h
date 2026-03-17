@@ -3,8 +3,8 @@
 
 // Required because the .h.inc file refers to MLIR classes and does not itself
 // have any includes.
-#include "mlir/include/mlir/IR/DialectImplementation.h"
+#include "mlir/IR/DialectImplementation.h"
 
-#include "include/Dialect/Poly/PolyDialect.h.inc"
+#include "Dialect/Poly/PolyDialect.h.inc"
 
 #endif  // LIB_DIALECT_POLY_POLYDIALECT_H_

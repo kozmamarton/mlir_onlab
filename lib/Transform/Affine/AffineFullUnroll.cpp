@@ -1,14 +1,14 @@
-#include "include/Transform/Affine/AffineFullUnroll.h"
+#include "Transform/Affine/AffineFullUnroll.h"
 #include "mlir/Dialect/Affine/IR/AffineOps.h"
 #include "mlir/Dialect/Affine/LoopUtils.h"
-#include "mlir/include/mlir/Pass/Pass.h"
+#include "mlir/Pass/Pass.h"
 
 
 namespace mlir {
 namespace tutorial {
 
 #define GEN_PASS_DEF_AFFINEFULLUNROLL
-#include "include/Transform/Affine/Passes.h.inc"
+#include "Transform/Affine/Passes.h.inc"
 
 using mlir::affine::AffineForOp;
 using mlir::affine::loopUnrollFull;

@@ -1,15 +1,15 @@
-#include "include/Transform/Arith/MulToAdd.h"
+#include "Transform/Arith/MulToAdd.h"
 #include "mlir/Dialect/Arith/IR/Arith.h"
 #include "mlir/IR/PatternMatch.h"
 #include "mlir/Transforms/GreedyPatternRewriteDriver.h"
-#include "mlir/include/mlir/Pass/Pass.h"
+#include "mlir/Pass/Pass.h"
 
 namespace mlir
 {
   namespace tutorial
   {
     #define GEN_PASS_DEF_MULTOADD
-    #include "include/Transform/Affine/Arith/Passes.h.inc"
+    #include "Transform/Affine/Arith/Passes.h.inc"
     using arith::AddIOp;
     using arith::ConstantOp;
     using arith::MulIOp;

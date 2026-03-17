@@ -3,9 +3,9 @@
 
 // Required because the .h.inc file refers to MLIR classes and does not itself
 // have any includes.
-#include "mlir/include/mlir/IR/DialectImplementation.h"
+#include "mlir/IR/DialectImplementation.h"
 
-#include "include/Dialect/Noisy/NoisyDialect.h.inc"
+#include "Dialect/Noisy/NoisyDialect.h.inc"
 
 
 constexpr int INITIAL_NOISE = 12;

@@ -38,6 +38,7 @@ include_directories(${PROJECT_SOURCE_DIR})
 include_directories(${PROJECT_SOURCE_DIR}/externals/llvm-project)
 include_directories(${PROJECT_BINARY_DIR})
 include_directories(${PROJECT_SOURCE_DIR}/include)
+include_directories(${PROJECT_BINARY_DIR}/lib)
 list(APPEND MLIR_TABLEGEN_FLAGS
   -I${PROJECT_SOURCE_DIR}/include
 )

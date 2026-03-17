@@ -1,5 +1,5 @@
-#include "lib/Transform/Affine/Passes.h"
-#include "lib/Transform/Arith/Passes.h"
+#include "Transform/Affine/Passes.h"
+#include "Transform/Arith/Passes.h"
 #include "mlir/InitAllDialects.h"
 #include "mlir/Pass/PassManager.h"
 #include "mlir/Pass/PassRegistry.h"

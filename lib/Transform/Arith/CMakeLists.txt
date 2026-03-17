@@ -1,6 +1,6 @@
 add_mlir_pdll_library(MulToAddPdllIncGen
   ${PROJECT_SOURCE_DIR}/include/Transform/Arith/MulToAdd.pdll
-  MulToAddPdll.h.inc
+  ${PROJECT_SOURCE_DIR}/include/Transform/Arith/MulToAddPdll.h.inc
 )
 
 set(LLVM_TARGET_DEFINITIONS  ${PROJECT_SOURCE_DIR}/include/Transform/Arith/Passes.td)

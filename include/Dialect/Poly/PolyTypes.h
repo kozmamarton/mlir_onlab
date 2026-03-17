@@ -3,9 +3,9 @@
 
 // Required because the .h.inc file refers to MLIR classes and does not itself
 // have any includes.
-#include "mlir/include/mlir/IR/DialectImplementation.h"
+#include "mlir/IR/DialectImplementation.h"
 
 #define GET_TYPEDEF_CLASSES
-#include "include/Dialect/Poly/PolyTypes.h.inc"
+#include "Dialect/Poly/PolyTypes.h.inc"
 
 #endif  // LIB_TYPES_POLY_POLYTYPES_H_

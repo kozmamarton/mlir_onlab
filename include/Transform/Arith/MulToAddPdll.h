@@ -10,9 +10,9 @@ namespace mlir {
 namespace tutorial {
 
 #define GEN_PASS_DECL_MULTOADDPDLL
-#include "include/Transform/Arith/Passes.h.inc"
+#include "Transform/Arith/Passes.h.inc"
 
-#include "include/Transform/Arith/MulToAddPdll.h.inc"
+#include "Transform/Arith/MulToAddPdll.h.inc"
 
 }  // namespace tutorial
 }  // namespace mlir

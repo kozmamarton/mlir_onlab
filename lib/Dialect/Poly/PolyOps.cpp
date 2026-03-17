@@ -1,11 +1,11 @@
-#include "include/Dialect/Poly/PolyOps.h"
+#include "Dialect/Poly/PolyOps.h"
 
 #include "mlir/Dialect/CommonFolders.h"
 #include "mlir/Dialect/Complex/IR/Complex.h"
 #include "mlir/IR/PatternMatch.h"
 
 // Required after PatternMatch.h
-#include "include/Dialect/Poly/PolyCanonicalize.cpp.inc"
+#include "Dialect/Poly/PolyCanonicalize.cpp.inc"
 
 namespace mlir {
 namespace tutorial {

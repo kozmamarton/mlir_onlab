@@ -1,20 +1,20 @@
-#include "include/Transform/Noisy/ReduceNoiseOptimizer.h"
+#include "Transform/Noisy/ReduceNoiseOptimizer.h"
 
-#include "include/Analysis/ReduceNoiseAnalysis/ReduceNoiseAnalysis.h"
-#include "include/Dialect/Noisy/NoisyOps.h"
-#include "include/Dialect/Noisy/NoisyTypes.h"
-#include "mlir/include/mlir/Analysis/DataFlow/DeadCodeAnalysis.h"
-#include "mlir/include/mlir/Analysis/DataFlow/IntegerRangeAnalysis.h"
-#include "mlir/include/mlir/Analysis/DataFlowFramework.h"
-#include "mlir/include/mlir/IR/Visitors.h"
-#include "mlir/include/mlir/Pass/Pass.h"
+#include "Analysis/ReduceNoiseAnalysis/ReduceNoiseAnalysis.h"
+#include "Dialect/Noisy/NoisyOps.h"
+#include "Dialect/Noisy/NoisyTypes.h"
+#include "mlir/Analysis/DataFlow/DeadCodeAnalysis.h"
+#include "mlir/Analysis/DataFlow/IntegerRangeAnalysis.h"
+#include "mlir/Analysis/DataFlowFramework.h"
+#include "mlir/IR/Visitors.h"
+#include "mlir/Pass/Pass.h"
 
 namespace mlir {
 namespace tutorial {
 namespace noisy {
 
 #define GEN_PASS_DEF_REDUCENOISEOPTIMIZER
-#include "include/Transform/Noisy/Passes.h.inc"
+#include "Transform/Noisy/Passes.h.inc"
 
 struct ReduceNoiseOptimizer
     : impl::ReduceNoiseOptimizerBase<ReduceNoiseOptimizer> {

@@ -2,12 +2,12 @@
 #define LIB_TRANSFORM_ARITH_MULTOADD_H_
 
 #include "mlir/Dialect/Func/IR/FuncOps.h"
-#include "mlir/include/mlir/Pass/Pass.h"
+#include "mlir/Pass/Pass.h"
 
 namespace mlir {
 namespace tutorial {
   #define GEN_PASS_DECL_MULTOADD
-  #include "include/Transform/Affine/Arith/Passes.h.inc"
+  #include "Transform/Affine/Passes.h.inc"
 
 
 } // namespace tutorial

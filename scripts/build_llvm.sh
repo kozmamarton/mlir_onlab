@@ -1,11 +1,8 @@
 #!/usr/bin/env bash
 set -e
 
-read -r -p "Surely want to proceed (y/n)? " ans
-case "$ans" in
-  [nN]) echo "Aborting."; exit 1 ;;
-  *) ;;
-esac
+
+
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$SCRIPT_DIR/.."
@@ -22,7 +19,7 @@ cmake -G Ninja -S "$PROJECT_ROOT" -B "$BUILD_DIR" \
   -DCMAKE_C_COMPILER=clang \
   -DCMAKE_CXX_COMPILER=clang++ \
   -DLLVM_ENABLE_LLD=ON \
-  -DLLVM_CCACHE_BUILD=ON \
+  -DLLVM_CCACHE_BUILD=OFF \
   -DFETCHCONTENT_UPDATES_DISCONNECTED=ON
 
 cmake  --build "$BUILD_DIR" --target tutorial-opt -j14

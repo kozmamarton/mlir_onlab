@@ -1,20 +1,20 @@
-#include "include/Conversion/PolyToStandard/PolyToStandard.h"
+#include "Conversion/PolyToStandard/PolyToStandard.h"
 
-#include "include/Dialect/Poly/PolyOps.h"
-#include "include/Dialect/Poly/PolyTypes.h"
-#include "llvm/include/llvm/ADT/SmallVector.h"          // from @llvm-project
+#include "Dialect/Poly/PolyOps.h"
+#include "Dialect/Poly/PolyTypes.h"
+#include "llvm/ADT/SmallVector.h"          // from @llvm-project
 #include "mlir/Dialect/SCF/IR/SCF.h"                    // from @llvm-project
-#include "mlir/include/mlir/Dialect/Func/IR/FuncOps.h"  // from @llvm-project
-#include "mlir/include/mlir/Dialect/Func/Transforms/FuncConversions.h"  // from @llvm-project
-#include "mlir/include/mlir/IR/ImplicitLocOpBuilder.h"  // from @llvm-project
-#include "mlir/include/mlir/Transforms/DialectConversion.h"  // from @llvm-project
+#include "mlir/Dialect/Func/IR/FuncOps.h"  // from @llvm-project
+#include "mlir/Dialect/Func/Transforms/FuncConversions.h"  // from @llvm-project
+#include "mlir/IR/ImplicitLocOpBuilder.h"  // from @llvm-project
+#include "mlir/Transforms/DialectConversion.h"  // from @llvm-project
 
 namespace mlir {
 namespace tutorial {
 namespace poly {
 
 #define GEN_PASS_DEF_POLYTOSTANDARD
-#include "include/Conversion/PolyToStandard/PolyToStandard.h.inc"
+#include "Conversion/PolyToStandard/PolyToStandard.h.inc"
 
 class PolyToStandardTypeConverter : public TypeConverter {
  public:

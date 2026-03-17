@@ -1,4 +1,4 @@
-#include "include/Dialect/Noisy/NoisyOps.h"
+#include "Dialect/Noisy/NoisyOps.h"
 
 namespace mlir {
 namespace tutorial {
