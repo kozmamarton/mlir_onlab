@@ -8,12 +8,22 @@ set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 set(BUILD_DEPS OFF CACHE BOOL "Build external dependencies")
 set(CMAKE_FIND_PACKAGE_PREFER_CONFIG OFF)
 
-# Pin package locations to avoid filesystem search
-set(MLIR_DIR "/home/marton/uni/onlab/llvm-project/build/lib/cmake/mlir"
-    CACHE PATH "MLIR CMake directory")
+# Resolve package locations relative to this repository by default.
+set(_LLVM_BUILD_DIR "${PROJECT_SOURCE_DIR}/externals/llvm-project/build")
+set(_DEFAULT_MLIR_DIR "${_LLVM_BUILD_DIR}/lib/cmake/mlir")
+set(_DEFAULT_LLVM_DIR "${_LLVM_BUILD_DIR}/lib/cmake/llvm")
 
-set(LLVM_DIR "/home/marton/uni/onlab/llvm-project/build/lib/cmake/llvm"
-    CACHE PATH "LLVM CMake directory")
+if(NOT DEFINED MLIR_DIR OR MLIR_DIR STREQUAL "")
+  set(MLIR_DIR "${_DEFAULT_MLIR_DIR}" CACHE PATH "MLIR CMake directory")
+else()
+  set(MLIR_DIR "${MLIR_DIR}" CACHE PATH "MLIR CMake directory")
+endif()
+
+if(NOT DEFINED LLVM_DIR OR LLVM_DIR STREQUAL "")
+  set(LLVM_DIR "${_DEFAULT_LLVM_DIR}" CACHE PATH "LLVM CMake directory")
+else()
+  set(LLVM_DIR "${LLVM_DIR}" CACHE PATH "LLVM CMake directory")
+endif()
 
 find_package(LLVM REQUIRED CONFIG)
 find_package(MLIR REQUIRED CONFIG)
