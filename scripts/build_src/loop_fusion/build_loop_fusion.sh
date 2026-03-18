@@ -1,42 +1,84 @@
 
+#!/usr/bin/env bash
+set -euo pipefail
+
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/../../.." && pwd)"
 LLVM_ROOT_DIR="$PROJECT_ROOT/externals/llvm-project"
+MLIR_OPT="$LLVM_ROOT_DIR/build/bin/mlir-opt"
+OUTPUT_DIR="$PROJECT_ROOT/src/loop_fusion"
 
-#  -pass-pipeline='builtin.module(func.func(affine-loop-fusion))' 
-#  -affine-loop-fusion
-#  -allow-unregistered-dialect
-#  -split-input-file
-APPLIED_PASSES=(
+# Shared mlir-opt flags applied to every generated loop-fusion example.
+COMMON_FLAGS=(
   "--allow-unregistered-dialect"
   "--split-input-file"
-  # Normalization
-  "--affine-loop-normalize"
-  # Fusion & optimization
-
-  "--affine-loop-fusion"
-  "--affine-scalrep"
-
-  # Lowering
-  #"--lower-affine"
-
 )
 
-echo "Executing transformations on loop fusion example 1."
+# Function-level passes for the default loop-fusion mode.
+DEFAULT_FUNC_PASSES=(
+  "affine-loop-fusion"
+)
 
-"$LLVM_ROOT_DIR/build/bin/mlir-opt" "${APPLIED_PASSES[@]}" \
-  < "$LLVM_ROOT_DIR/mlir/test/Dialect/Affine/loop-fusion.mlir" \
-  > "$PROJECT_ROOT/src/loop_fusion/loop-fusion.mlir"
+# Function-level passes for producer-consumer oriented loop fusion cases.
+PRODUCER_FUNC_PASSES=(
+  "affine-loop-fusion{mode=producer}"
+)
 
-echo "Executing transformations on loop fusion example 2."
+DEFAULT_CASES=(
+  "loop_fusion_hpc"
+  "should_fuse_reduction_to_pointwise"
+  "should_fuse_loop_nests_with_shifts"
+  "should_fuse_at_depth_above_loop_carried_dependence"
+  "mul_add_0"
+  "should_not_fuse_since_non_affine_users"
+)
 
-"$LLVM_ROOT_DIR/build/bin/mlir-opt" "${APPLIED_PASSES[@]}" \
-  < "$LLVM_ROOT_DIR/mlir/test/Dialect/Affine/loop-fusion-2.mlir" \
-  > "$PROJECT_ROOT/src/loop_fusion/loop-fusion-2.mlir"
+PRODUCER_CASES=(
+  "loop_fusion_producer"
+  "unflatten2d_with_transpose"
+)
 
-echo "Executing transformations on loop fusion example 3."
+mkdir -p "$OUTPUT_DIR"
 
-"$LLVM_ROOT_DIR/build/bin/mlir-opt" "${APPLIED_PASSES[@]}" \
-  < "$LLVM_ROOT_DIR/mlir/test/Dialect/Affine/loop-fusion-3.mlir" \
-  > "$PROJECT_ROOT/src/loop_fusion/loop-fusion-3.mlir"
+join_by() {
+  local delimiter="$1"
+  shift
+  local first_value="${1-}"
+  shift || true
+  printf '%s' "$first_value"
+  printf '%s' "${@/#/$delimiter}"
+}
+
+build_func_pipeline() {
+  local -n pass_list_ref="$1"
+  printf 'builtin.module(func.func(%s))' "$(join_by ',' "${pass_list_ref[@]}")"
+}
+
+run_default_case() {
+  local input_name="$1"
+  echo "Generating ${input_name}.mlir with default affine-loop-fusion mode."
+  "$MLIR_OPT" \
+    "${COMMON_FLAGS[@]}" \
+    -pass-pipeline="$(build_func_pipeline DEFAULT_FUNC_PASSES)" \
+    < "$PROJECT_ROOT/tests/${input_name}.mlir" \
+    > "$OUTPUT_DIR/${input_name}.mlir"
+}
+
+run_producer_case() {
+  local input_name="$1"
+  echo "Generating ${input_name}.mlir with producer affine-loop-fusion mode."
+  "$MLIR_OPT" \
+    "${COMMON_FLAGS[@]}" \
+    -pass-pipeline="$(build_func_pipeline PRODUCER_FUNC_PASSES)" \
+    < "$PROJECT_ROOT/tests/${input_name}.mlir" \
+    > "$OUTPUT_DIR/${input_name}.mlir"
+}
+
+for case_name in "${DEFAULT_CASES[@]}"; do
+  run_default_case "$case_name"
+done
+
+for case_name in "${PRODUCER_CASES[@]}"; do
+  run_producer_case "$case_name"
+done
 
