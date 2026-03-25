@@ -55,19 +55,18 @@ list(APPEND MLIR_TABLEGEN_FLAGS
 
 if(BUILD_DEPS)
   include(FetchContent)
-
   set(FETCHCONTENT_UPDATES_DISCONNECTED ON CACHE BOOL
       "Do not update already-fetched dependencies during configure")
-
   FetchContent_Declare(
     or-tools
     GIT_REPOSITORY https://github.com/google/or-tools.git
     GIT_TAG        v9.11
   )
-
   message(STATUS "Fetching or-tools...")
   FetchContent_MakeAvailable(or-tools)
   message(STATUS "Done fetching or-tools")
+else()
+  find_package(ortools CONFIG REQUIRED)
 endif()
 
 add_subdirectory(tests)
