@@ -69,6 +69,26 @@ else()
   find_package(ortools CONFIG REQUIRED)
 endif()
 
+if(NOT BUILD_DEPS)
+  find_package(ortools CONFIG QUIET)
+endif()
+
+if(NOT ortools_FOUND)
+  include(FetchContent)
+  set(FETCHCONTENT_UPDATES_DISCONNECTED ON CACHE BOOL
+      "Do not update already-fetched dependencies during configure")
+  FetchContent_Declare(
+    or-tools
+    GIT_REPOSITORY https://github.com/google/or-tools.git
+    GIT_TAG        v9.11
+  )
+  message(STATUS "or-tools not found on system, fetching from source...")
+  FetchContent_MakeAvailable(or-tools)
+  message(STATUS "Done fetching or-tools")
+else()
+  message(STATUS "Found system or-tools: ${ortools_DIR}")
+endif()
+
 add_subdirectory(tests)
 add_subdirectory(tools)
 add_subdirectory(lib)
