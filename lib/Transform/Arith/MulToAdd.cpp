@@ -9,7 +9,7 @@ namespace mlir
   namespace tutorial
   {
     #define GEN_PASS_DEF_MULTOADD
-    #include "Transform/Affine/Arith/Passes.h.inc"
+    #include "Transform/Arith/Passes.h.inc"
     using arith::AddIOp;
     using arith::ConstantOp;
     using arith::MulIOp;
