@@ -66,6 +66,10 @@ if(NOT ortools_FOUND)
     GIT_REPOSITORY https://github.com/google/or-tools.git
     GIT_TAG        v9.11
   )
+  # OR-Tools uses BUILD_DEPS internally to decide whether to fetch its own
+  # transitive deps (absl, protobuf, re2, eigen, etc.). Force it ON so they
+  # are built from source rather than required as system packages.
+  set(BUILD_DEPS ON CACHE BOOL "" FORCE)
   message(STATUS "or-tools not found on system, fetching from source...")
   FetchContent_MakeAvailable(or-tools)
   message(STATUS "Done fetching or-tools")
