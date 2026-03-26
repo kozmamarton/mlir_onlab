@@ -55,18 +55,27 @@ OUTPUT_DIR_MLIR="$PROJECT_ROOT/artifacts/mlir/loop_fusion"
 mkdir -p "$OUTPUT_DIR_LL"
 mkdir -p "$OUTPUT_DIR_MLIR"
 
-PIPELINE_PASSES=(
+PIPELINE_PASSES=( #parallel-loop-tiling?
   "func.func(gpu-map-parallel-loops)"
-	"convert-parallel-loops-to-gpu"
+  "canonicalize"
+  "cse"
+  "convert-parallel-loops-to-gpu"
+  "gpu-kernel-outlining"
+  "canonicalize"
+  "cse"
+  "gpu-lower-to-nvvm-pipeline{cubin-chip=sm_90 opt-level=3}"
+)
+
+
+## do not use this array. use only for reference when studying the passes in the pipeline. 
+## these are not meant to be used as a list of passes to run, but rather as a reference for which passes are included in the gpu-lower-to-nvvm-pipeline.
+__not_used_passes_reserved_for_study__=(	
+  "convert-parallel-loops-to-gpu"
 	"func.func(scf-parallel-for-to-nested-fors)"
 	"gpu-kernel-outlining"
 	"nvvm-attach-target{chip=sm_90 O=3}"
 	"gpu.module(convert-gpu-to-nvvm)"
 	"gpu-to-llvm"
-	"convert-scf-to-cf"
-	"convert-cf-to-llvm"
-	"convert-arith-to-llvm"
-	"convert-func-to-llvm"
 	"expand-strided-metadata"
 	"finalize-memref-to-llvm"
 	"reconcile-unrealized-casts"
@@ -104,7 +113,7 @@ for INPUT_FILE in "${INPUT_FILES[@]}"; do
   echo "$MLIR_TRANSLATE $NVVM_FILE \
     --mlir-to-llvmir \  
     -o $LLVM_FILE"
-    
+
 	"$MLIR_TRANSLATE" "$NVVM_FILE" \
 		--mlir-to-llvmir \
 		-o "$LLVM_FILE"
