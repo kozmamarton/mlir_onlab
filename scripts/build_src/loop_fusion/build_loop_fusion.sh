@@ -13,135 +13,184 @@ COMMON_FLAGS=(
   "--split-input-file"
 )
 
-# Function-level passes for the default loop-fusion mode.
-DEFAULT_FUNC_PASSES=(
+# Function-level passes.
+FUNC_PASSES=(
   "affine-loop-normalize"
+  "loop-invariant-code-motion"
   "affine-loop-fusion"
-  "affine-scalrep"
-  "affine-loop-tile"
-  "affine-parallelize"
-  "convert-parallel-loops-to-gpu"
+  "mem2reg"
+  "affine-scalrep" # cleans up useles write/read pairs after loop fusion
+  "affine-loop-tile" #option: cache size?
+  "affine-parallelize" #option: parallel-reductions?
+  "scf-parallel-loop-fusion"
   "lower-affine"
-  #"--convert-gpu-to-rocdl"
+  #-affine-pipeline-data-transfer #try?
 )
 
-# Module-level passes (run at builtin.module scope, before func.func passes).
-MODULE_PASSES=(
+# Passes to insert between each function-level pass (after each func.func pass).
+INBETWEEN_FUNC_PASSES=(
+  "cse"
+  "canonicalize"
+)
+
+# Module-level passes run before func.func passes.
+PRE_FUNC_MODULE_PASSES=(
   "inline"
+  "canonicalize"
 )
 
-# GPU-module-level passes (run at gpu.module scope).
-GPU_MODULE_PASSES=(
-  "convert-gpu-to-nvvm"
-)
-
-# Function-level passes for producer-consumer oriented loop fusion cases.
-PRODUCER_FUNC_PASSES=(
-  "affine-loop-normalize"
-  "affine-loop-fusion{mode=producer}"
-  "affine-scalrep"
-  "affine-loop-tile"
-  "affine-parallelize"
+# Module-level passes run after func.func passes.
+POST_FUNC_MODULE_PASSES=(
   "convert-parallel-loops-to-gpu"
-  "lower-affine"
-  #"--convert-gpu-to-rocdl"
+  "gpu-kernel-outlining"
 )
 
-DEFAULT_CASES=(
-  "loop_fusion_hpc"
+# Test cases to process.
+CASES=(
   "should_fuse_reduction_to_pointwise"
   "should_fuse_loop_nests_with_shifts"
   "should_fuse_at_depth_above_loop_carried_dependence"
   "mul_add_0"
   "should_not_fuse_since_non_affine_users"
-)
-
-PRODUCER_CASES=(
   "loop_fusion_producer"
   "unflatten2d_with_transpose"
 )
 
 usage() {
   cat <<EOF
-Usage: $(basename "$0") [--producer] [--default] [--all]
+Usage: $(basename "$0") [-f <PATH>] [-f <PATH>] ...
+
+Options:
+  -f, --file <PATH>    Process either a built-in case name or an explicit .mlir file.
+                       Built-in cases use tests/<name>.mlir; explicit files are processed
+                       via their absolute path.
+                       If not provided, all built-in test cases are processed.
+  -h, --help           Show this help message.
 
 Examples:
-  $(basename "$0") --producer
-  $(basename "$0") --default
-  $(basename "$0") --all
+  $(basename "$0")                                    # Process all cases
+  $(basename "$0") -f loop_fusion_hpc                 # Process only loop_fusion_hpc
+  $(basename "$0") -f loop_fusion_hpc -f mul_add_0   # Process two built-in cases
+  $(basename "$0") -f /tmp/example.mlir              # Process one explicit file
 EOF
 }
 
-run_default=false
-run_producer=false
+declare -a builtin_cases_to_process=()
+declare -a explicit_files_to_process=()
+
+to_abs_path() {
+  local path="$1"
+  local dir
+
+  if [[ "$path" = /* ]]; then
+    dir="$(cd "$(dirname "$path")" && pwd)"
+  else
+    dir="$(cd "$PROJECT_ROOT/$(dirname "$path")" && pwd)"
+  fi
+
+  printf '%s/%s\n' "$dir" "$(basename "$path")"
+}
+
+resolve_explicit_file() {
+  local raw_path="$1"
+  local candidate
+
+  if [[ "$raw_path" = /* ]]; then
+    candidate="$raw_path"
+  else
+    candidate="$PROJECT_ROOT/$raw_path"
+  fi
+
+  if [[ -f "$candidate" ]]; then
+    to_abs_path "$candidate"
+    return 0
+  fi
+
+  if [[ "$candidate" != *.mlir && -f "${candidate}.mlir" ]]; then
+    to_abs_path "${candidate}.mlir"
+    return 0
+  fi
+
+  return 1
+}
 
 while (($# > 0)); do
   case "$1" in
-    --producer)
-      run_producer=true
-      ;;
-    --default)
-      run_default=true
-      ;;
-    --all)
-      run_default=true
-      run_producer=true
+    -f|--file)
+      if [[ -z "${2-}" ]]; then
+        echo "Error: -f/--file requires an argument" >&2
+        usage
+        exit 1
+      fi
+      if [[ "$2" == */* || "$2" == .* || "$2" == *.mlir ]]; then
+        if resolved_file="$(resolve_explicit_file "$2")"; then
+          explicit_files_to_process+=("$resolved_file")
+        else
+          echo "Error: explicit file not found: $2" >&2
+          exit 1
+        fi
+      else
+        builtin_cases_to_process+=("$2")
+      fi
+      shift 2
       ;;
     -h|--help)
       usage
       exit 0
       ;;
     *)
+      echo "Error: Unknown option '$1'" >&2
       usage
       exit 1
       ;;
   esac
-  shift
 done
 
-if ! $run_default && ! $run_producer; then
-  usage
-  exit 1
+# If no specific targets were provided, use all built-in cases.
+if (( ${#builtin_cases_to_process[@]} == 0 && ${#explicit_files_to_process[@]} == 0 )); then
+  builtin_cases_to_process=("${CASES[@]}")
 fi
 
 mkdir -p "$OUTPUT_DIR"
 
 join_by() {
-  local delimiter="$1"
-  shift
-  local first_value="${1-}"
-  shift || true
-  printf '%s' "$first_value"
-  printf '%s' "${@/#/$delimiter}"
+  local IFS="$1"; shift
+  printf '%s' "$*"
+}
+
+build_func_passes_with_inbetween() {
+  local -n _funcs="$1"
+  local -n _between="$2"
+  local result=()
+
+  for pass in "${_funcs[@]}"; do
+   result+=("$pass")
+   result+=("${_between[@]}")
+  
+  done
+
+  join_by ',' "${result[@]}"
 }
 
 build_pipeline() {
-  local -n _mod_ref="$1"
-  local -n _func_ref="$2"
-  local -n _gpu_mod_ref="$3"
-  local pipeline_parts=()
+  local -n _pre_mod="$1"
+  local -n _post_mod="$2"
+  local parts=()
 
-  if (( ${#_mod_ref[@]} > 0 )); then
-    pipeline_parts+=("$(join_by ',' "${_mod_ref[@]}")")
-  fi
+  (( ${#_pre_mod[@]} )) && parts+=("$(join_by ',' "${_pre_mod[@]}")")
+  parts+=("func.func($(build_func_passes_with_inbetween "$3" "$4"))")
+  (( ${#_post_mod[@]} )) && parts+=("$(join_by ',' "${_post_mod[@]}")")
 
-  pipeline_parts+=("func.func($(join_by ',' "${_func_ref[@]}"))")
-
-  if (( ${#_gpu_mod_ref[@]} > 0 )); then
-    pipeline_parts+=("gpu.module($(join_by ',' "${_gpu_mod_ref[@]}"))")
-  fi
-
-  printf 'builtin.module(%s)' "$(join_by ',' "${pipeline_parts[@]}")"
+  printf 'builtin.module(%s)' "$(join_by ',' "${parts[@]}")"
 }
 
-run_default_case() {
+run_builtin_case() {
   local input_name="$1"
-  local _no_mod=()
   local pipeline
   local input_file="$PROJECT_ROOT/tests/${input_name}.mlir"
   local output_file="$OUTPUT_DIR/${input_name}.mlir"
-  pipeline="$(build_pipeline _no_mod DEFAULT_FUNC_PASSES GPU_MODULE_PASSES)"
-  echo "Generating ${input_name}.mlir with default affine-loop-fusion mode."
+  pipeline="$(build_pipeline PRE_FUNC_MODULE_PASSES POST_FUNC_MODULE_PASSES FUNC_PASSES INBETWEEN_FUNC_PASSES)"
+  echo "Generating ${input_name}.mlir"
   printf 'Running command:\n  %s %s -pass-pipeline="%s" \\\n    < %s \\\n    > %s\n' \
     "$MLIR_OPT" "${COMMON_FLAGS[*]}" "$pipeline" "$input_file" "$output_file"
   "$MLIR_OPT" \
@@ -151,14 +200,17 @@ run_default_case() {
     > "$output_file"
 }
 
-run_producer_case() {
-  local input_name="$1"
+run_explicit_file() {
+  local input_file="$1"
   local pipeline
-  local input_file="$PROJECT_ROOT/tests/${input_name}.mlir"
-  local output_file="$OUTPUT_DIR/${input_name}.mlir"
-  pipeline="$(build_pipeline MODULE_PASSES PRODUCER_FUNC_PASSES GPU_MODULE_PASSES)"
-  echo "Generating ${input_name}.mlir with producer affine-loop-fusion mode."
-  printf 'Running command:\n  %s %s -pass-pipeline="%s" \\\n    < %s \\\n    > %s\n' \
+  local input_name
+  local output_file
+
+  input_name="$(basename "$input_file" .mlir)"
+  output_file="$OUTPUT_DIR/${input_name}.mlir"
+  pipeline="$(build_pipeline PRE_FUNC_MODULE_PASSES POST_FUNC_MODULE_PASSES FUNC_PASSES INBETWEEN_FUNC_PASSES)"
+  echo "Generating ${input_name}.mlir"
+  printf 'Running command:\n  %s %s -pass-pipeline="%s" \\\n+    < %s \\\n+    > %s\n' \
     "$MLIR_OPT" "${COMMON_FLAGS[*]}" "$pipeline" "$input_file" "$output_file"
   "$MLIR_OPT" \
     "${COMMON_FLAGS[@]}" \
@@ -167,15 +219,11 @@ run_producer_case() {
     > "$output_file"
 }
 
-if $run_default; then
-  for case_name in "${DEFAULT_CASES[@]}"; do
-    run_default_case "$case_name"
-  done
-fi
+for case_name in "${builtin_cases_to_process[@]}"; do
+  run_builtin_case "$case_name"
+done
 
-if $run_producer; then
-  for case_name in "${PRODUCER_CASES[@]}"; do
-    run_producer_case "$case_name"
-  done
-fi
+for input_file in "${explicit_files_to_process[@]}"; do
+  run_explicit_file "$input_file"
+done
 
