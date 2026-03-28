@@ -4,34 +4,23 @@ module {
     %c32 = arith.constant 32 : index
     %c1 = arith.constant 1 : index
     scf.parallel (%arg2) = (%c0) to (%c32) step (%c1) {
-      %0 = arith.addi %arg2, %c1 : index
-      scf.parallel (%arg3) = (%arg2) to (%0) step (%c1) {
-        %1 = memref.load %arg0[%arg3] : memref<32xf32>
-        %2 = memref.load %arg1[%arg3] : memref<32xf32>
-        %3 = arith.addf %1, %2 : f32
-        memref.store %3, %arg0[%arg3] : memref<32xf32>
-        scf.reduce 
-      }
+      %0 = memref.load %arg0[%arg2] : memref<32xf32>
+      %1 = memref.load %arg1[%arg2] : memref<32xf32>
+      %2 = arith.addf %0, %1 : f32
+      memref.store %2, %arg0[%arg2] : memref<32xf32>
       scf.reduce 
     }
     scf.for %arg2 = %c0 to %c32 step %c1 {
-      %0 = arith.addi %arg2, %c1 : index
-      scf.for %arg3 = %arg2 to %0 step %c1 {
-        %1 = memref.load %arg0[%arg3] : memref<32xf32>
-        %2 = memref.load %arg1[%arg3] : memref<32xf32>
-        %3 = arith.subf %1, %2 : f32
-        memref.store %3, %arg0[%arg3] : memref<32xf32>
-      }
+      %0 = memref.load %arg0[%arg2] : memref<32xf32>
+      %1 = memref.load %arg1[%arg2] : memref<32xf32>
+      %2 = arith.subf %0, %1 : f32
+      memref.store %2, %arg0[%arg2] : memref<32xf32>
     }
     scf.parallel (%arg2) = (%c0) to (%c32) step (%c1) {
-      %0 = arith.addi %arg2, %c1 : index
-      scf.parallel (%arg3) = (%arg2) to (%0) step (%c1) {
-        %1 = memref.load %arg0[%arg3] : memref<32xf32>
-        %2 = memref.load %arg1[%arg3] : memref<32xf32>
-        %3 = arith.mulf %1, %2 : f32
-        memref.store %3, %arg0[%arg3] : memref<32xf32>
-        scf.reduce 
-      }
+      %0 = memref.load %arg0[%arg2] : memref<32xf32>
+      %1 = memref.load %arg1[%arg2] : memref<32xf32>
+      %2 = arith.mulf %0, %1 : f32
+      memref.store %2, %arg0[%arg2] : memref<32xf32>
       scf.reduce 
     }
     return
