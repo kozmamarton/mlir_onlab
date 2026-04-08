@@ -1845,6 +1845,10 @@ void ext_vaf_(real_t* vaf, real_t* ady2d, real_t* advva, real_t* arv, real_t* co
     }
 }
 
+void ext_etf_(int* iext, int* isplit, real_t* smoth, real_t* etf, real_t* elf, real_t* fsm) {
+    ext_etf_update_(iext, isplit, smoth, etf, elf, fsm);
+}
+
 void ext_etf_update_(int* iext, int* isplit, real_t* smoth, real_t* etf, real_t* elf, real_t* fsm)
 {
     if (*iext == *isplit - 2)

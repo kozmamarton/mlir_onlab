@@ -31,7 +31,7 @@
 # g77 -O3 pom2k.f /usr/local/lib/libnetcdf.a
 # ---- now netCDF output not used (see "CDF" in pom2k.f)
   gcc pom2k_fun.c -O0 -g -c -o pom2k_fun.o -std=c99 
-  f77 -O0 -g pom2k.F pom2k_fun.o
+  gfortran -O0 -g -cpp -ffixed-form -ffixed-line-length-none pom2k.F pom2k_fun.o -o a.out
 # f90 -O3 pom2k.f  # or any other compiler you wish to use 
 #
 # ------------------ OUTPUT FILES -----------------------------
