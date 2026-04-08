@@ -63,7 +63,7 @@ PIPELINE_PASSES=( #parallel-loop-tiling?
   "gpu-kernel-outlining"
   "canonicalize"
   "cse"
-  "gpu-lower-to-nvvm-pipeline{cubin-chip=sm_90 opt-level=3}"
+  "gpu-lower-to-nvvm-pipeline{cubin-chip=sm_80 opt-level=3}"
 )
 
 
@@ -73,7 +73,7 @@ __not_used_passes_reserved_for_study__=(
   "convert-parallel-loops-to-gpu"
 	"func.func(scf-parallel-for-to-nested-fors)"
 	"gpu-kernel-outlining"
-	"nvvm-attach-target{chip=sm_90 O=3}"
+	"nvvm-attach-target{chip=sm_80 O=3}"
 	"gpu.module(convert-gpu-to-nvvm)"
 	"gpu-to-llvm"
 	"expand-strided-metadata"
