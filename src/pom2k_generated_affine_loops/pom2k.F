@@ -160,7 +160,7 @@ C
 C***********************************************************************
 C
 
-#define OPS
+C* #define OPS*
 #define MODIFIED
 #define MODIFIED_depth
 #define MODIFIED_seamount
