@@ -12,3 +12,13 @@ build
 *.a
 *.exe
 *.out
+# Fortran build artifacts
+*.mod         # Fortran module files
+*.f90         # Preprocessed Fortran
+*.i90         # Intermediate Fortran
+*.i           # C preprocessor output
+*.s           # Assembly files
+*.asm         # Assembly files
+a.out         # Default executable name
+pom2k_fun.o   # Specific to this project
+pom2k.o       # Specific to this project
