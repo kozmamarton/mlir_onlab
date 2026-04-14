@@ -1,4 +1,4 @@
-      iproblem=  1                  
-      days=      0.025              
-      prtd1=     0.0125             
-      dte=       6.                 
+      iproblem=  3                  
+      days=      10.00               
+      prtd1=     0.25               
+      dte=      12.                 

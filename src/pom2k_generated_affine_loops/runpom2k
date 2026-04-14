@@ -19,12 +19,12 @@
 #
 # -- COAST TEST CASE (initial cond. from file)
 #
-#echo '      parameter(im=41, jm=61, kb=16)' >  grid
-#echo '      iproblem=  3                  ' >  params
-#echo '      days=      0.50               ' >> params
-#echo '      prtd1=     0.25               ' >> params
-#echo '      dte=      12.                 ' >> params
-#cp IC.dat fort.40            # Initial Condition file
+echo '      parameter(im=41, jm=61, kb=16)' >  grid
+echo '      iproblem=  3                  ' >  params
+echo '      days=      10.00               ' >> params
+echo '      prtd1=     0.25               ' >> params
+echo '      dte=      12.                 ' >> params
+cp IC.dat fort.40            # Initial Condition file
 #
 # ------------------ COMPILE & RUN ----------------------------
 #
@@ -42,6 +42,6 @@ rm fort.71
 diff -y <(xxd fort.71) <(xxd fort.71.O0.ref) > /dev/null
 # diff -y <(xxd h.raw) <(xxd fort.72) > /dev/null
 # diff reference_sol_O0 pom2k.out > /dev/null
-rc=$?; if [[ $rc != 0 ]]; then echo "TEST FAILED";exit $rc; else echo "TEST PASSED"; fi
+rc=$?; if [[ $rc != 0 ]]; then echo "TEST FAILED: rc=$rc";exit $rc; else echo "TEST PASSED"; fi
 #
 #       pom2k.nc         # netCDF file for MATLAB plotting 

@@ -8,16 +8,20 @@ module attributes {dlti.dl_spec = #dlti.dl_spec<#dlti.dl_entry<"dlti.endianness"
     %3 = memref.get_global @im : memref<1xi32>
     %4 = affine.load %3[0] : memref<1xi32>
     %5 = arith.index_cast %4 : i32 to index
+    %arg0_2d = memref.reinterpret_cast %arg0 to offset: [0], sizes: [%2, %5], strides: [%5, 1] : memref<?xf32> to memref<?x?xf32, strided<[?, 1], offset: 0>>
+    %arg1_2d = memref.reinterpret_cast %arg1 to offset: [0], sizes: [%2, %5], strides: [%5, 1] : memref<?xf32> to memref<?x?xf32, strided<[?, 1], offset: 0>>
+    %arg2_2d = memref.reinterpret_cast %arg2 to offset: [0], sizes: [%2, %5], strides: [%5, 1] : memref<?xf32> to memref<?x?xf32, strided<[?, 1], offset: 0>>
+    %arg3_2d = memref.reinterpret_cast %arg3 to offset: [0], sizes: [%2, %5], strides: [%5, 1] : memref<?xf32> to memref<?x?xf32, strided<[?, 1], offset: 0>>
     affine.for %arg4 = 0 to %2 {
       affine.for %arg5 = 0 to %5 {
-        %6 = affine.load %arg2[%arg5 + %arg4 * symbol(%5)] : memref<?xf32>
-        %7 = affine.load %arg0[%arg5 + %arg4 * symbol(%5)] : memref<?xf32>
+        %6 = affine.load %arg2_2d[%arg4, %arg5] : memref<?x?xf32, strided<[?, 1], offset: 0>>
+        %7 = affine.load %arg0_2d[%arg4, %arg5] : memref<?x?xf32, strided<[?, 1], offset: 0>>
         %8 = arith.subf %7, %6 : f32
-        affine.store %8, %arg0[%arg5 + %arg4 * symbol(%5)] : memref<?xf32>
-        %9 = affine.load %arg3[%arg5 + %arg4 * symbol(%5)] : memref<?xf32>
-        %10 = affine.load %arg1[%arg5 + %arg4 * symbol(%5)] : memref<?xf32>
+        affine.store %8, %arg0_2d[%arg4, %arg5] : memref<?x?xf32, strided<[?, 1], offset: 0>>
+        %9 = affine.load %arg3_2d[%arg4, %arg5] : memref<?x?xf32, strided<[?, 1], offset: 0>>
+        %10 = affine.load %arg1_2d[%arg4, %arg5] : memref<?x?xf32, strided<[?, 1], offset: 0>>
         %11 = arith.subf %10, %9 : f32
-        affine.store %11, %arg1[%arg5 + %arg4 * symbol(%5)] : memref<?xf32>
+        affine.store %11, %arg1_2d[%arg4, %arg5] : memref<?x?xf32, strided<[?, 1], offset: 0>>
       } {constants = [], locals = [], mlirclang.direction = "forward", mlirclang.indvar = "i", mlirclang.lb_src = "0", mlirclang.loop_kind = "scf.for", mlirclang.ub_src = "im"}
     } {constants = [], locals = [], mlirclang.direction = "forward", mlirclang.indvar = "j", mlirclang.lb_src = "0", mlirclang.loop_kind = "scf.for", mlirclang.ub_src = "jm"}
     return
