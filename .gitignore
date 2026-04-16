@@ -22,3 +22,7 @@ build
 a.out         # Default executable name
 pom2k_fun.o   # Specific to this project
 pom2k.o       # Specific to this project
+fort.*
+*fort.*      
+fort.*.*
+fort
