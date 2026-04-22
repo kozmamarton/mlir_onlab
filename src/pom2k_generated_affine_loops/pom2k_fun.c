@@ -2173,7 +2173,7 @@ void ext_init_horizontal_velocities_(real_t* uf, real_t* vf)
 /// grid in time step forward
 /////
 /////*****************************************************************************/////
-void ext_advq_(real_t* qb, real_t* q, real_t* qf, real_t* xflux, real_t* yflux, real_t* dt,
+void ext_advq_(real_t* qb, real_t* q, real_t* qf, real_t* xflux, real_t* yflux, real_t* dt, ///should fuse ----
                real_t* u, real_t* v, real_t* aam, real_t* h, real_t* dum, real_t* dx, real_t* dvm,
                real_t* dy, real_t* w, real_t* dz, real_t* art, real_t* etb, real_t* etf)
 {
