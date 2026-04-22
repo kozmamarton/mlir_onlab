@@ -55,8 +55,8 @@ OUTPUT_DIR_MLIR="$PROJECT_ROOT/artifacts/mlir/pom2k"
 mkdir -p "$OUTPUT_DIR_LL"
 mkdir -p "$OUTPUT_DIR_MLIR"
 
-PIPELINE_PASSES=( #parallel-loop-tiling?
-  "func.func(gpu-map-parallel-loops)"
+PIPELINE_PASSES=(
+  "func.func(scf-parallel-loop-tiling{parallel-loop-tile-sizes=32,4}, gpu-map-parallel-loops)"
   "canonicalize"
   "cse"
   "convert-parallel-loops-to-gpu"
