@@ -60,6 +60,8 @@ PIPELINE_PASSES=(
   "canonicalize"
   "cse"
   "convert-parallel-loops-to-gpu"
+	"canonicalize"
+  "cse"
   "gpu-kernel-outlining"
   "canonicalize"
   "cse"
