@@ -43,9 +43,7 @@ PRE_FUNC_MODULE_PASSES=(
 
 # Module-level passes run after func.func passes.
 POST_FUNC_MODULE_PASSES=(
-  "convert-parallel-loops-to-gpu"
-  "gpu-kernel-outlining"
-  "nvvm-attach-target{chip=sm_70 O=3}"
+
 )
 
 # Test cases to process.
