@@ -55,14 +55,31 @@ OUTPUT_DIR_MLIR="$PROJECT_ROOT/artifacts/mlir/pom2k/cpu"
 mkdir -p "$OUTPUT_DIR_LL"
 mkdir -p "$OUTPUT_DIR_MLIR"
 
+# Coarse parallel lowering by default. Enable tiling only when explicitly
+# requested because aggressive tiling can over-shard work and increase
+# OpenMP runtime overhead.
+
+
 PIPELINE_PASSES=(
-  "convert-scf-to-openmp"
-  "canonicalize"
-  "cse"
+	"lower-affine"
+	"canonicalize"
+	"cse"
+	#"scf-parallel-loop-tiling"
+	"canonicalize"
+	"cse"
+	"scf-parallel-loop-fusion"
+	"canonicalize"
+	"cse"
+	"convert-scf-to-openmp"
+	"canonicalize"
+	"cse"
+	"reconcile-unrealized-casts"
   "convert-scf-to-cf"
+	"reconcile-unrealized-casts"
   "convert-math-to-llvm"
   "convert-arith-to-llvm"
   "finalize-memref-to-llvm"
+	"reconcile-unrealized-casts"
   "convert-openmp-to-llvm"
   "convert-cf-to-llvm"
   "convert-func-to-llvm"
@@ -70,7 +87,7 @@ PIPELINE_PASSES=(
 )
 
 MLIR_OPT_FLAGS=(
-  "--split-input-file"
+ # "--split-input-file"
   "--allow-unregistered-dialect"
 )
 

@@ -24,8 +24,10 @@ FUNC_PASSES=(
   "mem2reg"
   "affine-scalrep" # cleans up useles write/read pairs after loop fusion
   "affine-parallelize" #option: parallel-reductions?
-  "scf-parallel-loop-fusion"
   "lower-affine"
+  # Note: scf-parallel-loop-fusion is intentionally not run here. The pass
+  # operates on scf.parallel and is more effective in the lowering pipeline,
+  # right before convert-scf-to-openmp.
   #-affine-pipeline-data-transfer #try?
 )
 
