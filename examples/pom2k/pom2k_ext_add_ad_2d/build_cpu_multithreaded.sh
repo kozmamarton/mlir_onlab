@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+EXAMPLE_LL="${EXAMPLE_LL:-$SCRIPT_DIR/ext_add_ad_2d_cpu.ll}"
+
+OUT_BIN="${OUT_BIN:-$SCRIPT_DIR/ext_add_ad_2d_bench_multithreaded.out}"
+clang++ -std=c++17 -O3 "$SCRIPT_DIR/pom2k_cpu_multithreaded.cpp" "$EXAMPLE_LL" \
+  -fopenmp \
+  -o "$OUT_BIN"
