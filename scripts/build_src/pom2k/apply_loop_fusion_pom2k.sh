@@ -12,6 +12,8 @@ BUILTIN_INPUT_BASE_DIR="$PROJECT_ROOT/src/pom2k_generated_affine_loops/mlir"
 COMMON_FLAGS=(
   "--allow-unregistered-dialect"
  # "--split-input-file"
+ "--debug"
+ "--debug-only=affine-parallelize,scf-parallel-loop-fusion"
 )
 
 # Function-level passes.
@@ -25,6 +27,8 @@ FUNC_PASSES=(
   "affine-scalrep" # cleans up useles write/read pairs after loop fusion
   "affine-parallelize" #option: parallel-reductions?
   "lower-affine"
+	#"scf-parallel-loop-tiling"
+	"scf-parallel-loop-fusion"
   # Note: scf-parallel-loop-fusion is intentionally not run here. The pass
   # operates on scf.parallel and is more effective in the lowering pipeline,
   # right before convert-scf-to-openmp.
@@ -49,7 +53,9 @@ POST_FUNC_MODULE_PASSES=(
 )
 
 # Test cases to process.
-CASES=(
+CASES=("ext_adjust_u_v_.mlir")
+
+CASES_N=(
   "ext_aam_.mlir"         "ext_advv_.mlir"          "ext_etf_update_.mlir"                  "ext_smol_adif_.mlir"
   "ext_add_ad_2d_.mlir"   "ext_apply_filter_.mlir"  "ext_final_internal_update_.mlir"       "ext_time_internal_forward_.mlir"
   "ext_adjust_u_v_.mlir"  "ext_baropg_.mlir"        "ext_flux_update_.mlir"                 "ext_uaf_.mlir"
