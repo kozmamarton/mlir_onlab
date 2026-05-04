@@ -104,10 +104,10 @@ void print_first_10(const std::string& label, const float* values,
     std::cout << "\n";
 }
 
-constexpr int rows   = 1024;
-constexpr int cols   = 1024;
+constexpr int rows   = 8196*2;
+constexpr int cols   = 8196*2;
 constexpr int levels = 20;
-constexpr int64_t numOfSamples = 10;
+constexpr int64_t numOfSamples = 1;
 
 int main() {
     im[0]   = rows;
@@ -119,32 +119,32 @@ int main() {
     const std::size_t sz3d = static_cast<std::size_t>(kbm1[0]) * sz2d;
     const std::size_t sz1d = static_cast<std::size_t>(kbm1[0]);
 
-    float* tps = new float[sz2d];
-    float* u   = new float[sz3d];
-    float* v   = new float[sz3d];
-    float* dz  = new float[sz1d];
-    float* utb = new float[sz2d];
-    float* utf = new float[sz2d];
-    float* vtb = new float[sz2d];
-    float* vtf = new float[sz2d];
-    float* dt  = new float[sz2d];
+    auto initialTps = std::make_unique<float[]>(sz2d);
+    auto initialU = std::make_unique<float[]>(sz3d);
+    auto initialV = std::make_unique<float[]>(sz3d);
+    auto dz = std::make_unique<float[]>(sz1d);
+    auto utb = std::make_unique<float[]>(sz2d);
+    auto utf = std::make_unique<float[]>(sz2d);
+    auto vtb = std::make_unique<float[]>(sz2d);
+    auto vtf = std::make_unique<float[]>(sz2d);
+    auto dt = std::make_unique<float[]>(sz2d);
 
     // Initialise 2-D surface arrays
     for (std::size_t index = 0; index < sz2d; ++index) {
         const float x = static_cast<float>(index % static_cast<std::size_t>(im[0]));
         const float y = static_cast<float>(index / static_cast<std::size_t>(im[0]));
-        tps[index] = 0.0f;
+        initialTps[index] = 0.0f;
         utb[index] = 0.1f * x;
         utf[index] = 0.1f * x + 0.01f;
         vtb[index] = -0.2f * y;
         vtf[index] = -0.2f * y + 0.01f;
-        dt[index]  = std::sin(0.01f * static_cast<float>(index));
+        dt[index]  = std::sin(0.01f * static_cast<float>(index)) + 2.0f;
     }
 
     // Initialise 3-D volume arrays
     for (std::size_t index = 0; index < sz3d; ++index) {
-        u[index] = std::sin(0.001f * static_cast<float>(index));
-        v[index] = std::cos(0.001f * static_cast<float>(index));
+        initialU[index] = std::sin(0.001f * static_cast<float>(index));
+        initialV[index] = std::cos(0.001f * static_cast<float>(index));
     }
 
     // Initialise 1-D level thicknesses
@@ -152,38 +152,54 @@ int main() {
         dz[k] = 10.0f + static_cast<float>(k);
     }
 
+    auto tps = std::make_unique<float[]>(sz2d);
+    auto u = std::make_unique<float[]>(sz3d);
+    auto v = std::make_unique<float[]>(sz3d);
+    std::copy_n(initialTps.get(), sz2d, tps.get());
+    std::copy_n(initialU.get(), sz3d, u.get());
+    std::copy_n(initialV.get(), sz3d, v.get());
+
     std::cout << '\n';
     std::cout << "Input snapshots (first 10 values each) (of " << rows * cols << " total):\n";
-    print_first_10("tps(before)", tps, sz2d);
-    print_first_10("u(before)",   u,   sz3d);
-    print_first_10("v(before)",   v,   sz3d);
+    print_first_10("tps(before)", tps.get(), sz2d);
+    print_first_10("u(before)",   u.get(),   sz3d);
+    print_first_10("v(before)",   v.get(),   sz3d);
 
-    auto args = std::make_unique<ExtAdjustUVCallArgs>(ExtAdjustUVCallArgs{
-        tps, tps, 0, static_cast<int64_t>(sz2d), 1,
-        u,   u,   0, static_cast<int64_t>(sz3d), 1,
-        v,   v,   0, static_cast<int64_t>(sz3d), 1,
-        dz,  dz,  0, static_cast<int64_t>(sz1d), 1,
-        utb, utb, 0, static_cast<int64_t>(sz2d), 1,
-        utf, utf, 0, static_cast<int64_t>(sz2d), 1,
-        vtb, vtb, 0, static_cast<int64_t>(sz2d), 1,
-        vtf, vtf, 0, static_cast<int64_t>(sz2d), 1,
-        dt,  dt,  0, static_cast<int64_t>(sz2d), 1,
-    });
+    ExtAdjustUVCallArgs args{
+        tps.get(), tps.get(), 0, static_cast<int64_t>(sz2d), 1,
+        u.get(),   u.get(),   0, static_cast<int64_t>(sz3d), 1,
+        v.get(),   v.get(),   0, static_cast<int64_t>(sz3d), 1,
+        dz.get(),  dz.get(),  0, static_cast<int64_t>(sz1d), 1,
+        utb.get(), utb.get(), 0, static_cast<int64_t>(sz2d), 1,
+        utf.get(), utf.get(), 0, static_cast<int64_t>(sz2d), 1,
+        vtb.get(), vtb.get(), 0, static_cast<int64_t>(sz2d), 1,
+        vtf.get(), vtf.get(), 0, static_cast<int64_t>(sz2d), 1,
+        dt.get(),  dt.get(),  0, static_cast<int64_t>(sz2d), 1,
+    };
 
     int64_t elapsedUsTotal = 0;
 
     for (int64_t i = 0; i < numOfSamples; ++i) {
+        std::copy_n(initialTps.get(), sz2d, tps.get());
+        std::copy_n(initialU.get(), sz3d, u.get());
+        std::copy_n(initialV.get(), sz3d, v.get());
+        args.tps_alloc = tps.get();
+        args.tps_aligned = tps.get();
+        args.u_alloc = u.get();
+        args.u_aligned = u.get();
+        args.v_alloc = v.get();
+        args.v_aligned = v.get();
         const auto start = std::chrono::high_resolution_clock::now();
         ext_adjust_u_v_(
-            args->tps_alloc, args->tps_aligned, args->tps_offset, args->tps_size, args->tps_stride,
-            args->u_alloc,   args->u_aligned,   args->u_offset,   args->u_size,   args->u_stride,
-            args->v_alloc,   args->v_aligned,   args->v_offset,   args->v_size,   args->v_stride,
-            args->dz_alloc,  args->dz_aligned,  args->dz_offset,  args->dz_size,  args->dz_stride,
-            args->utb_alloc, args->utb_aligned, args->utb_offset, args->utb_size, args->utb_stride,
-            args->utf_alloc, args->utf_aligned, args->utf_offset, args->utf_size, args->utf_stride,
-            args->vtb_alloc, args->vtb_aligned, args->vtb_offset, args->vtb_size, args->vtb_stride,
-            args->vtf_alloc, args->vtf_aligned, args->vtf_offset, args->vtf_size, args->vtf_stride,
-            args->dt_alloc,  args->dt_aligned,  args->dt_offset,  args->dt_size,  args->dt_stride);
+            args.tps_alloc, args.tps_aligned, args.tps_offset, args.tps_size, args.tps_stride,
+            args.u_alloc,   args.u_aligned,   args.u_offset,   args.u_size,   args.u_stride,
+            args.v_alloc,   args.v_aligned,   args.v_offset,   args.v_size,   args.v_stride,
+            args.dz_alloc,  args.dz_aligned,  args.dz_offset,  args.dz_size,  args.dz_stride,
+            args.utb_alloc, args.utb_aligned, args.utb_offset, args.utb_size, args.utb_stride,
+            args.utf_alloc, args.utf_aligned, args.utf_offset, args.utf_size, args.utf_stride,
+            args.vtb_alloc, args.vtb_aligned, args.vtb_offset, args.vtb_size, args.vtb_stride,
+            args.vtf_alloc, args.vtf_aligned, args.vtf_offset, args.vtf_size, args.vtf_stride,
+            args.dt_alloc,  args.dt_aligned,  args.dt_offset,  args.dt_size,  args.dt_stride);
         const auto end = std::chrono::high_resolution_clock::now();
         elapsedUsTotal += std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
     }
@@ -198,19 +214,9 @@ int main() {
               << " average: " << averageElapsedUs << " us (" << averageElapsedMs << " ms)\n\n";
 
     std::cout << "Output snapshots (same buffers after call, first 10 values each):\n";
-    print_first_10("tps(after)", tps, sz2d);
-    print_first_10("u(after)",   u,   sz3d);
-    print_first_10("v(after)",   v,   sz3d);
-
-    delete[] tps;
-    delete[] u;
-    delete[] v;
-    delete[] dz;
-    delete[] utb;
-    delete[] utf;
-    delete[] vtb;
-    delete[] vtf;
-    delete[] dt;
+    print_first_10("tps(after)", tps.get(), sz2d);
+    print_first_10("u(after)",   u.get(),   sz3d);
+    print_first_10("v(after)",   v.get(),   sz3d);
 
     return 0;
 }
