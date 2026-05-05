@@ -9,7 +9,7 @@ EXAMPLE_LL="${EXAMPLE_LL:-$SCRIPT_DIR/ext_add_ad_2d_amd.ll}"
 BUILD_DIR="${BUILD_DIR:-$PROJECT_ROOT/externals/llvm-project/build}"
 MLIR_LIBDIR="${MLIR_LIBDIR:-$BUILD_DIR/lib}"
 ROCM_PATH="${ROCM_PATH:-/opt/rocm}"
-OUT_BIN="${OUT_BIN:-$SCRIPT_DIR/ext_add_ad_2d_amd_bench.out}"
+OUT_BIN="${OUT_BIN:-$SCRIPT_DIR/bench_gpu_amd.out}"
 CLANGXX="${CLANGXX:-$BUILD_DIR/bin/clang++}"
 
 if [[ ! -f "$EXAMPLE_CPP" ]]; then

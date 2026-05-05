@@ -12,7 +12,7 @@ EXAMPLE_LL="${EXAMPLE_LL:-$SCRIPT_DIR/ext_add_ad_2d_.ll}"
 CUDA_ROOT="${CUDA_ROOT:-${CUDA_HOME:-/home/shared/software/cuda/12.3}}"
 MLIR_LIBDIR="${MLIR_LIBDIR:-$HOME/.local/shared/lib}"
 BUILD_DIR="${BUILD_DIR:-$PROJECT_ROOT/externals/llvm-project/build}"
-OUT_BIN="${OUT_BIN:-$SCRIPT_DIR/ext_add_ad_2d_bench.out}"
+OUT_BIN="${OUT_BIN:-$SCRIPT_DIR/bench_gpu_nvcc.out}"
 
 echo "[1/3] Lowering to NVVM/LLVM with sm_80"
 "$LOWER_SCRIPT" "$INPUT_MLIR"

@@ -6,7 +6,7 @@ EXAMPLE_LL="${EXAMPLE_LL:-$SCRIPT_DIR/ext_add_ad_2d_cpu.ll}"
 CXX="$SCRIPT_DIR/../../../externals/llvm-project/build/bin/clang++"
 
 
-OUT_BIN="${OUT_BIN:-$SCRIPT_DIR/ext_add_ad_2d_bench_multithreaded.out}"
+OUT_BIN="${OUT_BIN:-$SCRIPT_DIR/bench_cpu_multithreaded.out}"
 OMP_LIB_DIR="$SCRIPT_DIR/../../../externals/llvm-project/build/runtimes/runtimes-bins/openmp/runtime/src"
 
 "$CXX" -std=c++17 -O3 "$SCRIPT_DIR/pom2k_cpu_multithreaded.cpp" "$EXAMPLE_LL" \
