@@ -2,14 +2,15 @@
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-PROJECT_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
+PROJECT_ROOT="$(cd "$SCRIPT_DIR/../../../" && pwd)"
 
 EXAMPLE_CPP="${EXAMPLE_CPP:-$SCRIPT_DIR/pom2k_amd.cpp}"
 EXAMPLE_LL="${EXAMPLE_LL:-$SCRIPT_DIR/ext_add_ad_2d_amd.ll}"
-MLIR_LIBDIR="${MLIR_LIBDIR:-$HOME/.local/shared/lib}"
 BUILD_DIR="${BUILD_DIR:-$PROJECT_ROOT/externals/llvm-project/build}"
+MLIR_LIBDIR="${MLIR_LIBDIR:-$BUILD_DIR/lib}"
 ROCM_PATH="${ROCM_PATH:-/opt/rocm}"
 OUT_BIN="${OUT_BIN:-$SCRIPT_DIR/ext_add_ad_2d_amd_bench.out}"
+CLANGXX="${CLANGXX:-$BUILD_DIR/bin/clang++}"
 
 if [[ ! -f "$EXAMPLE_CPP" ]]; then
   echo "Missing source file: $EXAMPLE_CPP" >&2
@@ -46,7 +47,7 @@ if [[ ! -d "$ROCM_PATH" ]]; then
 fi
 
 echo "[3/3] Building AMD benchmark executable"
-clang++ -std=c++17 -O3 "$EXAMPLE_CPP" "$TMP_LL" \
+"$CLANGXX" -std=c++17 -O3 "$EXAMPLE_CPP" "$TMP_LL" \
   -L"$MLIR_LIBDIR" \
   -Wl,-rpath,"$MLIR_LIBDIR" \
   -L"$BUILD_DIR/lib" \

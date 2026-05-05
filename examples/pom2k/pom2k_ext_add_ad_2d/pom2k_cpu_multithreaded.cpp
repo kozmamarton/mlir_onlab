@@ -6,7 +6,6 @@
 #include <iomanip>
 #include <iostream>
 #include <string>
-#include <memory>
 
 
 extern "C" {
@@ -63,7 +62,7 @@ void print_first_10(const std::string& label, const float* values,
 int main() {
   constexpr int rows = 16978;
   constexpr int cols = 16978;
-  constexpr int64_t numOfSamples = 10;
+  constexpr int64_t numOfSamples = 200;
 
   im[0] = rows;
   jm[0] = cols;
@@ -91,22 +90,22 @@ int main() {
   print_first_10("ady2d(before)", ady2d, elementCount);
  // print_first_10("advua(before)", advua, elementCount);
  // print_first_10("advva(before)", advva, elementCount);
-  auto args = std::make_unique<ExtAddAd2DCallArgs>(ExtAddAd2DCallArgs{
-            adx2d, adx2d, 0, static_cast<int64_t>(elementCount), 1,
-            ady2d, ady2d, 0, static_cast<int64_t>(elementCount), 1,
-            advua, advua, 0, static_cast<int64_t>(elementCount), 1,
-            advva, advva, 0, static_cast<int64_t>(elementCount), 1,
-    });
+  ExtAddAd2DCallArgs args{
+      adx2d, adx2d, 0, static_cast<int64_t>(elementCount), 1,
+      ady2d, ady2d, 0, static_cast<int64_t>(elementCount), 1,
+      advua, advua, 0, static_cast<int64_t>(elementCount), 1,
+      advva, advva, 0, static_cast<int64_t>(elementCount), 1,
+  };
   int64_t elapsedUsTotal = 0;
   for (auto i = 0; i < numOfSamples; i++) {
     const auto start = std::chrono::high_resolution_clock::now();
-    ext_add_ad_2d_(args->adx2d_alloc, args->adx2d_aligned, args->adx2d_offset, args->adx2d_size,
-                                   args->adx2d_stride, args->ady2d_alloc, args->ady2d_aligned,
-                                   args->ady2d_offset, args->ady2d_size, args->ady2d_stride,
-                                   args->advua_alloc, args->advua_aligned, args->advua_offset,
-                                   args->advua_size, args->advua_stride, args->advva_alloc,
-                                   args->advva_aligned, args->advva_offset, args->advva_size,
-                                   args->advva_stride);
+    ext_add_ad_2d_(args.adx2d_alloc, args.adx2d_aligned, args.adx2d_offset, args.adx2d_size,
+                   args.adx2d_stride, args.ady2d_alloc, args.ady2d_aligned,
+                   args.ady2d_offset, args.ady2d_size, args.ady2d_stride,
+                   args.advua_alloc, args.advua_aligned, args.advua_offset,
+                   args.advua_size, args.advua_stride, args.advva_alloc,
+                   args.advva_aligned, args.advva_offset, args.advva_size,
+                   args.advva_stride);
     const auto end = std::chrono::high_resolution_clock::now();
     elapsedUsTotal += std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
   }
