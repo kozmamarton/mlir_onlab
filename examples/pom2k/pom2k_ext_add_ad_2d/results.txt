@@ -1,0 +1,45 @@
+16978 x 16978 = 288252484 total elements in the 2D arrays, 10 kernel calls per benchmark, 3 benchmarks (single threaded CPU, multithreaded CPU, GPU)
+
+
+--- single threaded CPU execution of the function call ---
+
+Input snapshots (first 10 values each) (of 288252484 total):
+adx2d(before) [0..9]: 0.000000, 0.100000, 0.200000, 0.300000, 0.400000, 0.500000, 0.600000, 0.700000, 0.800000, 0.900000
+ady2d(before) [0..9]: -0.000000, -0.000000, -0.000000, -0.000000, -0.000000, -0.000000, -0.000000, -0.000000, -0.000000, -0.000000
+
+Number of function calls initiated: 10
+cpu call time:  total: 4174165 us (4174.165000 ms) average: 417416us (417.416000 ms)
+
+Output snapshots (same buffers after call, first 10 values each):
+adx2d(after) [0..9]: 0.000000, 0.000002, 0.000013, 0.000045, 0.000107, 0.000208, 0.000360, 0.000572, 0.000853, 0.001214
+ady2d(after) [0..9]: -10.000000, -9.999500, -9.998000, -9.995500, -9.992000, -9.987503, -9.982005, -9.975511, -9.968018, -9.959527
+
+
+--- multithreaded CPU execution of the function call ---
+
+Input snapshots (first 10 values each) (of 288252484 total):
+adx2d(before) [0..9]: 0.000000, 0.100000, 0.200000, 0.300000, 0.400000, 0.500000, 0.600000, 0.700000, 0.800000, 0.900000
+ady2d(before) [0..9]: -0.000000, -0.000000, -0.000000, -0.000000, -0.000000, -0.000000, -0.000000, -0.000000, -0.000000, -0.000000
+
+Number of function calls initiated: 10
+cpu call time - multithreaded: total: 3391612 us (3391.612000 ms) average: 339161us (339.161000 ms)
+
+Output snapshots (same buffers after call, first 10 values each):
+adx2d(after) [0..9]: 0.000000, 0.000002, 0.000013, 0.000045, 0.000107, 0.000208, 0.000360, 0.000572, 0.000853, 0.001214
+ady2d(after) [0..9]: -10.000000, -9.999500, -9.998000, -9.995500, -9.992000, -9.987503, -9.982005, -9.975511, -9.968018, -9.959527
+
+
+---GPU execution of the function call ---
+
+
+pom2k benchmark: testing gpu kernel runtime
+Input snapshots (first 10 values each) (of 288252484 total):
+adx2d(before) [0..9]: 0.000000, 0.100000, 0.200000, 0.300000, 0.400000, 0.500000, 0.600000, 0.700000, 0.800000, 0.900000
+ady2d(before) [0..9]: -0.000000, -0.000000, -0.000000, -0.000000, -0.000000, -0.000000, -0.000000, -0.000000, -0.000000, -0.000000
+
+Number of function calls initiated: 10
+gpu kernel call time:  total: 1489339 us (1489.339000 ms) average: 148933us (148.933000 ms)
+
+Output snapshots (same buffers after kernel call, first 10 values each):
+adx2d(after) [0..9]: 0.000000, 0.000002, 0.000013, 0.000045, 0.000107, 0.000208, 0.000360, 0.000572, 0.000853, 0.001214
+ady2d(after) [0..9]: -10.000000, -9.999500, -9.998000, -9.995500, -9.992000, -9.987503, -9.982005, -9.975511, -9.968018, -9.959527

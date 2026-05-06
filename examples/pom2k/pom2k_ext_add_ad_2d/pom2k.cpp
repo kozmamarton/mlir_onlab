@@ -74,8 +74,8 @@ static void print_first_10(const std::string &label, const float *data, std::siz
 
 int main()
 {
-    constexpr int rows = 1024;
-    constexpr int cols = 1024;
+    constexpr int rows = 16978;
+    constexpr int cols = 16978;
     constexpr int64_t numOfSamples = 10;
     const std::size_t n = static_cast<std::size_t>(rows) * static_cast<std::size_t>(cols);
 

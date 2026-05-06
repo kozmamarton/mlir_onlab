@@ -62,7 +62,7 @@ void print_first_10(const std::string& label, const float* values,
 int main() {
   constexpr int rows = 16978;
   constexpr int cols = 16978;
-  constexpr int64_t numOfSamples = 200;
+  constexpr int64_t numOfSamples = 10;
 
   im[0] = rows;
   jm[0] = cols;

@@ -2,7 +2,7 @@
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-PROJECT_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
+PROJECT_ROOT="$(cd "$SCRIPT_DIR/../../.." && pwd)"
 
 INPUT_MLIR="${INPUT_MLIR:-$PROJECT_ROOT/src/loop_fusion/pom2k/ext_add_ad_2d_.mlir}"
 LOWER_SCRIPT="${LOWER_SCRIPT:-$PROJECT_ROOT/scripts/build_src/pom2k/lower_gpu_to_llvm.sh}"
