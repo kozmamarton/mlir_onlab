@@ -27,15 +27,15 @@ module attributes {dlti.dl_spec = #dlti.dl_spec<"dlti.endianness" = "little", i6
     scf.for %arg10 = %c0 to %2 step %c1 {
       scf.for %arg11 = %c0 to %7 step %c1 {
         scf.for %arg12 = %c0 to %8 step %c1 {
-          %42 = arith.muli %arg11, %8 overflow<nsw> : index
-          %43 = arith.addi %arg12, %42 : index
-          %44 = memref.load %arg5[%43] : memref<?xf32>
-          %45 = arith.muli %arg10, %8 overflow<nsw> : index
-          %46 = arith.muli %45, %7 overflow<nsw> : index
-          %47 = arith.addi %43, %46 : index
-          %48 = memref.load %arg3[%47] : memref<?xf32>
-          %49 = arith.mulf %48, %44 : f32
-          memref.store %49, %arg3[%47] : memref<?xf32>
+          %41 = arith.muli %arg11, %8 overflow<nsw> : index
+          %42 = arith.addi %arg12, %41 : index
+          %43 = memref.load %arg5[%42] : memref<?xf32>
+          %44 = arith.muli %arg10, %8 overflow<nsw> : index
+          %45 = arith.muli %44, %7 overflow<nsw> : index
+          %46 = arith.addi %42, %45 : index
+          %47 = memref.load %arg3[%46] : memref<?xf32>
+          %48 = arith.mulf %47, %43 : f32
+          memref.store %48, %arg3[%46] : memref<?xf32>
         }
       }
     }
@@ -51,100 +51,97 @@ module attributes {dlti.dl_spec = #dlti.dl_spec<"dlti.endianness" = "little", i6
     %18 = arith.index_cast %14 : i32 to index
     %19 = arith.index_cast %15 : i32 to index
     scf.for %arg10 = %c0 to %11 step %c1 {
-      %42 = arith.addi %17, %c-1 : index
-      scf.for %arg11 = %c0 to %42 step %c1 {
-        %43 = arith.addi %arg11, %c1 : index
-        %44 = arith.addi %18, %c-1 : index
-        scf.for %arg12 = %c0 to %44 step %c1 {
-          %45 = arith.addi %arg12, %c1 : index
-          %46 = arith.muli %43, %18 overflow<nsw> : index
-          %47 = arith.addi %arg12, %46 : index
-          %48 = arith.muli %arg10, %18 overflow<nsw> : index
-          %49 = arith.muli %48, %19 overflow<nsw> : index
-          %50 = arith.addi %47, %49 : index
-          %51 = arith.addi %50, %c1 : index
-          %52 = memref.load %arg3[%51] : memref<?xf32>
-          %53 = arith.cmpf olt, %52, %cst_2 : f32
-          %54 = scf.if %53 -> (i1) {
+      scf.for %arg11 = %c1 to %17 step %c1 {
+        scf.for %arg12 = %c1 to %18 step %c1 {
+          %41 = arith.muli %arg11, %18 overflow<nsw> : index
+          %42 = arith.addi %arg12, %41 : index
+          %43 = arith.muli %arg10, %18 overflow<nsw> : index
+          %44 = arith.muli %43, %19 overflow<nsw> : index
+          %45 = arith.addi %42, %44 : index
+          %46 = memref.load %arg3[%45] : memref<?xf32>
+          %47 = arith.cmpf olt, %46, %cst_2 : f32
+          %48 = scf.if %47 -> (i1) {
             scf.yield %true : i1
           } else {
-            %55 = memref.load %4[%c0] : memref<1xi32>
-            %56 = memref.load %3[%c0] : memref<1xi32>
-            %57 = arith.index_cast %55 : i32 to index
-            %58 = arith.muli %43, %57 : index
-            %59 = arith.addi %arg12, %58 : index
-            %60 = arith.muli %arg10, %57 : index
-            %61 = arith.index_cast %56 : i32 to index
-            %62 = arith.muli %60, %61 : index
-            %63 = arith.addi %59, %62 : index
-            %64 = memref.load %arg3[%63] : memref<?xf32>
-            %65 = arith.cmpf olt, %64, %cst_2 : f32
-            scf.yield %65 : i1
+            %49 = memref.load %4[%c0] : memref<1xi32>
+            %50 = memref.load %3[%c0] : memref<1xi32>
+            %51 = arith.addi %arg12, %c-1 : index
+            %52 = arith.index_cast %49 : i32 to index
+            %53 = arith.muli %arg11, %52 : index
+            %54 = arith.addi %51, %53 : index
+            %55 = arith.muli %arg10, %52 : index
+            %56 = arith.index_cast %50 : i32 to index
+            %57 = arith.muli %55, %56 : index
+            %58 = arith.addi %54, %57 : index
+            %59 = memref.load %arg3[%58] : memref<?xf32>
+            %60 = arith.cmpf olt, %59, %cst_2 : f32
+            scf.yield %60 : i1
           }
-          scf.if %54 {
-            %55 = memref.load %4[%c0] : memref<1xi32>
-            %56 = memref.load %3[%c0] : memref<1xi32>
-            %57 = arith.index_cast %55 : i32 to index
-            %58 = arith.muli %43, %57 : index
-            %59 = arith.addi %45, %58 : index
-            %60 = arith.muli %arg10, %57 : index
-            %61 = arith.index_cast %56 : i32 to index
-            %62 = arith.muli %60, %61 : index
-            %63 = arith.addi %59, %62 : index
-            memref.store %cst_0, %arg0[%63] : memref<?xf32>
+          scf.if %48 {
+            %49 = memref.load %4[%c0] : memref<1xi32>
+            %50 = memref.load %3[%c0] : memref<1xi32>
+            %51 = arith.index_cast %49 : i32 to index
+            %52 = arith.muli %arg11, %51 : index
+            %53 = arith.addi %arg12, %52 : index
+            %54 = arith.muli %arg10, %51 : index
+            %55 = arith.index_cast %50 : i32 to index
+            %56 = arith.muli %54, %55 : index
+            %57 = arith.addi %53, %56 : index
+            memref.store %cst_0, %arg0[%57] : memref<?xf32>
           } else {
-            %55 = memref.load %4[%c0] : memref<1xi32>
-            %56 = memref.load %3[%c0] : memref<1xi32>
-            %57 = arith.index_cast %55 : i32 to index
-            %58 = arith.muli %43, %57 : index
-            %59 = arith.addi %45, %58 : index
-            %60 = arith.muli %arg10, %57 : index
-            %61 = arith.index_cast %56 : i32 to index
-            %62 = arith.muli %60, %61 : index
-            %63 = arith.addi %59, %62 : index
-            %64 = memref.load %arg0[%63] : memref<?xf32>
-            %65 = arith.extf %64 : f32 to f64
-            %66 = math.absf %65 : f64
-            %67 = arith.truncf %66 : f64 to f32
-            %68 = memref.get_global @dti2 : memref<1xf32>
-            %69 = memref.load %68[%c0] : memref<1xf32>
-            %70 = arith.mulf %69, %64 : f32
-            %71 = arith.mulf %70, %64 : f32
-            %72 = arith.mulf %71, %cst : f32
-            %73 = memref.load %arg6[%59] : memref<?xf32>
-            %74 = arith.addi %arg12, %58 : index
-            %75 = memref.load %arg8[%74] : memref<?xf32>
-            %76 = memref.load %arg8[%59] : memref<?xf32>
-            %77 = arith.addf %75, %76 : f32
-            %78 = arith.mulf %73, %77 : f32
-            %79 = arith.divf %72, %78 : f32
-            %80 = memref.load %arg3[%63] : memref<?xf32>
-            %81 = arith.addi %74, %62 : index
-            %82 = memref.load %arg3[%81] : memref<?xf32>
-            %83 = arith.subf %80, %82 : f32
-            %84 = arith.addf %82, %80 : f32
-            %85 = arith.addf %84, %cst_1 : f32
-            %86 = arith.divf %83, %85 : f32
-            %87 = arith.subf %67, %79 : f32
-            %88 = arith.mulf %87, %86 : f32
-            %89 = arith.mulf %88, %16 : f32
-            memref.store %89, %arg0[%63] : memref<?xf32>
-            %90 = arith.extf %67 : f32 to f64
-            %91 = math.absf %90 : f64
-            %92 = arith.extf %79 : f32 to f64
-            %93 = math.absf %92 : f64
-            %94 = arith.cmpf olt, %91, %93 : f64
-            scf.if %94 {
-              %95 = memref.load %4[%c0] : memref<1xi32>
-              %96 = memref.load %3[%c0] : memref<1xi32>
-              %97 = arith.index_cast %95 : i32 to index
-              %98 = arith.muli %43, %97 : index
-              %99 = arith.addi %45, %98 : index
-              %100 = arith.muli %arg10, %97 : index
-              %101 = arith.index_cast %96 : i32 to index
-              %102 = arith.muli %100, %101 : index
-              %103 = arith.addi %99, %102 : index
-              memref.store %cst_0, %arg0[%103] : memref<?xf32>
+            %49 = memref.load %4[%c0] : memref<1xi32>
+            %50 = memref.load %3[%c0] : memref<1xi32>
+            %51 = arith.index_cast %49 : i32 to index
+            %52 = arith.muli %arg11, %51 : index
+            %53 = arith.addi %arg12, %52 : index
+            %54 = arith.muli %arg10, %51 : index
+            %55 = arith.index_cast %50 : i32 to index
+            %56 = arith.muli %54, %55 : index
+            %57 = arith.addi %53, %56 : index
+            %58 = memref.load %arg0[%57] : memref<?xf32>
+            %59 = arith.extf %58 : f32 to f64
+            %60 = math.absf %59 : f64
+            %61 = arith.truncf %60 : f64 to f32
+            %62 = memref.get_global @dti2 : memref<1xf32>
+            %63 = memref.load %62[%c0] : memref<1xf32>
+            %64 = arith.mulf %63, %58 : f32
+            %65 = arith.mulf %64, %58 : f32
+            %66 = arith.mulf %65, %cst : f32
+            %67 = memref.load %arg6[%53] : memref<?xf32>
+            %68 = arith.addi %arg12, %c-1 : index
+            %69 = arith.addi %68, %52 : index
+            %70 = memref.load %arg8[%69] : memref<?xf32>
+            %71 = memref.load %arg8[%53] : memref<?xf32>
+            %72 = arith.addf %70, %71 : f32
+            %73 = arith.mulf %67, %72 : f32
+            %74 = arith.divf %66, %73 : f32
+            %75 = memref.load %arg3[%57] : memref<?xf32>
+            %76 = arith.addi %69, %56 : index
+            %77 = memref.load %arg3[%76] : memref<?xf32>
+            %78 = arith.subf %75, %77 : f32
+            %79 = arith.addf %77, %75 : f32
+            %80 = arith.addf %79, %cst_1 : f32
+            %81 = arith.divf %78, %80 : f32
+            %82 = arith.subf %61, %74 : f32
+            %83 = arith.mulf %82, %81 : f32
+            %84 = arith.mulf %83, %16 : f32
+            memref.store %84, %arg0[%57] : memref<?xf32>
+            %85 = arith.extf %61 : f32 to f64
+            %86 = math.absf %85 : f64
+            %87 = arith.extf %74 : f32 to f64
+            %88 = math.absf %87 : f64
+            %89 = arith.cmpf olt, %86, %88 : f64
+            scf.if %89 {
+              %90 = memref.load %4[%c0] : memref<1xi32>
+              %91 = memref.load %3[%c0] : memref<1xi32>
+              %92 = arith.index_cast %90 : i32 to index
+              %93 = arith.muli %arg11, %92 : index
+              %94 = arith.addi %arg12, %93 : index
+              %95 = arith.muli %arg10, %92 : index
+              %96 = arith.index_cast %91 : i32 to index
+              %97 = arith.muli %95, %96 : index
+              %98 = arith.addi %94, %97 : index
+              memref.store %cst_0, %arg0[%98] : memref<?xf32>
             }
           }
         }
@@ -161,101 +158,98 @@ module attributes {dlti.dl_spec = #dlti.dl_spec<"dlti.endianness" = "little", i6
     %28 = arith.index_cast %24 : i32 to index
     %29 = arith.index_cast %25 : i32 to index
     scf.for %arg10 = %c0 to %21 step %c1 {
-      %42 = arith.addi %27, %c-1 : index
-      scf.for %arg11 = %c0 to %42 step %c1 {
-        %43 = arith.addi %arg11, %c1 : index
-        %44 = arith.addi %28, %c-1 : index
-        scf.for %arg12 = %c0 to %44 step %c1 {
-          %45 = arith.addi %arg12, %c1 : index
-          %46 = arith.muli %43, %29 overflow<nsw> : index
-          %47 = arith.addi %arg12, %46 : index
-          %48 = arith.muli %arg10, %29 overflow<nsw> : index
-          %49 = arith.muli %48, %27 overflow<nsw> : index
-          %50 = arith.addi %47, %49 : index
-          %51 = arith.addi %50, %c1 : index
-          %52 = memref.load %arg3[%51] : memref<?xf32>
-          %53 = arith.cmpf olt, %52, %cst_2 : f32
-          %54 = scf.if %53 -> (i1) {
+      scf.for %arg11 = %c1 to %27 step %c1 {
+        scf.for %arg12 = %c1 to %28 step %c1 {
+          %41 = arith.muli %arg11, %29 overflow<nsw> : index
+          %42 = arith.addi %arg12, %41 : index
+          %43 = arith.muli %arg10, %29 overflow<nsw> : index
+          %44 = arith.muli %43, %27 overflow<nsw> : index
+          %45 = arith.addi %42, %44 : index
+          %46 = memref.load %arg3[%45] : memref<?xf32>
+          %47 = arith.cmpf olt, %46, %cst_2 : f32
+          %48 = scf.if %47 -> (i1) {
             scf.yield %true : i1
           } else {
-            %55 = memref.load %4[%c0] : memref<1xi32>
-            %56 = memref.load %3[%c0] : memref<1xi32>
-            %57 = arith.index_cast %55 : i32 to index
-            %58 = arith.muli %arg11, %57 : index
-            %59 = arith.addi %45, %58 : index
-            %60 = arith.muli %arg10, %57 : index
-            %61 = arith.index_cast %56 : i32 to index
-            %62 = arith.muli %60, %61 : index
-            %63 = arith.addi %59, %62 : index
-            %64 = memref.load %arg3[%63] : memref<?xf32>
-            %65 = arith.cmpf olt, %64, %cst_2 : f32
-            scf.yield %65 : i1
+            %49 = memref.load %4[%c0] : memref<1xi32>
+            %50 = memref.load %3[%c0] : memref<1xi32>
+            %51 = arith.addi %arg11, %c-1 : index
+            %52 = arith.index_cast %49 : i32 to index
+            %53 = arith.muli %51, %52 : index
+            %54 = arith.addi %arg12, %53 : index
+            %55 = arith.muli %arg10, %52 : index
+            %56 = arith.index_cast %50 : i32 to index
+            %57 = arith.muli %55, %56 : index
+            %58 = arith.addi %54, %57 : index
+            %59 = memref.load %arg3[%58] : memref<?xf32>
+            %60 = arith.cmpf olt, %59, %cst_2 : f32
+            scf.yield %60 : i1
           }
-          scf.if %54 {
-            %55 = memref.load %4[%c0] : memref<1xi32>
-            %56 = memref.load %3[%c0] : memref<1xi32>
-            %57 = arith.index_cast %55 : i32 to index
-            %58 = arith.muli %43, %57 : index
-            %59 = arith.addi %45, %58 : index
-            %60 = arith.muli %arg10, %57 : index
-            %61 = arith.index_cast %56 : i32 to index
-            %62 = arith.muli %60, %61 : index
-            %63 = arith.addi %59, %62 : index
-            memref.store %cst_0, %arg1[%63] : memref<?xf32>
+          scf.if %48 {
+            %49 = memref.load %4[%c0] : memref<1xi32>
+            %50 = memref.load %3[%c0] : memref<1xi32>
+            %51 = arith.index_cast %49 : i32 to index
+            %52 = arith.muli %arg11, %51 : index
+            %53 = arith.addi %arg12, %52 : index
+            %54 = arith.muli %arg10, %51 : index
+            %55 = arith.index_cast %50 : i32 to index
+            %56 = arith.muli %54, %55 : index
+            %57 = arith.addi %53, %56 : index
+            memref.store %cst_0, %arg1[%57] : memref<?xf32>
           } else {
-            %55 = memref.load %4[%c0] : memref<1xi32>
-            %56 = memref.load %3[%c0] : memref<1xi32>
-            %57 = arith.index_cast %55 : i32 to index
-            %58 = arith.muli %43, %57 : index
-            %59 = arith.addi %45, %58 : index
-            %60 = arith.muli %arg10, %57 : index
-            %61 = arith.index_cast %56 : i32 to index
-            %62 = arith.muli %60, %61 : index
-            %63 = arith.addi %59, %62 : index
-            %64 = memref.load %arg1[%63] : memref<?xf32>
-            %65 = arith.extf %64 : f32 to f64
-            %66 = math.absf %65 : f64
-            %67 = arith.truncf %66 : f64 to f32
-            %68 = memref.get_global @dti2 : memref<1xf32>
-            %69 = memref.load %68[%c0] : memref<1xf32>
-            %70 = arith.mulf %69, %64 : f32
-            %71 = arith.mulf %70, %64 : f32
-            %72 = arith.mulf %71, %cst : f32
-            %73 = memref.load %arg7[%59] : memref<?xf32>
-            %74 = arith.muli %arg11, %57 : index
-            %75 = arith.addi %45, %74 : index
-            %76 = memref.load %arg8[%75] : memref<?xf32>
-            %77 = memref.load %arg8[%59] : memref<?xf32>
-            %78 = arith.addf %76, %77 : f32
-            %79 = arith.mulf %73, %78 : f32
-            %80 = arith.divf %72, %79 : f32
-            %81 = memref.load %arg3[%63] : memref<?xf32>
-            %82 = arith.addi %75, %62 : index
-            %83 = memref.load %arg3[%82] : memref<?xf32>
-            %84 = arith.subf %81, %83 : f32
-            %85 = arith.addf %83, %81 : f32
-            %86 = arith.addf %85, %cst_1 : f32
-            %87 = arith.divf %84, %86 : f32
-            %88 = arith.subf %67, %80 : f32
-            %89 = arith.mulf %88, %87 : f32
-            %90 = arith.mulf %89, %26 : f32
-            memref.store %90, %arg1[%63] : memref<?xf32>
-            %91 = arith.extf %67 : f32 to f64
-            %92 = math.absf %91 : f64
-            %93 = arith.extf %80 : f32 to f64
-            %94 = math.absf %93 : f64
-            %95 = arith.cmpf olt, %92, %94 : f64
-            scf.if %95 {
-              %96 = memref.load %4[%c0] : memref<1xi32>
-              %97 = memref.load %3[%c0] : memref<1xi32>
-              %98 = arith.index_cast %96 : i32 to index
-              %99 = arith.muli %43, %98 : index
-              %100 = arith.addi %45, %99 : index
-              %101 = arith.muli %arg10, %98 : index
-              %102 = arith.index_cast %97 : i32 to index
-              %103 = arith.muli %101, %102 : index
-              %104 = arith.addi %100, %103 : index
-              memref.store %cst_0, %arg1[%104] : memref<?xf32>
+            %49 = memref.load %4[%c0] : memref<1xi32>
+            %50 = memref.load %3[%c0] : memref<1xi32>
+            %51 = arith.index_cast %49 : i32 to index
+            %52 = arith.muli %arg11, %51 : index
+            %53 = arith.addi %arg12, %52 : index
+            %54 = arith.muli %arg10, %51 : index
+            %55 = arith.index_cast %50 : i32 to index
+            %56 = arith.muli %54, %55 : index
+            %57 = arith.addi %53, %56 : index
+            %58 = memref.load %arg1[%57] : memref<?xf32>
+            %59 = arith.extf %58 : f32 to f64
+            %60 = math.absf %59 : f64
+            %61 = arith.truncf %60 : f64 to f32
+            %62 = memref.get_global @dti2 : memref<1xf32>
+            %63 = memref.load %62[%c0] : memref<1xf32>
+            %64 = arith.mulf %63, %58 : f32
+            %65 = arith.mulf %64, %58 : f32
+            %66 = arith.mulf %65, %cst : f32
+            %67 = memref.load %arg7[%53] : memref<?xf32>
+            %68 = arith.addi %arg11, %c-1 : index
+            %69 = arith.muli %68, %51 : index
+            %70 = arith.addi %arg12, %69 : index
+            %71 = memref.load %arg8[%70] : memref<?xf32>
+            %72 = memref.load %arg8[%53] : memref<?xf32>
+            %73 = arith.addf %71, %72 : f32
+            %74 = arith.mulf %67, %73 : f32
+            %75 = arith.divf %66, %74 : f32
+            %76 = memref.load %arg3[%57] : memref<?xf32>
+            %77 = arith.addi %70, %56 : index
+            %78 = memref.load %arg3[%77] : memref<?xf32>
+            %79 = arith.subf %76, %78 : f32
+            %80 = arith.addf %78, %76 : f32
+            %81 = arith.addf %80, %cst_1 : f32
+            %82 = arith.divf %79, %81 : f32
+            %83 = arith.subf %61, %75 : f32
+            %84 = arith.mulf %83, %82 : f32
+            %85 = arith.mulf %84, %26 : f32
+            memref.store %85, %arg1[%57] : memref<?xf32>
+            %86 = arith.extf %61 : f32 to f64
+            %87 = math.absf %86 : f64
+            %88 = arith.extf %75 : f32 to f64
+            %89 = math.absf %88 : f64
+            %90 = arith.cmpf olt, %87, %89 : f64
+            scf.if %90 {
+              %91 = memref.load %4[%c0] : memref<1xi32>
+              %92 = memref.load %3[%c0] : memref<1xi32>
+              %93 = arith.index_cast %91 : i32 to index
+              %94 = arith.muli %arg11, %93 : index
+              %95 = arith.addi %arg12, %94 : index
+              %96 = arith.muli %arg10, %93 : index
+              %97 = arith.index_cast %92 : i32 to index
+              %98 = arith.muli %96, %97 : index
+              %99 = arith.addi %95, %98 : index
+              memref.store %cst_0, %arg1[%99] : memref<?xf32>
             }
           }
         }
@@ -272,101 +266,96 @@ module attributes {dlti.dl_spec = #dlti.dl_spec<"dlti.endianness" = "little", i6
     %38 = arith.index_cast %33 : i32 to index
     %39 = arith.index_cast %34 : i32 to index
     %40 = arith.index_cast %35 : i32 to index
-    %41 = arith.addi %31, %c-1 : index
-    scf.for %arg10 = %c0 to %41 step %c1 {
-      %42 = arith.addi %arg10, %c1 : index
-      %43 = arith.addi %37, %c-1 : index
-      scf.for %arg11 = %c0 to %43 step %c1 {
-        %44 = arith.addi %arg11, %c1 : index
-        %45 = arith.addi %38, %c-1 : index
-        scf.for %arg12 = %c0 to %45 step %c1 {
-          %46 = arith.addi %arg12, %c1 : index
-          %47 = arith.muli %44, %39 overflow<nsw> : index
-          %48 = arith.addi %arg12, %47 : index
-          %49 = arith.muli %42, %39 overflow<nsw> : index
-          %50 = arith.muli %49, %40 overflow<nsw> : index
-          %51 = arith.addi %48, %50 : index
-          %52 = arith.addi %51, %c1 : index
-          %53 = memref.load %arg3[%52] : memref<?xf32>
-          %54 = arith.cmpf olt, %53, %cst_2 : f32
-          %55 = scf.if %54 -> (i1) {
+    scf.for %arg10 = %c1 to %31 step %c1 {
+      scf.for %arg11 = %c1 to %37 step %c1 {
+        scf.for %arg12 = %c1 to %38 step %c1 {
+          %41 = arith.muli %arg11, %39 overflow<nsw> : index
+          %42 = arith.addi %arg12, %41 : index
+          %43 = arith.muli %arg10, %39 overflow<nsw> : index
+          %44 = arith.muli %43, %40 overflow<nsw> : index
+          %45 = arith.addi %42, %44 : index
+          %46 = memref.load %arg3[%45] : memref<?xf32>
+          %47 = arith.cmpf olt, %46, %cst_2 : f32
+          %48 = scf.if %47 -> (i1) {
             scf.yield %true : i1
           } else {
-            %56 = memref.load %4[%c0] : memref<1xi32>
-            %57 = memref.load %3[%c0] : memref<1xi32>
-            %58 = arith.index_cast %56 : i32 to index
-            %59 = arith.muli %44, %58 : index
-            %60 = arith.addi %46, %59 : index
-            %61 = arith.muli %arg10, %58 : index
-            %62 = arith.index_cast %57 : i32 to index
-            %63 = arith.muli %61, %62 : index
-            %64 = arith.addi %60, %63 : index
-            %65 = memref.load %arg3[%64] : memref<?xf32>
-            %66 = arith.cmpf olt, %65, %cst_2 : f32
-            scf.yield %66 : i1
+            %49 = memref.load %4[%c0] : memref<1xi32>
+            %50 = memref.load %3[%c0] : memref<1xi32>
+            %51 = arith.index_cast %49 : i32 to index
+            %52 = arith.muli %arg11, %51 : index
+            %53 = arith.addi %arg12, %52 : index
+            %54 = arith.addi %arg10, %c-1 : index
+            %55 = arith.muli %54, %51 : index
+            %56 = arith.index_cast %50 : i32 to index
+            %57 = arith.muli %55, %56 : index
+            %58 = arith.addi %53, %57 : index
+            %59 = memref.load %arg3[%58] : memref<?xf32>
+            %60 = arith.cmpf olt, %59, %cst_2 : f32
+            scf.yield %60 : i1
           }
-          scf.if %55 {
-            %56 = memref.load %4[%c0] : memref<1xi32>
-            %57 = memref.load %3[%c0] : memref<1xi32>
-            %58 = arith.index_cast %56 : i32 to index
-            %59 = arith.muli %44, %58 : index
-            %60 = arith.addi %46, %59 : index
-            %61 = arith.muli %42, %58 : index
-            %62 = arith.index_cast %57 : i32 to index
-            %63 = arith.muli %61, %62 : index
-            %64 = arith.addi %60, %63 : index
-            memref.store %cst_0, %arg2[%64] : memref<?xf32>
+          scf.if %48 {
+            %49 = memref.load %4[%c0] : memref<1xi32>
+            %50 = memref.load %3[%c0] : memref<1xi32>
+            %51 = arith.index_cast %49 : i32 to index
+            %52 = arith.muli %arg11, %51 : index
+            %53 = arith.addi %arg12, %52 : index
+            %54 = arith.muli %arg10, %51 : index
+            %55 = arith.index_cast %50 : i32 to index
+            %56 = arith.muli %54, %55 : index
+            %57 = arith.addi %53, %56 : index
+            memref.store %cst_0, %arg2[%57] : memref<?xf32>
           } else {
-            %56 = memref.load %4[%c0] : memref<1xi32>
-            %57 = memref.load %3[%c0] : memref<1xi32>
-            %58 = arith.index_cast %56 : i32 to index
-            %59 = arith.muli %44, %58 : index
-            %60 = arith.addi %46, %59 : index
-            %61 = arith.muli %42, %58 : index
-            %62 = arith.index_cast %57 : i32 to index
-            %63 = arith.muli %61, %62 : index
-            %64 = arith.addi %60, %63 : index
-            %65 = memref.load %arg2[%64] : memref<?xf32>
-            %66 = arith.extf %65 : f32 to f64
-            %67 = math.absf %66 : f64
-            %68 = arith.truncf %67 : f64 to f32
-            %69 = memref.get_global @dti2 : memref<1xf32>
-            %70 = memref.load %69[%c0] : memref<1xf32>
-            %71 = arith.mulf %70, %65 : f32
-            %72 = arith.mulf %71, %65 : f32
-            %73 = memref.load %arg9[%arg10] : memref<?xf32>
-            %74 = memref.load %arg8[%60] : memref<?xf32>
-            %75 = arith.mulf %73, %74 : f32
-            %76 = arith.divf %72, %75 : f32
-            %77 = arith.muli %arg10, %58 : index
-            %78 = arith.muli %77, %62 : index
-            %79 = arith.addi %60, %78 : index
-            %80 = memref.load %arg3[%79] : memref<?xf32>
-            %81 = memref.load %arg3[%64] : memref<?xf32>
-            %82 = arith.subf %80, %81 : f32
-            %83 = arith.addf %81, %80 : f32
-            %84 = arith.addf %83, %cst_1 : f32
-            %85 = arith.divf %82, %84 : f32
-            %86 = arith.subf %68, %76 : f32
-            %87 = arith.mulf %86, %85 : f32
-            %88 = arith.mulf %87, %36 : f32
-            memref.store %88, %arg2[%64] : memref<?xf32>
-            %89 = arith.extf %68 : f32 to f64
-            %90 = math.absf %89 : f64
-            %91 = arith.extf %76 : f32 to f64
-            %92 = math.absf %91 : f64
-            %93 = arith.cmpf olt, %90, %92 : f64
-            scf.if %93 {
-              %94 = memref.load %4[%c0] : memref<1xi32>
-              %95 = memref.load %3[%c0] : memref<1xi32>
-              %96 = arith.index_cast %94 : i32 to index
-              %97 = arith.muli %44, %96 : index
-              %98 = arith.addi %46, %97 : index
-              %99 = arith.muli %42, %96 : index
-              %100 = arith.index_cast %95 : i32 to index
-              %101 = arith.muli %99, %100 : index
-              %102 = arith.addi %98, %101 : index
-              memref.store %cst_0, %arg2[%102] : memref<?xf32>
+            %49 = memref.load %4[%c0] : memref<1xi32>
+            %50 = memref.load %3[%c0] : memref<1xi32>
+            %51 = arith.index_cast %49 : i32 to index
+            %52 = arith.muli %arg11, %51 : index
+            %53 = arith.addi %arg12, %52 : index
+            %54 = arith.muli %arg10, %51 : index
+            %55 = arith.index_cast %50 : i32 to index
+            %56 = arith.muli %54, %55 : index
+            %57 = arith.addi %53, %56 : index
+            %58 = memref.load %arg2[%57] : memref<?xf32>
+            %59 = arith.extf %58 : f32 to f64
+            %60 = math.absf %59 : f64
+            %61 = arith.truncf %60 : f64 to f32
+            %62 = memref.get_global @dti2 : memref<1xf32>
+            %63 = memref.load %62[%c0] : memref<1xf32>
+            %64 = arith.mulf %63, %58 : f32
+            %65 = arith.mulf %64, %58 : f32
+            %66 = arith.addi %arg10, %c-1 : index
+            %67 = memref.load %arg9[%66] : memref<?xf32>
+            %68 = memref.load %arg8[%53] : memref<?xf32>
+            %69 = arith.mulf %67, %68 : f32
+            %70 = arith.divf %65, %69 : f32
+            %71 = arith.muli %66, %51 : index
+            %72 = arith.muli %71, %55 : index
+            %73 = arith.addi %53, %72 : index
+            %74 = memref.load %arg3[%73] : memref<?xf32>
+            %75 = memref.load %arg3[%57] : memref<?xf32>
+            %76 = arith.subf %74, %75 : f32
+            %77 = arith.addf %75, %74 : f32
+            %78 = arith.addf %77, %cst_1 : f32
+            %79 = arith.divf %76, %78 : f32
+            %80 = arith.subf %61, %70 : f32
+            %81 = arith.mulf %80, %79 : f32
+            %82 = arith.mulf %81, %36 : f32
+            memref.store %82, %arg2[%57] : memref<?xf32>
+            %83 = arith.extf %61 : f32 to f64
+            %84 = math.absf %83 : f64
+            %85 = arith.extf %70 : f32 to f64
+            %86 = math.absf %85 : f64
+            %87 = arith.cmpf olt, %84, %86 : f64
+            scf.if %87 {
+              %88 = memref.load %4[%c0] : memref<1xi32>
+              %89 = memref.load %3[%c0] : memref<1xi32>
+              %90 = arith.index_cast %88 : i32 to index
+              %91 = arith.muli %arg11, %90 : index
+              %92 = arith.addi %arg12, %91 : index
+              %93 = arith.muli %arg10, %90 : index
+              %94 = arith.index_cast %89 : i32 to index
+              %95 = arith.muli %93, %94 : index
+              %96 = arith.addi %92, %95 : index
+              memref.store %cst_0, %arg2[%96] : memref<?xf32>
             }
           }
         }

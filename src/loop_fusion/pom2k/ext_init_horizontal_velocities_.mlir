@@ -3,7 +3,6 @@ module attributes {dlti.dl_spec = #dlti.dl_spec<"dlti.endianness" = "little", i6
   memref.global @jm : memref<1xi32>
   memref.global @kb : memref<1xi32>
   func.func @ext_init_horizontal_velocities_(%arg0: memref<?xf32> {polygeist.name = "uf", polygeist.type = "float *"}, %arg1: memref<?xf32> {polygeist.name = "vf", polygeist.type = "float *"}) attributes {llvm.linkage = #llvm.linkage<external>} {
-    %c-1 = arith.constant -1 : index
     %c1 = arith.constant 1 : index
     %c0 = arith.constant 0 : index
     %cst = arith.constant 0.000000e+00 : f32
@@ -17,19 +16,15 @@ module attributes {dlti.dl_spec = #dlti.dl_spec<"dlti.endianness" = "little", i6
     %7 = arith.index_cast %5 : i32 to index
     %8 = arith.index_cast %6 : i32 to index
     scf.for %arg2 = %c0 to %2 step %c1 {
-      %9 = arith.addi %7, %c-1 : index
-      scf.for %arg3 = %c0 to %9 step %c1 {
-        %10 = arith.addi %8, %c-1 : index
-        scf.for %arg4 = %c0 to %10 step %c1 {
-          %11 = arith.addi %arg3, %c1 : index
-          %12 = arith.muli %11, %8 overflow<nsw> : index
-          %13 = arith.addi %arg4, %12 : index
-          %14 = arith.muli %arg2, %8 overflow<nsw> : index
-          %15 = arith.muli %14, %7 overflow<nsw> : index
-          %16 = arith.addi %13, %15 : index
-          %17 = arith.addi %16, %c1 : index
-          memref.store %cst, %arg0[%17] : memref<?xf32>
-          memref.store %cst, %arg1[%17] : memref<?xf32>
+      scf.for %arg3 = %c1 to %7 step %c1 {
+        scf.for %arg4 = %c1 to %8 step %c1 {
+          %9 = arith.muli %arg3, %8 overflow<nsw> : index
+          %10 = arith.addi %arg4, %9 : index
+          %11 = arith.muli %arg2, %8 overflow<nsw> : index
+          %12 = arith.muli %11, %7 overflow<nsw> : index
+          %13 = arith.addi %10, %12 : index
+          memref.store %cst, %arg0[%13] : memref<?xf32>
+          memref.store %cst, %arg1[%13] : memref<?xf32>
         }
       }
     }

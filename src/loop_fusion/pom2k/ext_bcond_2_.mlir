@@ -8,7 +8,6 @@ module attributes {dlti.dl_spec = #dlti.dl_spec<"dlti.endianness" = "little", i6
   memref.global @jmm1 : memref<1xi32>
   func.func @ext_bcond_2_(%arg0: memref<?xf32> {polygeist.name = "uaf", polygeist.type = "float *"}, %arg1: memref<?xf32> {polygeist.name = "vaf", polygeist.type = "float *"}, %arg2: memref<?xf32> {polygeist.name = "uabe", polygeist.type = "float *"}, %arg3: memref<?xf32> {polygeist.name = "uabw", polygeist.type = "float *"}, %arg4: memref<?xf32> {polygeist.name = "vabn", polygeist.type = "float *"}, %arg5: memref<?xf32> {polygeist.name = "vabs", polygeist.type = "float *"}, %arg6: memref<?xf32> {polygeist.name = "h", polygeist.type = "float *"}, %arg7: memref<?xf32> {polygeist.name = "el", polygeist.type = "float *"}, %arg8: memref<?xf32> {polygeist.name = "ele", polygeist.type = "float *"}, %arg9: memref<?xf32> {polygeist.name = "elw", polygeist.type = "float *"}, %arg10: memref<?xf32> {polygeist.name = "eln", polygeist.type = "float *"}, %arg11: memref<?xf32> {polygeist.name = "els", polygeist.type = "float *"}, %arg12: memref<?xf32> {polygeist.name = "dum", polygeist.type = "float *"}, %arg13: memref<?xf32> {polygeist.name = "dvm", polygeist.type = "float *"}, %arg14: memref<?xf32> {polygeist.name = "ramp", polygeist.type = "float *"}, %arg15: memref<?xf32> {polygeist.name = "rfe", polygeist.type = "float *"}, %arg16: memref<?xf32> {polygeist.name = "rfw", polygeist.type = "float *"}, %arg17: memref<?xf32> {polygeist.name = "rfn", polygeist.type = "float *"}, %arg18: memref<?xf32> {polygeist.name = "rfs", polygeist.type = "float *"}) attributes {llvm.linkage = #llvm.linkage<external>} {
     %c1 = arith.constant 1 : index
-    %c-1 = arith.constant -1 : index
     %c0 = arith.constant 0 : index
     %cst = arith.constant 0.000000e+00 : f32
     %0 = memref.get_global @jmm1 : memref<1xi32>
@@ -28,115 +27,108 @@ module attributes {dlti.dl_spec = #dlti.dl_spec<"dlti.endianness" = "little", i6
     %14 = arith.index_cast %7 : i32 to index
     %15 = arith.index_cast %8 : i32 to index
     %16 = arith.index_cast %11 : i32 to index
-    %17 = arith.addi %2, %c-1 : index
-    scf.for %arg19 = %c0 to %17 step %c1 {
-      %39 = arith.addi %arg19, %c1 : index
-      %40 = memref.load %arg2[%39] : memref<?xf32>
-      %41 = arith.muli %39, %15 overflow<nsw> : index
-      %42 = arith.addi %41, %16 : index
-      %43 = memref.load %arg6[%42] : memref<?xf32>
-      %44 = arith.divf %10, %43 : f32
-      %45 = math.sqrt %44 : f32
-      %46 = arith.mulf %9, %45 : f32
-      %47 = memref.load %arg7[%42] : memref<?xf32>
-      %48 = memref.load %arg8[%39] : memref<?xf32>
-      %49 = arith.subf %47, %48 : f32
-      %50 = arith.mulf %46, %49 : f32
-      %51 = arith.addf %40, %50 : f32
-      %52 = arith.addi %41, %14 : index
-      memref.store %51, %arg0[%52] : memref<?xf32>
-      %53 = memref.load %arg0[%52] : memref<?xf32>
-      %54 = arith.mulf %12, %53 : f32
-      memref.store %54, %arg0[%52] : memref<?xf32>
-      memref.store %cst, %arg1[%52] : memref<?xf32>
-      %55 = memref.load %arg3[%39] : memref<?xf32>
-      %56 = arith.addi %41, %c1 : index
-      %57 = memref.load %arg6[%56] : memref<?xf32>
-      %58 = arith.divf %10, %57 : f32
-      %59 = math.sqrt %58 : f32
-      %60 = arith.mulf %13, %59 : f32
-      %61 = memref.load %arg7[%56] : memref<?xf32>
-      %62 = memref.load %arg9[%39] : memref<?xf32>
-      %63 = arith.subf %61, %62 : f32
-      %64 = arith.mulf %60, %63 : f32
-      %65 = arith.subf %55, %64 : f32
-      memref.store %65, %arg0[%56] : memref<?xf32>
-      %66 = memref.load %arg0[%56] : memref<?xf32>
-      %67 = arith.mulf %12, %66 : f32
-      memref.store %67, %arg0[%56] : memref<?xf32>
-      %68 = memref.load %arg0[%56] : memref<?xf32>
-      memref.store %68, %arg0[%41] : memref<?xf32>
-      memref.store %cst, %arg1[%41] : memref<?xf32>
+    scf.for %arg19 = %c1 to %2 step %c1 {
+      %37 = memref.load %arg2[%arg19] : memref<?xf32>
+      %38 = arith.muli %arg19, %15 overflow<nsw> : index
+      %39 = arith.addi %38, %16 : index
+      %40 = memref.load %arg6[%39] : memref<?xf32>
+      %41 = arith.divf %10, %40 : f32
+      %42 = math.sqrt %41 : f32
+      %43 = arith.mulf %9, %42 : f32
+      %44 = memref.load %arg7[%39] : memref<?xf32>
+      %45 = memref.load %arg8[%arg19] : memref<?xf32>
+      %46 = arith.subf %44, %45 : f32
+      %47 = arith.mulf %43, %46 : f32
+      %48 = arith.addf %37, %47 : f32
+      %49 = arith.addi %38, %14 : index
+      memref.store %48, %arg0[%49] : memref<?xf32>
+      %50 = memref.load %arg0[%49] : memref<?xf32>
+      %51 = arith.mulf %12, %50 : f32
+      memref.store %51, %arg0[%49] : memref<?xf32>
+      memref.store %cst, %arg1[%49] : memref<?xf32>
+      %52 = memref.load %arg3[%arg19] : memref<?xf32>
+      %53 = arith.addi %38, %c1 : index
+      %54 = memref.load %arg6[%53] : memref<?xf32>
+      %55 = arith.divf %10, %54 : f32
+      %56 = math.sqrt %55 : f32
+      %57 = arith.mulf %13, %56 : f32
+      %58 = memref.load %arg7[%53] : memref<?xf32>
+      %59 = memref.load %arg9[%arg19] : memref<?xf32>
+      %60 = arith.subf %58, %59 : f32
+      %61 = arith.mulf %57, %60 : f32
+      %62 = arith.subf %52, %61 : f32
+      memref.store %62, %arg0[%53] : memref<?xf32>
+      %63 = memref.load %arg0[%53] : memref<?xf32>
+      %64 = arith.mulf %12, %63 : f32
+      memref.store %64, %arg0[%53] : memref<?xf32>
+      %65 = memref.load %arg0[%53] : memref<?xf32>
+      memref.store %65, %arg0[%38] : memref<?xf32>
+      memref.store %cst, %arg1[%38] : memref<?xf32>
     }
-    %18 = memref.load %3[%c0] : memref<1xi32>
-    %19 = arith.index_cast %18 : i32 to index
-    %20 = memref.get_global @jmm2 : memref<1xi32>
-    %21 = memref.load %0[%c0] : memref<1xi32>
-    %22 = memref.load %4[%c0] : memref<1xi32>
-    %23 = memref.load %arg17[%c0] : memref<?xf32>
-    %24 = memref.load %5[%c0] : memref<1xf32>
-    %25 = memref.load %20[%c0] : memref<1xi32>
-    %26 = memref.load %arg14[%c0] : memref<?xf32>
-    %27 = memref.load %arg18[%c0] : memref<?xf32>
+    %17 = memref.load %3[%c0] : memref<1xi32>
+    %18 = arith.index_cast %17 : i32 to index
+    %19 = memref.get_global @jmm2 : memref<1xi32>
+    %20 = memref.load %0[%c0] : memref<1xi32>
+    %21 = memref.load %4[%c0] : memref<1xi32>
+    %22 = memref.load %arg17[%c0] : memref<?xf32>
+    %23 = memref.load %5[%c0] : memref<1xf32>
+    %24 = memref.load %19[%c0] : memref<1xi32>
+    %25 = memref.load %arg14[%c0] : memref<?xf32>
+    %26 = memref.load %arg18[%c0] : memref<?xf32>
+    %27 = arith.index_cast %20 : i32 to index
     %28 = arith.index_cast %21 : i32 to index
-    %29 = arith.index_cast %22 : i32 to index
-    %30 = arith.muli %28, %29 : index
-    %31 = arith.index_cast %25 : i32 to index
-    %32 = arith.muli %31, %29 : index
-    %33 = arith.addi %19, %c-1 : index
-    scf.for %arg19 = %c0 to %33 step %c1 {
-      %39 = arith.addi %arg19, %c1 : index
-      %40 = memref.load %arg4[%39] : memref<?xf32>
-      %41 = arith.addi %arg19, %32 : index
-      %42 = arith.addi %41, %c1 : index
-      %43 = memref.load %arg6[%42] : memref<?xf32>
-      %44 = arith.divf %24, %43 : f32
-      %45 = math.sqrt %44 : f32
-      %46 = arith.mulf %23, %45 : f32
-      %47 = memref.load %arg7[%42] : memref<?xf32>
-      %48 = memref.load %arg10[%39] : memref<?xf32>
-      %49 = arith.subf %47, %48 : f32
-      %50 = arith.mulf %46, %49 : f32
-      %51 = arith.addf %40, %50 : f32
-      %52 = arith.mulf %26, %51 : f32
-      %53 = arith.addi %arg19, %30 : index
-      %54 = arith.addi %53, %c1 : index
-      memref.store %52, %arg1[%54] : memref<?xf32>
-      memref.store %cst, %arg0[%54] : memref<?xf32>
-      %55 = memref.load %arg5[%39] : memref<?xf32>
-      %56 = arith.addi %arg19, %29 : index
-      %57 = arith.addi %56, %c1 : index
-      %58 = memref.load %arg6[%57] : memref<?xf32>
-      %59 = arith.divf %24, %58 : f32
-      %60 = math.sqrt %59 : f32
-      %61 = arith.mulf %27, %60 : f32
-      %62 = memref.load %arg7[%57] : memref<?xf32>
-      %63 = memref.load %arg11[%39] : memref<?xf32>
-      %64 = arith.subf %62, %63 : f32
-      %65 = arith.mulf %61, %64 : f32
-      %66 = arith.subf %55, %65 : f32
-      %67 = arith.mulf %26, %66 : f32
-      memref.store %67, %arg1[%57] : memref<?xf32>
-      memref.store %67, %arg1[%39] : memref<?xf32>
-      memref.store %cst, %arg0[%39] : memref<?xf32>
+    %29 = arith.muli %27, %28 : index
+    %30 = arith.index_cast %24 : i32 to index
+    %31 = arith.muli %30, %28 : index
+    scf.for %arg19 = %c1 to %18 step %c1 {
+      %37 = memref.load %arg4[%arg19] : memref<?xf32>
+      %38 = arith.addi %arg19, %31 : index
+      %39 = memref.load %arg6[%38] : memref<?xf32>
+      %40 = arith.divf %23, %39 : f32
+      %41 = math.sqrt %40 : f32
+      %42 = arith.mulf %22, %41 : f32
+      %43 = memref.load %arg7[%38] : memref<?xf32>
+      %44 = memref.load %arg10[%arg19] : memref<?xf32>
+      %45 = arith.subf %43, %44 : f32
+      %46 = arith.mulf %42, %45 : f32
+      %47 = arith.addf %37, %46 : f32
+      %48 = arith.mulf %25, %47 : f32
+      %49 = arith.addi %arg19, %29 : index
+      memref.store %48, %arg1[%49] : memref<?xf32>
+      memref.store %cst, %arg0[%49] : memref<?xf32>
+      %50 = memref.load %arg5[%arg19] : memref<?xf32>
+      %51 = arith.addi %arg19, %28 : index
+      %52 = memref.load %arg6[%51] : memref<?xf32>
+      %53 = arith.divf %23, %52 : f32
+      %54 = math.sqrt %53 : f32
+      %55 = arith.mulf %26, %54 : f32
+      %56 = memref.load %arg7[%51] : memref<?xf32>
+      %57 = memref.load %arg11[%arg19] : memref<?xf32>
+      %58 = arith.subf %56, %57 : f32
+      %59 = arith.mulf %55, %58 : f32
+      %60 = arith.subf %50, %59 : f32
+      %61 = arith.mulf %25, %60 : f32
+      memref.store %61, %arg1[%51] : memref<?xf32>
+      memref.store %61, %arg1[%arg19] : memref<?xf32>
+      memref.store %cst, %arg0[%arg19] : memref<?xf32>
     }
-    %34 = memref.get_global @jm : memref<1xi32>
-    %35 = memref.load %34[%c0] : memref<1xi32>
+    %32 = memref.get_global @jm : memref<1xi32>
+    %33 = memref.load %32[%c0] : memref<1xi32>
+    %34 = arith.index_cast %33 : i32 to index
+    %35 = memref.load %4[%c0] : memref<1xi32>
     %36 = arith.index_cast %35 : i32 to index
-    %37 = memref.load %4[%c0] : memref<1xi32>
-    %38 = arith.index_cast %37 : i32 to index
-    scf.for %arg19 = %c0 to %36 step %c1 {
-      scf.for %arg20 = %c0 to %38 step %c1 {
-        %39 = arith.muli %arg19, %38 overflow<nsw> : index
-        %40 = arith.addi %arg20, %39 : index
-        %41 = memref.load %arg0[%40] : memref<?xf32>
-        %42 = memref.load %arg12[%40] : memref<?xf32>
-        %43 = arith.mulf %41, %42 : f32
-        memref.store %43, %arg0[%40] : memref<?xf32>
-        %44 = memref.load %arg1[%40] : memref<?xf32>
-        %45 = memref.load %arg13[%40] : memref<?xf32>
-        %46 = arith.mulf %44, %45 : f32
-        memref.store %46, %arg1[%40] : memref<?xf32>
+    scf.for %arg19 = %c0 to %34 step %c1 {
+      scf.for %arg20 = %c0 to %36 step %c1 {
+        %37 = arith.muli %arg19, %36 overflow<nsw> : index
+        %38 = arith.addi %arg20, %37 : index
+        %39 = memref.load %arg0[%38] : memref<?xf32>
+        %40 = memref.load %arg12[%38] : memref<?xf32>
+        %41 = arith.mulf %39, %40 : f32
+        memref.store %41, %arg0[%38] : memref<?xf32>
+        %42 = memref.load %arg1[%38] : memref<?xf32>
+        %43 = memref.load %arg13[%38] : memref<?xf32>
+        %44 = arith.mulf %42, %43 : f32
+        memref.store %44, %arg1[%38] : memref<?xf32>
       }
     }
     return

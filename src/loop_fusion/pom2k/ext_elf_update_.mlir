@@ -4,9 +4,7 @@ module attributes {dlti.dl_spec = #dlti.dl_spec<"dlti.endianness" = "little", i6
   memref.global @imm1 : memref<1xi32>
   memref.global @jmm1 : memref<1xi32>
   func.func @ext_elf_update_(%arg0: memref<?xf32> {polygeist.name = "elf", polygeist.type = "float *"}, %arg1: memref<?xf32> {polygeist.name = "elb", polygeist.type = "float *"}, %arg2: memref<?xf32> {polygeist.name = "fluxua", polygeist.type = "float *"}, %arg3: memref<?xf32> {polygeist.name = "fluxva", polygeist.type = "float *"}, %arg4: memref<?xf32> {polygeist.name = "art", polygeist.type = "float *"}, %arg5: memref<?xf32> {polygeist.name = "vfluxf", polygeist.type = "float *"}) attributes {llvm.linkage = #llvm.linkage<external>} {
-    %c2 = arith.constant 2 : index
     %c1 = arith.constant 1 : index
-    %c-1 = arith.constant -1 : index
     %c0 = arith.constant 0 : index
     %0 = memref.get_global @jmm1 : memref<1xi32>
     %1 = memref.load %0[%c0] : memref<1xi32>
@@ -19,35 +17,30 @@ module attributes {dlti.dl_spec = #dlti.dl_spec<"dlti.endianness" = "little", i6
     %8 = memref.load %5[%c0] : memref<1xf32>
     %9 = arith.index_cast %6 : i32 to index
     %10 = arith.index_cast %7 : i32 to index
-    %11 = arith.addi %2, %c-1 : index
-    scf.for %arg6 = %c0 to %11 step %c1 {
-      %12 = arith.addi %9, %c-1 : index
-      scf.for %arg7 = %c0 to %12 step %c1 {
-        %13 = arith.addi %arg6, %c1 : index
-        %14 = arith.muli %13, %10 overflow<nsw> : index
-        %15 = arith.addi %arg7, %14 : index
-        %16 = arith.addi %15, %c1 : index
-        %17 = memref.load %arg1[%16] : memref<?xf32>
-        %18 = arith.addi %15, %c2 : index
-        %19 = memref.load %arg2[%18] : memref<?xf32>
-        %20 = memref.load %arg2[%16] : memref<?xf32>
-        %21 = arith.subf %19, %20 : f32
-        %22 = arith.addi %arg6, %c2 : index
-        %23 = arith.muli %22, %10 overflow<nsw> : index
-        %24 = arith.addi %arg7, %23 : index
-        %25 = arith.addi %24, %c1 : index
-        %26 = memref.load %arg3[%25] : memref<?xf32>
-        %27 = arith.addf %21, %26 : f32
-        %28 = memref.load %arg3[%16] : memref<?xf32>
+    scf.for %arg6 = %c1 to %2 step %c1 {
+      scf.for %arg7 = %c1 to %9 step %c1 {
+        %11 = arith.muli %arg6, %10 overflow<nsw> : index
+        %12 = arith.addi %arg7, %11 : index
+        %13 = memref.load %arg1[%12] : memref<?xf32>
+        %14 = arith.addi %12, %c1 : index
+        %15 = memref.load %arg2[%14] : memref<?xf32>
+        %16 = memref.load %arg2[%12] : memref<?xf32>
+        %17 = arith.subf %15, %16 : f32
+        %18 = arith.addi %arg6, %c1 : index
+        %19 = arith.muli %18, %10 overflow<nsw> : index
+        %20 = arith.addi %arg7, %19 : index
+        %21 = memref.load %arg3[%20] : memref<?xf32>
+        %22 = arith.addf %17, %21 : f32
+        %23 = memref.load %arg3[%12] : memref<?xf32>
+        %24 = arith.subf %22, %23 : f32
+        %25 = arith.negf %24 : f32
+        %26 = memref.load %arg4[%12] : memref<?xf32>
+        %27 = arith.divf %25, %26 : f32
+        %28 = memref.load %arg5[%12] : memref<?xf32>
         %29 = arith.subf %27, %28 : f32
-        %30 = arith.negf %29 : f32
-        %31 = memref.load %arg4[%16] : memref<?xf32>
-        %32 = arith.divf %30, %31 : f32
-        %33 = memref.load %arg5[%16] : memref<?xf32>
-        %34 = arith.subf %32, %33 : f32
-        %35 = arith.mulf %8, %34 : f32
-        %36 = arith.addf %17, %35 : f32
-        memref.store %36, %arg0[%16] : memref<?xf32>
+        %30 = arith.mulf %8, %29 : f32
+        %31 = arith.addf %13, %30 : f32
+        memref.store %31, %arg0[%12] : memref<?xf32>
       }
     }
     return
