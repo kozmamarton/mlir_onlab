@@ -76,6 +76,9 @@ PIPELINE_PASSES=(
 	"reconcile-unrealized-casts"
   "convert-scf-to-cf"
 	"reconcile-unrealized-casts"
+	"canonicalize"
+	"cse"
+	"loop-invariant-code-motion"
   "convert-math-to-llvm"
   "convert-arith-to-llvm"
   "finalize-memref-to-llvm"
@@ -84,6 +87,9 @@ PIPELINE_PASSES=(
   "convert-cf-to-llvm"
   "convert-func-to-llvm"
   "reconcile-unrealized-casts"
+	"canonicalize"
+	"cse"
+	"loop-invariant-code-motion"
 )
 
 MLIR_OPT_FLAGS=(
@@ -103,7 +109,7 @@ for INPUT_FILE in "${INPUT_FILES[@]}"; do
 	INPUT_DIR="$(dirname "$INPUT_FILE")"
 	INPUT_BASE="$(basename "$INPUT_FILE" .mlir)"
 	CPU_FILE="$OUTPUT_DIR_MLIR/${INPUT_BASE}-llvm.mlir"
-	LLVM_FILE="$OUTPUT_DIR_LL/${INPUT_BASE}.ll"
+	LLVM_FILE="$OUTPUT_DIR_LL/${INPUT_BASE}_cpu.ll"
 
   echo "$MLIR_OPT $INPUT_FILE \
 		${MLIR_OPT_FLAGS[*]} \

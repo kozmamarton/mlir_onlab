@@ -65,7 +65,7 @@ PIPELINE_PASSES=(
   "gpu-kernel-outlining"
   "canonicalize"
   "cse"
-  "gpu-lower-to-nvvm-pipeline{cubin-chip=sm_80 opt-level=3}"
+  "gpu-lower-to-nvvm-pipeline{cubin-chip=sm_70 opt-level=3}"
 )
 
 
