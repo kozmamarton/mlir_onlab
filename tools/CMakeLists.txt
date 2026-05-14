@@ -8,10 +8,8 @@ set(LIBS
   MLIRNoisy
   MLIROptLib
   MLIRPass
-  MLIRPoly
   MulToAdd
   NoisyPasses
-  PolyToStandard
   MLIRRegisterAllDialects
   MLIRRegisterAllPasses
   ortools::ortools

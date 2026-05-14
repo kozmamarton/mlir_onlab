@@ -3653,7 +3653,7 @@ void ext_advt2_(real_t* fb, real_t* f, real_t* fclim, real_t* ff, real_t* xflux,
     }
 
     // Calculate horizontal mass fluxes:
-    for (int k = 0; k < kbm1; k++)
+    for (int k = 0; k < kbm1; k++) //unroll neeeded for fusion
     {
         for (int j = 1; j < jmm1; j++)
         {
@@ -3699,7 +3699,7 @@ void ext_advt2_(real_t* fb, real_t* f, real_t* fclim, real_t* ff, real_t* xflux,
     }
 
     // Start Smolarkiewicz scheme:
-    // for (int itera = 0; itera < 10; itera++) {
+    // for (int itera = 0; itera < 10; itera++) { //uncomment for interest
     int itera = 0;
 
     // Upwind advection scheme:

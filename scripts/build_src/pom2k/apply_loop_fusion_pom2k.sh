@@ -5,6 +5,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/../../.." && pwd)"
 LLVM_ROOT_DIR="$PROJECT_ROOT/externals/llvm-project"
 MLIR_OPT="$LLVM_ROOT_DIR/build/bin/mlir-opt"
+TUTORIAL_OPT="$PROJECT_ROOT/build/tools/tutorial-opt"
 OUTPUT_DIR="$PROJECT_ROOT/src/loop_fusion/pom2k"
 BUILTIN_INPUT_BASE_DIR="$PROJECT_ROOT/src/pom2k_generated_affine_loops/mlir"
 
@@ -16,13 +17,16 @@ COMMON_FLAGS=(
  "--debug-only=affine-parallelize,scf-parallel-loop-fusion"
 )
 
+CUSTOM_PASSES=(
+  "reinterpret-flat-array-access" # custom pass to reinterpret 1D arrays as multi-dimensional for better affine analysis
+)
+
 # Function-level passes.
 FUNC_PASSES=(
-  "affine-raise-from-memref"
- # "affine-loop-normalize"
+  #"affine-raise-from-memref"
   "loop-invariant-code-motion"
   "affine-loop-invariant-code-motion"
-  "affine-loop-fusion"
+  "affine-loop-fusion{maximal=true}"
   "mem2reg"
   "affine-scalrep" # cleans up useles write/read pairs after loop fusion
   "affine-parallelize" #option: parallel-reductions?
@@ -37,8 +41,8 @@ FUNC_PASSES=(
 
 # Passes to insert between each function-level pass (after each func.func pass).
 INBETWEEN_FUNC_PASSES=(
-  "cse"
   "canonicalize"
+  "cse"
 )
 
 # Module-level passes run before func.func passes.
@@ -63,18 +67,6 @@ CASES=(  "ext_aam_.mlir"         "ext_advv_.mlir"          "ext_etf_update_.mlir
   "ext_advt2_.mlir"       "ext_dens_.mlir"          "ext_profu_.mlir"                       "ext_vert_avgs_.mlir"
   "ext_advu_.mlir"        "ext_elf_update_.mlir"    "ext_profv_.mlir"                       "ext_vertvl_.mlir")
 
-CASES_N=(
-  "ext_aam_.mlir"         "ext_advv_.mlir"          "ext_etf_update_.mlir"                  "ext_smol_adif_.mlir"
-  "ext_add_ad_2d_.mlir"   "ext_apply_filter_.mlir"  "ext_final_internal_update_.mlir"       "ext_time_internal_forward_.mlir"
-  "ext_adjust_u_v_.mlir"  "ext_baropg_.mlir"        "ext_flux_update_.mlir"                 "ext_uaf_.mlir"
-  "ext_advave_.mlir"      "ext_bcond_1_.mlir"       "ext_init_horizontal_velocities_.mlir"  "ext_update_turbulane_.mlir"
-  "ext_advct_.mlir"       "ext_bcond_2_.mlir"       "ext_init_internal_.mlir"               "ext_update_u_v_.mlir"
-  "ext_advq_.mlir"        "ext_bcond_3_.mlir"       "ext_profq_.mlir"                       "ext_updeta_t_s_.mlir"
-  "ext_advt1_.mlir"       "ext_bcond_5_.mlir"       "ext_proft_.mlir"                       "ext_vaf_.mlir"
-  "ext_advt2_.mlir"       "ext_dens_.mlir"          "ext_profu_.mlir"                       "ext_vert_avgs_.mlir"
-  "ext_advu_.mlir"        "ext_elf_update_.mlir"    "ext_profv_.mlir"                       "ext_vertvl_.mlir"
-)
-
 usage() {
   cat <<EOF
 Usage: $(basename "$0") [-f <PATH>] [-f <PATH>] ...
@@ -96,6 +88,20 @@ EOF
 
 declare -a builtin_cases_to_process=()
 declare -a explicit_files_to_process=()
+
+is_builtin_case() {
+  local candidate="$1"
+  local case_name
+
+  case_name="${candidate%.mlir}"
+  for builtin in "${CASES[@]}"; do
+    if [[ "$builtin" == "$candidate" || "${builtin%.mlir}" == "$case_name" ]]; then
+      return 0
+    fi
+  done
+
+  return 1
+}
 
 to_abs_path() {
   local path="$1"
@@ -144,12 +150,17 @@ while (($# > 0)); do
       if [[ "$2" == */* || "$2" == .* || "$2" == *.mlir ]]; then
         if resolved_file="$(resolve_explicit_file "$2")"; then
           explicit_files_to_process+=("$resolved_file")
+        elif is_builtin_case "$2"; then
+          builtin_cases_to_process+=("${2%.mlir}.mlir")
         else
           echo "Error: explicit file not found: $2" >&2
           exit 1
         fi
+      elif is_builtin_case "$2"; then
+        builtin_cases_to_process+=("${2%.mlir}.mlir")
       else
-        builtin_cases_to_process+=("$2")
+        echo "Error: unknown built-in case: $2" >&2
+        exit 1
       fi
       shift 2
       ;;
@@ -203,20 +214,39 @@ build_pipeline() {
   printf 'builtin.module(%s)' "$(join_by ',' "${parts[@]}")"
 }
 
+build_custom_pipeline() {
+  (( ${#CUSTOM_PASSES[@]} )) || return 1
+  printf 'builtin.module(%s)' "$(join_by ',' "${CUSTOM_PASSES[@]}")"
+}
+
+run_pipeline() {
+  local input_file="$1"
+  local output_file="$2"
+  local main_pipeline="$3"
+  local custom_pipeline="${4-}"
+
+  if [[ -n "$custom_pipeline" ]]; then
+    printf 'Running command:\n  %s -pass-pipeline="%s" < %s | %s %s -pass-pipeline="%s" > %s\n' \
+      "$TUTORIAL_OPT" "$custom_pipeline" "$input_file" "$MLIR_OPT" "${COMMON_FLAGS[*]}" "$main_pipeline" "$output_file"
+    "$TUTORIAL_OPT" -pass-pipeline="$custom_pipeline" < "$input_file" |
+      "$MLIR_OPT" "${COMMON_FLAGS[@]}" -pass-pipeline="$main_pipeline" > "$output_file"
+    return
+  fi
+
+  printf 'Running command:\n  %s %s -pass-pipeline="%s" < %s > %s\n' \
+    "$MLIR_OPT" "${COMMON_FLAGS[*]}" "$main_pipeline" "$input_file" "$output_file"
+  "$MLIR_OPT" "${COMMON_FLAGS[@]}" -pass-pipeline="$main_pipeline" < "$input_file" > "$output_file"
+}
+
 run_builtin_case() {
   local input_name="$1"
   local pipeline
   local input_file="$BUILTIN_INPUT_BASE_DIR/${input_name}"
   local output_file="$OUTPUT_DIR/${input_name}"
+
   pipeline="$(build_pipeline PRE_FUNC_MODULE_PASSES POST_FUNC_MODULE_PASSES FUNC_PASSES INBETWEEN_FUNC_PASSES)"
-  echo "Generating ${input_name}.mlir"
-  printf 'Running command:\n  %s %s -pass-pipeline="%s" \\\n    < %s \\\n    > %s\n' \
-    "$MLIR_OPT" "${COMMON_FLAGS[*]}" "$pipeline" "$input_file" "$output_file"
-  "$MLIR_OPT" \
-    "${COMMON_FLAGS[@]}" \
-    -pass-pipeline="$pipeline" \
-    < "$input_file" \
-    > "$output_file"
+  echo "Generating ${input_name}"
+  run_pipeline "$input_file" "$output_file" "$pipeline" "$(build_custom_pipeline || true)"
 }
 
 run_explicit_file() {
@@ -228,14 +258,8 @@ run_explicit_file() {
   input_name="$(basename "$input_file" .mlir)"
   output_file="$OUTPUT_DIR/${input_name}.mlir"
   pipeline="$(build_pipeline PRE_FUNC_MODULE_PASSES POST_FUNC_MODULE_PASSES FUNC_PASSES INBETWEEN_FUNC_PASSES)"
-  echo "Generating ${input_name}.mlir"
-  printf 'Running command:\n  %s %s -pass-pipeline="%s" \\\n+    < %s \\\n+    > %s\n' \
-    "$MLIR_OPT" "${COMMON_FLAGS[*]}" "$pipeline" "$input_file" "$output_file"
-  "$MLIR_OPT" \
-    "${COMMON_FLAGS[@]}" \
-    -pass-pipeline="$pipeline" \
-    < "$input_file" \
-    > "$output_file"
+  echo "Generating ${input_name}"
+  run_pipeline "$input_file" "$output_file" "$pipeline" "$(build_custom_pipeline || true)"
 }
 
 for case_name in "${builtin_cases_to_process[@]}"; do

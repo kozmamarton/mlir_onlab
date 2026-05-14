@@ -3,6 +3,7 @@
 
 #include "Transform/Affine/AffineFullUnroll.h"
 #include "Transform/Affine/AffineFullUnrollPatternRewrite.h"
+#include "Transform/Affine/ReinterpretFlatArrayAccess.h"
 
 namespace mlir {
 namespace tutorial {

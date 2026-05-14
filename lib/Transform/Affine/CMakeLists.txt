@@ -1,6 +1,7 @@
 add_mlir_library(AffineFullUnroll
     AffineFullUnroll.cpp
     AffineFullUnrollPatternRewrite.cpp
+    ReinterpretFlatArrayAccess.cpp
     ADDITIONAL_HEADER_DIRS
     ${PROJECT_SOURCE_DIR}/include/Transform/Affine/
     DEPENDS

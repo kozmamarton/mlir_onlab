@@ -10,27 +10,36 @@ module attributes {dlti.dl_spec = #dlti.dl_spec<"dlti.endianness" = "little", i6
     %3 = memref.get_global @im : memref<1xi32>
     %4 = memref.load %3[%c0] : memref<1xi32>
     %5 = arith.index_cast %4 : i32 to index
-    scf.for %arg13 = %c0 to %2 step %c1 {
-      scf.for %arg14 = %c0 to %5 step %c1 {
-        %6 = arith.muli %arg13, %5 overflow<nsw> : index
-        %7 = arith.addi %arg14, %6 : index
-        %8 = memref.load %arg1[%7] : memref<?xf32>
-        memref.store %8, %arg0[%7] : memref<?xf32>
-        %9 = memref.load %arg3[%7] : memref<?xf32>
-        memref.store %9, %arg2[%7] : memref<?xf32>
-        %10 = memref.load %arg4[%7] : memref<?xf32>
-        memref.store %10, %arg3[%7] : memref<?xf32>
-        %11 = memref.load %arg6[%7] : memref<?xf32>
-        %12 = memref.load %arg3[%7] : memref<?xf32>
-        %13 = arith.addf %11, %12 : f32
-        memref.store %13, %arg5[%7] : memref<?xf32>
-        %14 = memref.load %arg8[%7] : memref<?xf32>
-        memref.store %14, %arg7[%7] : memref<?xf32>
-        %15 = memref.load %arg10[%7] : memref<?xf32>
-        memref.store %15, %arg9[%7] : memref<?xf32>
-        %16 = memref.load %arg12[%7] : memref<?xf32>
-        memref.store %16, %arg11[%7] : memref<?xf32>
-      }
+    %reinterpret_cast = memref.reinterpret_cast %arg1 to offset: [0], sizes: [%2, %5], strides: [%5, 1] : memref<?xf32> to memref<?x?xf32, strided<[?, 1]>>
+    %reinterpret_cast_0 = memref.reinterpret_cast %arg0 to offset: [0], sizes: [%2, %5], strides: [%5, 1] : memref<?xf32> to memref<?x?xf32, strided<[?, 1]>>
+    %reinterpret_cast_1 = memref.reinterpret_cast %arg3 to offset: [0], sizes: [%2, %5], strides: [%5, 1] : memref<?xf32> to memref<?x?xf32, strided<[?, 1]>>
+    %reinterpret_cast_2 = memref.reinterpret_cast %arg2 to offset: [0], sizes: [%2, %5], strides: [%5, 1] : memref<?xf32> to memref<?x?xf32, strided<[?, 1]>>
+    %reinterpret_cast_3 = memref.reinterpret_cast %arg4 to offset: [0], sizes: [%2, %5], strides: [%5, 1] : memref<?xf32> to memref<?x?xf32, strided<[?, 1]>>
+    %reinterpret_cast_4 = memref.reinterpret_cast %arg6 to offset: [0], sizes: [%2, %5], strides: [%5, 1] : memref<?xf32> to memref<?x?xf32, strided<[?, 1]>>
+    %reinterpret_cast_5 = memref.reinterpret_cast %arg5 to offset: [0], sizes: [%2, %5], strides: [%5, 1] : memref<?xf32> to memref<?x?xf32, strided<[?, 1]>>
+    %reinterpret_cast_6 = memref.reinterpret_cast %arg8 to offset: [0], sizes: [%2, %5], strides: [%5, 1] : memref<?xf32> to memref<?x?xf32, strided<[?, 1]>>
+    %reinterpret_cast_7 = memref.reinterpret_cast %arg7 to offset: [0], sizes: [%2, %5], strides: [%5, 1] : memref<?xf32> to memref<?x?xf32, strided<[?, 1]>>
+    %reinterpret_cast_8 = memref.reinterpret_cast %arg10 to offset: [0], sizes: [%2, %5], strides: [%5, 1] : memref<?xf32> to memref<?x?xf32, strided<[?, 1]>>
+    %reinterpret_cast_9 = memref.reinterpret_cast %arg9 to offset: [0], sizes: [%2, %5], strides: [%5, 1] : memref<?xf32> to memref<?x?xf32, strided<[?, 1]>>
+    %reinterpret_cast_10 = memref.reinterpret_cast %arg12 to offset: [0], sizes: [%2, %5], strides: [%5, 1] : memref<?xf32> to memref<?x?xf32, strided<[?, 1]>>
+    %reinterpret_cast_11 = memref.reinterpret_cast %arg11 to offset: [0], sizes: [%2, %5], strides: [%5, 1] : memref<?xf32> to memref<?x?xf32, strided<[?, 1]>>
+    scf.parallel (%arg13, %arg14) = (%c0, %c0) to (%2, %5) step (%c1, %c1) {
+      %6 = memref.load %reinterpret_cast[%arg13, %arg14] : memref<?x?xf32, strided<[?, 1]>>
+      memref.store %6, %reinterpret_cast_0[%arg13, %arg14] : memref<?x?xf32, strided<[?, 1]>>
+      %7 = memref.load %reinterpret_cast_1[%arg13, %arg14] : memref<?x?xf32, strided<[?, 1]>>
+      memref.store %7, %reinterpret_cast_2[%arg13, %arg14] : memref<?x?xf32, strided<[?, 1]>>
+      %8 = memref.load %reinterpret_cast_3[%arg13, %arg14] : memref<?x?xf32, strided<[?, 1]>>
+      memref.store %8, %reinterpret_cast_1[%arg13, %arg14] : memref<?x?xf32, strided<[?, 1]>>
+      %9 = memref.load %reinterpret_cast_4[%arg13, %arg14] : memref<?x?xf32, strided<[?, 1]>>
+      %10 = arith.addf %9, %8 : f32
+      memref.store %10, %reinterpret_cast_5[%arg13, %arg14] : memref<?x?xf32, strided<[?, 1]>>
+      %11 = memref.load %reinterpret_cast_6[%arg13, %arg14] : memref<?x?xf32, strided<[?, 1]>>
+      memref.store %11, %reinterpret_cast_7[%arg13, %arg14] : memref<?x?xf32, strided<[?, 1]>>
+      %12 = memref.load %reinterpret_cast_8[%arg13, %arg14] : memref<?x?xf32, strided<[?, 1]>>
+      memref.store %12, %reinterpret_cast_9[%arg13, %arg14] : memref<?x?xf32, strided<[?, 1]>>
+      %13 = memref.load %reinterpret_cast_10[%arg13, %arg14] : memref<?x?xf32, strided<[?, 1]>>
+      memref.store %13, %reinterpret_cast_11[%arg13, %arg14] : memref<?x?xf32, strided<[?, 1]>>
+      scf.reduce 
     }
     return
   }

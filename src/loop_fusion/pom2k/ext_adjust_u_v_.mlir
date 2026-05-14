@@ -27,9 +27,6 @@ module attributes {dlti.dl_spec = #dlti.dl_spec<"dlti.endianness" = "little", i6
     %reinterpret_cast_6 = memref.reinterpret_cast %arg8 to offset: [0], sizes: [%2, %5], strides: [%5, 1] : memref<?xf32> to memref<?x?xf32, strided<[?, 1]>>
     scf.parallel (%arg9, %arg10) = (%c0, %c0) to (%2, %5) step (%c1, %c1) {
       memref.store %cst, %reinterpret_cast[%arg9, %arg10] : memref<?x?xf32, strided<[?, 1]>>
-      scf.reduce 
-    }
-    scf.parallel (%arg9, %arg10) = (%c0, %c0) to (%2, %5) step (%c1, %c1) {
       scf.for %arg11 = %c0 to %8 step %c1 {
         %10 = memref.load %arg3[%arg11] : memref<?xf32>
         %11 = memref.load %reinterpret_cast[%arg9, %arg10] : memref<?x?xf32, strided<[?, 1]>>
