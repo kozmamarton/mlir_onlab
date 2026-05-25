@@ -53,7 +53,7 @@ namespace
 
 constexpr int rows = 16978;
 constexpr int cols = 16978;
-constexpr int64_t numOfSamples = 10;
+constexpr int64_t numOfSamples = 100;
 
 int main()
 {

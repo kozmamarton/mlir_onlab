@@ -1,0 +1,4 @@
+timestamp,benchmark,backend,cpu_model,gpu_model,raw_output_file
+"2026-05-25T13:51:00Z","cpu_single_threaded","cpu","Intel(R) Xeon(R) Gold 6126 CPU @ 2.60GHz","N/A","/home/mkozma/mlir_onlab/examples/pom2k/pom2k_adjust_u_v/results/raw/cpu_single_threaded_20260525T135100Z.log"
+"2026-05-25T13:51:27Z","cpu_multithreaded","cpu_openmp","Intel(R) Xeon(R) Gold 6126 CPU @ 2.60GHz","N/A","/home/mkozma/mlir_onlab/examples/pom2k/pom2k_adjust_u_v/results/raw/cpu_multithreaded_20260525T135127Z.log"
+"2026-05-25T13:51:41Z","gpu_cuda","cuda","Intel(R) Xeon(R) Gold 6126 CPU @ 2.60GHz","N/A","N/A"
