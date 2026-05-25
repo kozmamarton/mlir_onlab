@@ -37,7 +37,7 @@ for lib in libmlir_cuda_runtime libmlir_runner_utils libmlir_c_runner_utils; do
 done
 
 echo "[3/3] Building benchmark executable"
-clang++ -std=c++17 -O2 "$SCRIPT_DIR/benchmark_gpu_nvcc.cpp" "$EXAMPLE_LL" \
+clang++ -std=c++17 -O3 "$SCRIPT_DIR/benchmark_gpu_nvcc.cpp" "$EXAMPLE_LL" \
   -I"$CUDA_ROOT/include" \
   -L"$CUDA_ROOT/lib64" \
   -Wl,-rpath,"$CUDA_ROOT/lib64" \

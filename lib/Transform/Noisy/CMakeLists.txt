@@ -9,6 +9,7 @@ add_mlir_library(NoisyPasses
     MLIRNoisyPasses
 
     LINK_LIBS PUBLIC
+    MLIRAnalysis
     ReduceNoiseAnalysis
 )
 

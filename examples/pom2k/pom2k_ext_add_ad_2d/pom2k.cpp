@@ -6,7 +6,6 @@
 #include <cuda_runtime.h>
 #include <iomanip>
 #include <iostream>
-#include <memory>
 #include <stdexcept>
 #include <string>
 
@@ -103,7 +102,7 @@ int main()
 
     check_cuda(cudaDeviceSynchronize(), "cudaDeviceSynchronize(after initialization)");
 
-    auto args = std::make_unique<ExtAddAd2DCallArgs>(ExtAddAd2DCallArgs{
+    ExtAddAd2DCallArgs args{
         adx2d,
         adx2d,
         0,
@@ -124,7 +123,7 @@ int main()
         0,
         static_cast<int64_t>(n),
         1,
-    });
+    };
 
     std::cout << '\n';
     std::cout << "pom2k benchmark: testing gpu kernel runtime\n";
@@ -138,13 +137,13 @@ int main()
     for (auto i = 0; i < numOfSamples; i++)
     {
         const auto start = std::chrono::high_resolution_clock::now();
-        ext_add_ad_2d_(args->adx2d_alloc, args->adx2d_aligned, args->adx2d_offset, args->adx2d_size,
-                       args->adx2d_stride, args->ady2d_alloc, args->ady2d_aligned,
-                       args->ady2d_offset, args->ady2d_size, args->ady2d_stride,
-                       args->advua_alloc, args->advua_aligned, args->advua_offset,
-                       args->advua_size, args->advua_stride, args->advva_alloc,
-                       args->advva_aligned, args->advva_offset, args->advva_size,
-                       args->advva_stride);
+        ext_add_ad_2d_(args.adx2d_alloc, args.adx2d_aligned, args.adx2d_offset, args.adx2d_size,
+                   args.adx2d_stride, args.ady2d_alloc, args.ady2d_aligned,
+                   args.ady2d_offset, args.ady2d_size, args.ady2d_stride,
+                   args.advua_alloc, args.advua_aligned, args.advua_offset,
+                   args.advua_size, args.advua_stride, args.advva_alloc,
+                   args.advva_aligned, args.advva_offset, args.advva_size,
+                   args.advva_stride);
         check_cuda(cudaDeviceSynchronize(), "cudaDeviceSynchronize(after kernel call)");
         const auto end = std::chrono::high_resolution_clock::now();
         elapsedUsTotal += std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();

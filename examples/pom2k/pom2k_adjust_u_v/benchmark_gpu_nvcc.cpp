@@ -128,7 +128,7 @@ static void check_cuda(cudaError_t status, const char *what)
 constexpr int rows   = 4096*1;
 constexpr int cols   = 4096*1;
 constexpr int levels = 20;
-constexpr int64_t numOfSamples = 1;
+constexpr int64_t numOfSamples = 10;
 
 int main() {
     im[0]   = rows;
