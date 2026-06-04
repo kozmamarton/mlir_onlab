@@ -23,8 +23,8 @@ CPU_EXAMPLE_LL="${CPU_EXAMPLE_LL:-$SCRIPT_DIR/ext_adjust_u_v_cpu.ll}"
 GPU_GENERATED_LL="${GPU_GENERATED_LL:-$PROJECT_ROOT/artifacts/llvm/pom2k/ext_adjust_u_v_.ll}"
 GPU_EXAMPLE_LL="${GPU_EXAMPLE_LL:-$SCRIPT_DIR/ext_adjust_u_v_.ll}"
 
-CPU_SINGLE_BIN="${CPU_SINGLE_BIN:-$SCRIPT_DIR/benchmark_cpu_single_threaded.out}"
-CPU_MULTI_BIN="${CPU_MULTI_BIN:-$SCRIPT_DIR/benchmark_cpu_multithreaded.out}"
+CPU_SINGLE_BIN="${CPU_SINGLE_BIN:-$SCRIPT_DIR/bench_cpu_single_threaded.out}"
+CPU_MULTI_BIN="${CPU_MULTI_BIN:-$SCRIPT_DIR/bench_cpu_multithreaded.out}"
 GPU_CUDA_BIN="${GPU_CUDA_BIN:-$SCRIPT_DIR/bench_gpu_nvcc.out}"
 
 NOW_UTC="$(date -u +"%Y-%m-%dT%H:%M:%SZ")"
@@ -141,11 +141,14 @@ require_file "$CPU_GENERATED_LL"
 cp "$CPU_GENERATED_LL" "$CPU_EXAMPLE_LL"
 
 # Build required LLVM IR for CUDA benchmark.
-echo "[prep] Lowering CUDA LLVM IR"
-"$GPU_LOWER_SCRIPT" "$INPUT_MLIR"
-require_file "$GPU_GENERATED_LL"
-cp "$GPU_GENERATED_LL" "$GPU_EXAMPLE_LL"
-
+if [[ -n "$NVIDIA_GPU_MODEL" ]]; then
+  echo "[prep] Lowering CUDA LLVM IR"
+  "$GPU_LOWER_SCRIPT" "$INPUT_MLIR"
+  require_file "$GPU_GENERATED_LL"
+  cp "$GPU_GENERATED_LL" "$GPU_EXAMPLE_LL"
+else
+  echo "[prep] Skipping CUDA LLVM IR generation: no NVIDIA GPU detected"
+fi
 # Build and run CPU single-thread benchmark.
 echo "[build] CPU single-threaded"
 "$BUILD_CPU_SINGLE_SCRIPT"

@@ -1,4 +1,5 @@
 timestamp,benchmark,backend,cpu_model,gpu_model,raw_output_file
-"2026-05-25T13:54:16Z","cpu_single_threaded","cpu","AMD EPYC 7F72 24-Core Processor","N/A","/home/mkozma/mlir_onlab/examples/pom2k/pom2k_ext_add_ad_2d/results/raw/cpu_single_threaded_20260525T135416Z.log"
-"2026-05-25T13:54:46Z","cpu_multithreaded","cpu_openmp","AMD EPYC 7F72 24-Core Processor","N/A","/home/mkozma/mlir_onlab/examples/pom2k/pom2k_ext_add_ad_2d/results/raw/cpu_multithreaded_20260525T135446Z.log"
-"2026-05-25T13:55:12Z","gpu_cuda","cuda","AMD EPYC 7F72 24-Core Processor","NVIDIA A100-PCIE-40GB","/home/mkozma/mlir_onlab/examples/pom2k/pom2k_ext_add_ad_2d/results/raw/gpu_cuda_20260525T135512Z.log"
+"2026-05-25T15:02:58Z","cpu_single_threaded","cpu","AMD Ryzen 7 9700X 8-Core Processor","N/A","/home/marton/uni/onlab/mlir-tutorial/examples/pom2k/pom2k_ext_add_ad_2d/results/raw/cpu_single_threaded_20260525T150258Z.log"
+"2026-05-25T15:03:15Z","cpu_multithreaded","cpu_openmp","AMD Ryzen 7 9700X 8-Core Processor","N/A","/home/marton/uni/onlab/mlir-tutorial/examples/pom2k/pom2k_ext_add_ad_2d/results/raw/cpu_multithreaded_20260525T150315Z.log"
+"2026-05-25T15:03:33Z","gpu_cuda","cuda","AMD Ryzen 7 9700X 8-Core Processor","N/A","N/A"
+"2026-05-25T15:03:32Z","gpu_amd","rocm","AMD Ryzen 7 9700X 8-Core Processor","AMD Radeon RX 7800 XT              ","/home/marton/uni/onlab/mlir-tutorial/examples/pom2k/pom2k_ext_add_ad_2d/results/raw/gpu_amd_20260525T150332Z.log"

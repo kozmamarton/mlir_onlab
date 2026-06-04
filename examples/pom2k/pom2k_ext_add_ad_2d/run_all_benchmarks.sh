@@ -12,6 +12,7 @@ RAW_DIR="${RAW_DIR:-$RESULTS_DIR/raw}"
 BUILD_CPU_SINGLE_SCRIPT="$SCRIPT_DIR/build_cpu_single_threaded.sh"
 BUILD_CPU_MULTI_SCRIPT="$SCRIPT_DIR/build_cpu_multithreaded.sh"
 BUILD_GPU_CUDA_SCRIPT="$SCRIPT_DIR/build_gpu.sh"
+BUILD_GPU_AMD_SCRIPT="$SCRIPT_DIR/build_gpu_amd.sh"
 
 CPU_LOWER_SCRIPT="${CPU_LOWER_SCRIPT:-$PROJECT_ROOT/scripts/build_src/pom2k/lower_cpu_to_llvm.sh}"
 GPU_LOWER_SCRIPT="${GPU_LOWER_SCRIPT:-$PROJECT_ROOT/scripts/build_src/pom2k/lower_gpu_to_llvm.sh}"
@@ -26,6 +27,8 @@ GPU_EXAMPLE_LL="${GPU_EXAMPLE_LL:-$SCRIPT_DIR/ext_add_ad_2d_.ll}"
 CPU_SINGLE_BIN="${CPU_SINGLE_BIN:-$SCRIPT_DIR/bench_cpu_single_threaded.out}"
 CPU_MULTI_BIN="${CPU_MULTI_BIN:-$SCRIPT_DIR/bench_cpu_multithreaded.out}"
 GPU_CUDA_BIN="${GPU_CUDA_BIN:-$SCRIPT_DIR/bench_gpu_nvcc.out}"
+GPU_AMD_BIN="${GPU_AMD_BIN:-$SCRIPT_DIR/bench_gpu_amd.out}"
+ROCM_PATH="${ROCM_PATH:-/opt/rocm}"
 
 NOW_UTC="$(date -u +"%Y-%m-%dT%H:%M:%SZ")"
 
@@ -47,6 +50,44 @@ get_gpu_model_nvidia() {
   else
     echo ""
   fi
+}
+
+has_rocm_environment() {
+  [[ -d "$ROCM_PATH" ]]
+}
+
+get_gpu_model_amd() {
+  if command -v rocminfo >/dev/null 2>&1; then
+    local name
+    name="$(rocminfo 2>/dev/null | awk '
+      /^[[:space:]]*Agent[[:space:]]+[0-9]+/ {
+        if (agent_started && is_gpu && marketing != "") {
+          print marketing
+          exit
+        }
+        agent_started = 1
+        is_gpu = 0
+        marketing = ""
+        next
+      }
+      /^[[:space:]]*(Device[[:space:]]+)?Type:[[:space:]]*GPU/ { is_gpu = 1; next }
+      /^[[:space:]]*Marketing Name:/ {
+        val = $0
+        sub(/^[^:]*:[[:space:]]*/, "", val)
+        marketing = val
+        next
+      }
+      END {
+        if (is_gpu && marketing != "")
+          print marketing
+      }
+    ')"
+    if [[ -n "$name" ]]; then
+      echo "$name"
+      return
+    fi
+  fi
+  echo "AMD GPU (ROCm)"
 }
 
 csv_escape() {
@@ -112,6 +153,11 @@ run_and_capture() {
 
 CPU_MODEL="$(get_cpu_model)"
 NVIDIA_GPU_MODEL="$(get_gpu_model_nvidia)"
+if has_rocm_environment; then
+  AMD_GPU_MODEL="$(get_gpu_model_amd)"
+else
+  AMD_GPU_MODEL=""
+fi
 
 {
   echo "pom2k_ext_add_ad_2d benchmark run"
@@ -119,6 +165,8 @@ NVIDIA_GPU_MODEL="$(get_gpu_model_nvidia)"
   echo "cpu_model: $CPU_MODEL"
   if [[ -n "$NVIDIA_GPU_MODEL" ]]; then
     echo "gpu_model: $NVIDIA_GPU_MODEL"
+  elif [[ -n "$AMD_GPU_MODEL" ]]; then
+    echo "gpu_model: $AMD_GPU_MODEL"
   else
     echo "gpu_model: N/A"
   fi
@@ -133,6 +181,7 @@ require_file "$GPU_LOWER_SCRIPT"
 require_file "$BUILD_CPU_SINGLE_SCRIPT"
 require_file "$BUILD_CPU_MULTI_SCRIPT"
 require_file "$BUILD_GPU_CUDA_SCRIPT"
+require_file "$BUILD_GPU_AMD_SCRIPT"
 
 # Build required LLVM IR for CPU benchmark.
 echo "[prep] Lowering CPU LLVM IR"
@@ -140,11 +189,15 @@ echo "[prep] Lowering CPU LLVM IR"
 require_file "$CPU_GENERATED_LL"
 cp "$CPU_GENERATED_LL" "$CPU_EXAMPLE_LL"
 
-# Build required LLVM IR for CUDA benchmark.
-echo "[prep] Lowering CUDA LLVM IR"
-"$GPU_LOWER_SCRIPT" "$INPUT_MLIR"
-require_file "$GPU_GENERATED_LL"
-cp "$GPU_GENERATED_LL" "$GPU_EXAMPLE_LL"
+if [[ -n "$NVIDIA_GPU_MODEL" ]]; then
+  # Build required LLVM IR for CUDA benchmark.
+  echo "[prep] Lowering CUDA LLVM IR"
+  "$GPU_LOWER_SCRIPT" "$INPUT_MLIR"
+  require_file "$GPU_GENERATED_LL"
+  cp "$GPU_GENERATED_LL" "$GPU_EXAMPLE_LL"
+else
+  echo "[prep] Skipping CUDA LLVM IR generation: no NVIDIA GPU detected"
+fi
 
 # Build and run CPU single-thread benchmark.
 echo "[build] CPU single-threaded"
@@ -178,6 +231,28 @@ else
     echo "status: skipped (nvidia-smi not found or no NVIDIA GPU detected)"
   } >> "$TXT_OUT"
   append_csv_row "$(date -u +"%Y-%m-%dT%H:%M:%SZ")" "gpu_cuda" "cuda" "$CPU_MODEL" "N/A" "N/A"
+fi
+
+# Auto-detect ROCm runtime and run AMD benchmark if available.
+if [[ -n "$AMD_GPU_MODEL" ]]; then
+  echo "[build] GPU AMD (ROCm)"
+  ROCM_PATH="$ROCM_PATH" "$BUILD_GPU_AMD_SCRIPT"
+  require_file "$GPU_AMD_BIN"
+  run_and_capture "gpu_amd" "rocm" "$GPU_AMD_BIN" "$AMD_GPU_MODEL"
+else
+  echo "[skip] AMD benchmark skipped: ROCm not detected ($ROCM_PATH not found)"
+  {
+    echo ""
+    echo "================================================================"
+    echo "timestamp_utc: $(date -u +"%Y-%m-%dT%H:%M:%SZ")"
+    echo "benchmark: gpu_amd"
+    echo "backend: rocm"
+    echo "cpu_model: $CPU_MODEL"
+    echo "gpu_model: N/A"
+    echo "raw_output_file: N/A"
+    echo "status: skipped (ROCm path not found: $ROCM_PATH)"
+  } >> "$TXT_OUT"
+  append_csv_row "$(date -u +"%Y-%m-%dT%H:%M:%SZ")" "gpu_amd" "rocm" "$CPU_MODEL" "N/A" "N/A"
 fi
 
 echo ""

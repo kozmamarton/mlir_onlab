@@ -1,16 +1,16 @@
 pom2k_ext_add_ad_2d benchmark run
-generated_at_utc: 2026-05-25T13:54:13Z
-cpu_model: AMD EPYC 7F72 24-Core Processor
-gpu_model: NVIDIA A100-PCIE-40GB
+generated_at_utc: 2026-05-25T15:02:57Z
+cpu_model: AMD Ryzen 7 9700X 8-Core Processor
+gpu_model: AMD Radeon RX 7800 XT              
 
 
 ================================================================
-timestamp_utc: 2026-05-25T13:54:16Z
+timestamp_utc: 2026-05-25T15:02:58Z
 benchmark: cpu_single_threaded
 backend: cpu
-cpu_model: AMD EPYC 7F72 24-Core Processor
+cpu_model: AMD Ryzen 7 9700X 8-Core Processor
 gpu_model: N/A
-raw_output_file: /home/mkozma/mlir_onlab/examples/pom2k/pom2k_ext_add_ad_2d/results/raw/cpu_single_threaded_20260525T135416Z.log
+raw_output_file: /home/marton/uni/onlab/mlir-tutorial/examples/pom2k/pom2k_ext_add_ad_2d/results/raw/cpu_single_threaded_20260525T150258Z.log
 ----------------------------------------------------------------
 
 Input snapshots (first 10 values each) (of 288252484 total):
@@ -18,19 +18,19 @@ adx2d(before) [0..9]: 0.000000, 0.100000, 0.200000, 0.300000, 0.400000, 0.500000
 ady2d(before) [0..9]: -0.000000, -0.000000, -0.000000, -0.000000, -0.000000, -0.000000, -0.000000, -0.000000, -0.000000, -0.000000
 
 Number of function calls initiated: 100
-cpu call time:  total: 26275527 us (26275.527000 ms) average: 262755us (262.755000 ms)
+cpu call time:  total: 13482332 us (13482.332000 ms) average: 134823us (134.823000 ms)
 
 Output snapshots (same buffers after call, first 10 values each):
 adx2d(after) [0..9]: 0.000000, -0.899983, -1.799867, -2.699547, -3.598930, -4.497919, -5.396403, -6.294291, -7.191461, -8.087855
 ady2d(after) [0..9]: -100.000000, -99.994904, -99.980103, -99.954994, -99.919937, -99.874939, -99.819992, -99.755104, -99.680267, -99.595398
 
 ================================================================
-timestamp_utc: 2026-05-25T13:54:46Z
+timestamp_utc: 2026-05-25T15:03:15Z
 benchmark: cpu_multithreaded
 backend: cpu_openmp
-cpu_model: AMD EPYC 7F72 24-Core Processor
+cpu_model: AMD Ryzen 7 9700X 8-Core Processor
 gpu_model: N/A
-raw_output_file: /home/mkozma/mlir_onlab/examples/pom2k/pom2k_ext_add_ad_2d/results/raw/cpu_multithreaded_20260525T135446Z.log
+raw_output_file: /home/marton/uni/onlab/mlir-tutorial/examples/pom2k/pom2k_ext_add_ad_2d/results/raw/cpu_multithreaded_20260525T150315Z.log
 ----------------------------------------------------------------
 
 Input snapshots (first 10 values each) (of 288252484 total):
@@ -38,29 +38,37 @@ adx2d(before) [0..9]: 0.000000, 0.100000, 0.200000, 0.300000, 0.400000, 0.500000
 ady2d(before) [0..9]: -0.000000, -0.000000, -0.000000, -0.000000, -0.000000, -0.000000, -0.000000, -0.000000, -0.000000, -0.000000
 
 Number of function calls initiated: 100
-cpu call time - multithreaded: total: 21167594 us (21167.594000 ms) average: 211675us (211.675000 ms)
+cpu call time - multithreaded: total: 14399432 us (14399.432000 ms) average: 143994us (143.994000 ms)
 
 Output snapshots (same buffers after call, first 10 values each):
 adx2d(after) [0..9]: 0.000000, -0.899983, -1.799867, -2.699547, -3.598930, -4.497919, -5.396403, -6.294291, -7.191461, -8.087855
 ady2d(after) [0..9]: -100.000000, -99.994904, -99.980103, -99.954994, -99.919937, -99.874939, -99.819992, -99.755104, -99.680267, -99.595398
 
 ================================================================
-timestamp_utc: 2026-05-25T13:55:12Z
+timestamp_utc: 2026-05-25T15:03:33Z
 benchmark: gpu_cuda
 backend: cuda
-cpu_model: AMD EPYC 7F72 24-Core Processor
-gpu_model: NVIDIA A100-PCIE-40GB
-raw_output_file: /home/mkozma/mlir_onlab/examples/pom2k/pom2k_ext_add_ad_2d/results/raw/gpu_cuda_20260525T135512Z.log
+cpu_model: AMD Ryzen 7 9700X 8-Core Processor
+gpu_model: N/A
+raw_output_file: N/A
+status: skipped (nvidia-smi not found or no NVIDIA GPU detected)
+
+================================================================
+timestamp_utc: 2026-05-25T15:03:32Z
+benchmark: gpu_amd
+backend: rocm
+cpu_model: AMD Ryzen 7 9700X 8-Core Processor
+gpu_model: AMD Radeon RX 7800 XT              
+raw_output_file: /home/marton/uni/onlab/mlir-tutorial/examples/pom2k/pom2k_ext_add_ad_2d/results/raw/gpu_amd_20260525T150332Z.log
 ----------------------------------------------------------------
 
-pom2k benchmark: testing gpu kernel runtime
 Input snapshots (first 10 values each) (of 288252484 total):
 adx2d(before) [0..9]: 0.000000, 0.100000, 0.200000, 0.300000, 0.400000, 0.500000, 0.600000, 0.700000, 0.800000, 0.900000
 ady2d(before) [0..9]: -0.000000, -0.000000, -0.000000, -0.000000, -0.000000, -0.000000, -0.000000, -0.000000, -0.000000, -0.000000
 
 Number of function calls initiated: 100
-gpu kernel call time:  total: 3686939 us (3686.939000 ms) average: 36869us (36.869000 ms)
+gpu call time - amd: total: 4641312 us (4641.312000 ms) average: 46413 us (46.413000 ms)
 
-Output snapshots (same buffers after kernel call, first 10 values each):
+Output snapshots (same buffers after call, first 10 values each):
 adx2d(after) [0..9]: 0.000000, -0.899983, -1.799867, -2.699547, -3.598930, -4.497919, -5.396403, -6.294291, -7.191461, -8.087855
 ady2d(after) [0..9]: -100.000000, -99.994904, -99.980103, -99.954994, -99.919937, -99.874939, -99.819992, -99.755104, -99.680267, -99.595398
