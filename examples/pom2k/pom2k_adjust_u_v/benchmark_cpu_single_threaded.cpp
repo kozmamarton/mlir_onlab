@@ -96,7 +96,7 @@ static void print_first_10(const char* label, const float* values, size_t size)
 static const int rows = 4096*1;
 static const int cols = 4096*1;
 static const int levels = 20;
-static const int64_t numOfSamples = 10;
+static const int64_t numOfSamples = 100;
 
 int main(void)
 {
