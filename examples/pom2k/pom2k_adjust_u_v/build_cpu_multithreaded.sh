@@ -3,7 +3,7 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 EXAMPLE_LL="${EXAMPLE_LL:-$SCRIPT_DIR/ext_adjust_u_v_cpu.ll}"
-CXX="$SCRIPT_DIR/../../../externals/llvm-project/build/bin/clang++"
+CXX="clang++"
 OUT_BIN="${OUT_BIN:-$SCRIPT_DIR/bench_cpu_multithreaded.out}"
 OMP_LIB_DIR="$SCRIPT_DIR/../../../externals/llvm-project/build/runtimes/runtimes-bins/openmp/runtime/src"
 
