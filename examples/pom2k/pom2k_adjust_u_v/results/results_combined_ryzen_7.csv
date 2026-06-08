@@ -1,0 +1,4 @@
+timestamp,benchmark,backend,cpu_model,gpu_model,raw_output_file
+"2026-05-25T14:50:32Z","cpu_single_threaded","cpu","AMD Ryzen 7 9700X 8-Core Processor","N/A","/home/marton/uni/onlab/mlir-tutorial/examples/pom2k/pom2k_adjust_u_v/results/raw/cpu_single_threaded_20260525T145032Z.log"
+"2026-05-25T14:50:43Z","cpu_multithreaded","cpu_openmp","AMD Ryzen 7 9700X 8-Core Processor","N/A","/home/marton/uni/onlab/mlir-tutorial/examples/pom2k/pom2k_adjust_u_v/results/raw/cpu_multithreaded_20260525T145043Z.log"
+"2026-05-25T14:50:53Z","gpu_cuda","cuda","AMD Ryzen 7 9700X 8-Core Processor","N/A","N/A"

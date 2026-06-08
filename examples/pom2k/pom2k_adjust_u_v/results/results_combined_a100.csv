@@ -1,4 +1,0 @@
-timestamp,benchmark,backend,cpu_model,gpu_model,raw_output_file
-"2026-05-25T13:57:55Z","cpu_single_threaded","cpu","AMD EPYC 7F72 24-Core Processor","N/A","/home/mkozma/mlir_onlab/examples/pom2k/pom2k_adjust_u_v/results/raw/cpu_single_threaded_20260525T135755Z.log"
-"2026-05-25T13:58:13Z","cpu_multithreaded","cpu_openmp","AMD EPYC 7F72 24-Core Processor","N/A","/home/mkozma/mlir_onlab/examples/pom2k/pom2k_adjust_u_v/results/raw/cpu_multithreaded_20260525T135813Z.log"
-"2026-05-25T13:58:51Z","gpu_cuda","cuda","AMD EPYC 7F72 24-Core Processor","NVIDIA A100-PCIE-40GB","/home/mkozma/mlir_onlab/examples/pom2k/pom2k_adjust_u_v/results/raw/gpu_cuda_20260525T135851Z.log"
