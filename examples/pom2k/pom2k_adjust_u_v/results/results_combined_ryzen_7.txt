@@ -1,16 +1,16 @@
 pom2k_adjust_u_v benchmark run
-generated_at_utc: 2026-06-08T13:27:34Z
-cpu_model: AMD EPYC 7F72 24-Core Processor
-gpu_model: NVIDIA A100-PCIE-40GB
+generated_at_utc: 2026-05-25T14:50:31Z
+cpu_model: AMD Ryzen 7 9700X 8-Core Processor
+gpu_model: N/A
 
 
 ================================================================
-timestamp_utc: 2026-06-08T13:27:37Z
+timestamp_utc: 2026-05-25T14:50:32Z
 benchmark: cpu_single_threaded
 backend: cpu
-cpu_model: AMD EPYC 7F72 24-Core Processor
+cpu_model: AMD Ryzen 7 9700X 8-Core Processor
 gpu_model: N/A
-raw_output_file: /home/mkozma/mlir_onlab/examples/pom2k/pom2k_adjust_u_v/results/raw/cpu_single_threaded_20260608T132737Z.log
+raw_output_file: /home/marton/uni/onlab/mlir-tutorial/examples/pom2k/pom2k_adjust_u_v/results/raw/cpu_single_threaded_20260525T145032Z.log
 ----------------------------------------------------------------
 
 Input snapshots (first 10 values each) (of 16777216 total):
@@ -19,7 +19,7 @@ u(before) [0..9]: 0.000000, 0.001000, 0.002000, 0.003000, 0.004000, 0.005000, 0.
 v(before) [0..9]: 1.000000, 1.000000, 0.999998, 0.999996, 0.999992, 0.999987, 0.999982, 0.999976, 0.999968, 0.999960
 
 Number of function calls initiated: 10
-cpu call time: total: 8719925 us (8719.925 ms) average: 871992 us (871.992 ms)
+cpu call time: total: 3943705 us (3943.705 ms) average: 394370 us (394.370 ms)
 
 Output snapshots (same buffers after call, first 10 values each):
 tps(after) [0..9]: 12.009224, 12.009220, 11.989933, 11.953272, 11.953236, 11.907686, 11.861467, 11.842075, 11.842001, 11.726906
@@ -27,12 +27,12 @@ u(after) [0..9]: 0.000000, -34.981270, -34.950394, -34.791801, -34.752399, -35.0
 v(after) [0..9]: 1.000000, 1.000000, 0.999998, 0.999996, 0.999992, 0.999987, 0.999982, 0.999976, 0.999968, 0.999960
 
 ================================================================
-timestamp_utc: 2026-06-08T13:27:53Z
+timestamp_utc: 2026-05-25T14:50:43Z
 benchmark: cpu_multithreaded
 backend: cpu_openmp
-cpu_model: AMD EPYC 7F72 24-Core Processor
+cpu_model: AMD Ryzen 7 9700X 8-Core Processor
 gpu_model: N/A
-raw_output_file: /home/mkozma/mlir_onlab/examples/pom2k/pom2k_adjust_u_v/results/raw/cpu_multithreaded_20260608T132753Z.log
+raw_output_file: /home/marton/uni/onlab/mlir-tutorial/examples/pom2k/pom2k_adjust_u_v/results/raw/cpu_multithreaded_20260525T145043Z.log
 ----------------------------------------------------------------
 
 Input snapshots (first 10 values each) (of 16777216 total):
@@ -41,7 +41,7 @@ u(before) [0..9]: 0.000000, 0.001000, 0.002000, 0.003000, 0.004000, 0.005000, 0.
 v(before) [0..9]: 1.000000, 1.000000, 0.999998, 0.999996, 0.999992, 0.999987, 0.999982, 0.999976, 0.999968, 0.999960
 
 Number of function calls initiated: 10
-cpu call time - multithreaded: total: 13110929 us (13110.929000 ms) average: 1311092 us (1311.092000 ms)
+cpu call time - multithreaded: total: 4247173 us (4247.173000 ms) average: 424717 us (424.717000 ms)
 
 Output snapshots (same buffers after call, first 10 values each):
 tps(after) [0..9]: 12.009224, 12.009220, 11.989933, 11.953272, 11.953236, 11.907686, 11.861467, 11.842075, 11.842001, 11.726906
@@ -49,23 +49,10 @@ u(after) [0..9]: 0.000000, -34.981270, -34.950394, -34.791801, -34.752399, -35.0
 v(after) [0..9]: 1.000000, 1.000000, 0.999998, 0.999996, 0.999992, 0.999987, 0.999982, 0.999976, 0.999968, 0.999960
 
 ================================================================
-timestamp_utc: 2026-06-08T13:28:14Z
+timestamp_utc: 2026-05-25T14:50:53Z
 benchmark: gpu_cuda
 backend: cuda
-cpu_model: AMD EPYC 7F72 24-Core Processor
-gpu_model: NVIDIA A100-PCIE-40GB
-raw_output_file: /home/mkozma/mlir_onlab/examples/pom2k/pom2k_adjust_u_v/results/raw/gpu_cuda_20260608T132814Z.log
-----------------------------------------------------------------
-
-Input snapshots (first 10 values each) (of 16777216 total):
-tps(before) [0..9]: 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000
-u(before) [0..9]: 0.000000, 0.001000, 0.002000, 0.003000, 0.004000, 0.005000, 0.006000, 0.007000, 0.008000, 0.009000
-v(before) [0..9]: 1.000000, 1.000000, 0.999998, 0.999996, 0.999992, 0.999987, 0.999982, 0.999976, 0.999968, 0.999960
-
-Number of kernel calls initiated: 10
-gpu kernel call time (device memory, H2D+kernel+D2H): total: 1270166 us (1270.166000 ms) average: 127016 us (127.016000 ms)
-
-Output snapshots (same buffers after kernel call, first 10 values each):
-tps(after) [0..9]: 12.009224, 12.009220, 11.989933, 11.953272, 11.953236, 11.907686, 11.861467, 11.842075, 11.842001, 11.726906
-u(after) [0..9]: 0.000000, -34.981270, -34.950394, -34.791801, -34.752399, -35.013584, -34.906094, -34.877472, -34.839916, -34.449432
-v(after) [0..9]: 1.000000, 1.000000, 0.999998, 0.999996, 0.999992, 0.999987, 0.999982, 0.999976, 0.999968, 0.999960
+cpu_model: AMD Ryzen 7 9700X 8-Core Processor
+gpu_model: N/A
+raw_output_file: N/A
+status: skipped (nvidia-smi not found or no NVIDIA GPU detected)
