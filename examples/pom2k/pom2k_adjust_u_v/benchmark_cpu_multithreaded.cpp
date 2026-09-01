@@ -107,7 +107,7 @@ void print_first_10(const std::string& label, const float* values,
 constexpr int rows   = 4096*1;
 constexpr int cols   = 4096*1;
 constexpr int levels = 20;
-constexpr int64_t numOfSamples = 10;
+constexpr int64_t numOfSamples = 100;
 
 int main() {
     im[0]   = rows;
