@@ -59,8 +59,9 @@ __device__ std::size_t index_3d(int i, int j, int k, int im, int jm)
 	return index_2d(i, j, im) + static_cast<std::size_t>(k) * im * jm;
 }
 
-__global__ void reduce_u_kernel(float* tps, const float* u, const float* dz, int im, int jm,
-								int kbm1)
+__global__ void adjust_u_v_kernel(float* tps, float* u, float* v, const float* dz,
+								  const float* utb, const float* utf, const float* vtb,
+								  const float* vtf, const float* dt, int im, int jm, int kbm1)
 {
 	const int i = static_cast<int>(blockIdx.x * blockDim.x + threadIdx.x);
 	const int j = static_cast<int>(blockIdx.y * blockDim.y + threadIdx.y);
@@ -68,70 +69,32 @@ __global__ void reduce_u_kernel(float* tps, const float* u, const float* dz, int
 		return;
 	}
 
-	float sum = 0.0f;
+	float u_sum = 0.0f;
+	float v_sum = 0.0f;
 	for (int k = 0; k < kbm1; ++k) {
-		sum += u[index_3d(i, j, k, im, jm)] * dz[k];
-	}
-	tps[index_2d(i, j, im)] = sum;
-}
-
-__global__ void update_u_kernel(float* u, const float* tps, const float* utb, const float* utf,
-								const float* dt, int im, int jm, int kbm1)
-{
-	const int i = static_cast<int>(blockIdx.x * blockDim.x + threadIdx.x);
-	const int j = static_cast<int>(blockIdx.y * blockDim.y + threadIdx.y);
-	const int k = static_cast<int>(blockIdx.z * blockDim.z + threadIdx.z);
-	if (i == 0 || i >= im || j >= jm || k >= kbm1) {
-		return;
+		const std::size_t volume_index = index_3d(i, j, k, im, jm);
+		u_sum += u[volume_index] * dz[k];
+		v_sum += v[volume_index] * dz[k];
 	}
 
 	const std::size_t surface_index = index_2d(i, j, im);
-	const float correction = (utb[surface_index] + utf[surface_index]) /
-		(dt[surface_index] + dt[index_2d(i - 1, j, im)]);
-	const std::size_t volume_index = index_3d(i, j, k, im, jm);
-	u[volume_index] = u[volume_index] - tps[surface_index] + correction;
-}
-
-__global__ void clear_tps_kernel(float* tps, int im, int jm)
-{
-	const int i = static_cast<int>(blockIdx.x * blockDim.x + threadIdx.x);
-	const int j = static_cast<int>(blockIdx.y * blockDim.y + threadIdx.y);
-	if (i < im && j < jm) {
-		tps[index_2d(i, j, im)] = 0.0f;
+	if (i > 0) {
+		const float u_correction = (utb[surface_index] + utf[surface_index]) /
+			(dt[surface_index] + dt[index_2d(i - 1, j, im)]);
+		for (int k = 0; k < kbm1; ++k) {
+			const std::size_t volume_index = index_3d(i, j, k, im, jm);
+			u[volume_index] = (u[volume_index] - u_sum) + u_correction;
+		}
 	}
-}
-
-__global__ void reduce_v_kernel(float* tps, const float* v, const float* dz, int im, int jm,
-								int kbm1)
-{
-	const int i = static_cast<int>(blockIdx.x * blockDim.x + threadIdx.x);
-	const int j = static_cast<int>(blockIdx.y * blockDim.y + threadIdx.y);
-	if (i >= im || j >= jm) {
-		return;
+	if (j > 0) {
+		const float v_correction = (vtb[surface_index] + vtf[surface_index]) /
+			(dt[surface_index] + dt[index_2d(i, j - 1, im)]);
+		for (int k = 0; k < kbm1; ++k) {
+			const std::size_t volume_index = index_3d(i, j, k, im, jm);
+			v[volume_index] = (v[volume_index] - v_sum) + v_correction;
+		}
 	}
-
-	float sum = 0.0f;
-	for (int k = 0; k < kbm1; ++k) {
-		sum += v[index_3d(i, j, k, im, jm)] * dz[k];
-	}
-	tps[index_2d(i, j, im)] = sum;
-}
-
-__global__ void update_v_kernel(float* v, const float* tps, const float* vtb, const float* vtf,
-								const float* dt, int im, int jm, int kbm1)
-{
-	const int i = static_cast<int>(blockIdx.x * blockDim.x + threadIdx.x);
-	const int j = static_cast<int>(blockIdx.y * blockDim.y + threadIdx.y);
-	const int k = static_cast<int>(blockIdx.z * blockDim.z + threadIdx.z);
-	if (i >= im || j == 0 || j >= jm || k >= kbm1) {
-		return;
-	}
-
-	const std::size_t surface_index = index_2d(i, j, im);
-	const float correction = (vtb[surface_index] + vtf[surface_index]) /
-		(dt[surface_index] + dt[index_2d(i, j - 1, im)]);
-	const std::size_t volume_index = index_3d(i, j, k, im, jm);
-	v[volume_index] = v[volume_index] - tps[surface_index] + correction;
+	tps[surface_index] = v_sum;
 }
 
 } // namespace
@@ -147,21 +110,9 @@ extern "C" void ext_adjust_u_v_cuda(float* tps, float* u, float* v, const float*
 
 	const dim3 grid_2d{static_cast<unsigned int>((im + kThreadsPerBlock.x - 1) / kThreadsPerBlock.x),
 					  static_cast<unsigned int>((jm + kThreadsPerBlock.y - 1) / kThreadsPerBlock.y)};
-	const dim3 threads_3d{16, 4, 4};
-	const dim3 grid_3d{static_cast<unsigned int>((im + threads_3d.x - 1) / threads_3d.x),
-					  static_cast<unsigned int>((jm + threads_3d.y - 1) / threads_3d.y),
-					  static_cast<unsigned int>((kbm1 + threads_3d.z - 1) / threads_3d.z)};
-
-	reduce_u_kernel<<<grid_2d, kThreadsPerBlock, 0, stream>>>(tps, u, dz, im, jm, kbm1);
-	check_cuda(cudaGetLastError(), "reduce_u_kernel launch");
-	update_u_kernel<<<grid_3d, threads_3d, 0, stream>>>(u, tps, utb, utf, dt, im, jm, kbm1);
-	check_cuda(cudaGetLastError(), "update_u_kernel launch");
-	clear_tps_kernel<<<grid_2d, kThreadsPerBlock, 0, stream>>>(tps, im, jm);
-	check_cuda(cudaGetLastError(), "clear_tps_kernel launch");
-	reduce_v_kernel<<<grid_2d, kThreadsPerBlock, 0, stream>>>(tps, v, dz, im, jm, kbm1);
-	check_cuda(cudaGetLastError(), "reduce_v_kernel launch");
-	update_v_kernel<<<grid_3d, threads_3d, 0, stream>>>(v, tps, vtb, vtf, dt, im, jm, kbm1);
-	check_cuda(cudaGetLastError(), "update_v_kernel launch");
+	adjust_u_v_kernel<<<grid_2d, kThreadsPerBlock, 0, stream>>>(
+		tps, u, v, dz, utb, utf, vtb, vtf, dt, im, jm, kbm1);
+	check_cuda(cudaGetLastError(), "adjust_u_v_kernel launch");
 }
 
 int main()

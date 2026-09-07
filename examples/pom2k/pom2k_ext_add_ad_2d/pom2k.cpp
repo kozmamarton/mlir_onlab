@@ -89,7 +89,7 @@ int main()
     check_cuda(cudaMallocManaged(&adx2d, n * sizeof(float)), "cudaMallocManaged(adx2d)");
     check_cuda(cudaMallocManaged(&ady2d, n * sizeof(float)), "cudaMallocManaged(ady2d)");
     check_cuda(cudaMallocManaged(&advua, n * sizeof(float)), "cudaMallocManaged(advua)");
-    check_cuda(cudaMallocManaged(&advva, n * sizeof(float)), "cudaMallocManaged(advva)");
+    check_cuda(cudaMallocManaged(&advva, n * sizeof(float)), "cudaMallocManaged(advva)");//TODO: replace with malloc
     for (std::size_t idx = 0; idx < n; ++idx)
     {
         const float x = static_cast<float>(idx % cols);
