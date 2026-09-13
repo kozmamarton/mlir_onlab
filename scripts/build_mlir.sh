@@ -28,7 +28,7 @@ cmake -G Ninja -S "$PROJECT_ROOT" -B "$BUILD_DIR" \
   -DMLIR_DIR=$PROJECT_ROOT/externals/llvm-project/build/lib/cmake/mlir \
   -DLLVM_DIR=$PROJECT_ROOT/externals/llvm-project/build/lib/cmake/llvm \
   -DLLVM_BUILD_EXAMPLES=ON \
-  -DLLVM_TARGETS_TO_BUILD="Native;NVPTX;AMDGPU" \
+  -DLLVM_TARGETS_TO_BUILD="Native;NVPTX" \
   -DCMAKE_BUILD_TYPE=Debug \
   -DLLVM_ENABLE_ASSERTIONS=ON \
   -DCMAKE_C_COMPILER=clang \

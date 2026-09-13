@@ -1,5 +1,6 @@
 #include "Transform/Affine/ReinterpretFlatArrayAccess.h"
 
+#include "llvm/ADT/DenseMap.h"
 #include "mlir/Dialect/Affine/IR/AffineOps.h"
 #include "mlir/Dialect/Arith/IR/Arith.h"
 #include "mlir/Dialect/MemRef/IR/MemRef.h"
@@ -35,6 +36,15 @@ struct ParsedTerm {
   unsigned dimPos;
   int64_t offset;
   SmallVector<unsigned> symbols;
+};
+
+struct CachedView {
+  Operation *insertionAnchor;
+  unsigned rank;
+  Value iSize;
+  Value jSize;
+  Value kSize;
+  Value view;
 };
 
 static bool isAdd(AffineExpr expr) { return expr.getKind() == AffineExprKind::Add; }
@@ -425,6 +435,35 @@ static Value createViewForAccess(OpBuilder &builder, Location loc, Value base,
   return cast.getResult();
 }
 
+// Returns the loop before which a view for `info` can be materialized.
+//
+// @param op Access rewritten by the pass.
+// @param info Parsed access metadata.
+// @return The loop carrying the outermost reinterpreted dimension: `j` for a
+// rank-2 access and `k` for a rank-3 access. Returns a null operation when the
+// corresponding induction variable has no enclosing affine loop.
+static affine::AffineForOp getViewInsertionLoop(Operation *op,
+                                                const FlatAccessInfo &info) {
+  return findParentForByIV(op, info.rank == 2 ? info.j : info.k);
+}
+
+// Checks whether a cached view has the same source layout and loop scope.
+//
+// @param cached Cached reinterpret-cast view.
+// @param insertionAnchor Loop before which a new view would be created.
+// @param info Parsed access metadata for the candidate view.
+// @return `true` when `cached` can represent `info` at `insertionAnchor`.
+// For rank two, `kSize` is ignored; for rank three, all three sizes must
+// match.
+static bool matchesCachedView(const CachedView &cached,
+                              Operation *insertionAnchor,
+                              const FlatAccessInfo &info) {
+  return cached.insertionAnchor == insertionAnchor &&
+         cached.rank == info.rank && cached.iSize == info.iSize &&
+         cached.jSize == info.jSize &&
+         (info.rank == 2 || cached.kSize == info.kSize);
+}
+
 struct ReinterpretFlatArrayAccess
     : impl::ReinterpretFlatArrayAccessBase<ReinterpretFlatArrayAccess> {
   using ReinterpretFlatArrayAccessBase::ReinterpretFlatArrayAccessBase;
@@ -451,6 +490,7 @@ struct ReinterpretFlatArrayAccess
     });
 
     bool changed = false;
+    DenseMap<Value, SmallVector<CachedView>> viewCache;
 
     for (Operation *op : accesses) {
       if (!op || op->getBlock() == nullptr)
@@ -481,9 +521,28 @@ struct ReinterpretFlatArrayAccess
       if (!parseFlatAccess(map, mapOperands, op, builder, info))
         continue;
 
-      Value view = createViewForAccess(builder, op->getLoc(), memref, info);
-      if (!view)
+      auto insertionLoop = getViewInsertionLoop(op, info);
+      if (!insertionLoop)
         continue;
+      Operation *insertionAnchor = insertionLoop.getOperation();
+
+      Value view;
+      SmallVector<CachedView> &cachedViews = viewCache[memref];
+      for (const CachedView &cached : cachedViews) {
+        if (matchesCachedView(cached, insertionAnchor, info)) {
+          view = cached.view;
+          break;
+        }
+      }
+
+      if (!view) {
+        OpBuilder viewBuilder(insertionAnchor);
+        view = createViewForAccess(viewBuilder, op->getLoc(), memref, info);
+        if (!view)
+          continue;
+        cachedViews.push_back({insertionAnchor, info.rank, info.iSize,
+                               info.jSize, info.kSize, view});
+      }
 
       Value i = createIndexWithOffset(builder, op->getLoc(), info.i, info.iOffset);
       Value j = createIndexWithOffset(builder, op->getLoc(), info.j, info.jOffset);
