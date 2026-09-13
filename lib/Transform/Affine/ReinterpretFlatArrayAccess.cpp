@@ -40,6 +40,15 @@ struct ParsedTerm {
 static bool isAdd(AffineExpr expr) { return expr.getKind() == AffineExprKind::Add; }
 static bool isMul(AffineExpr expr) { return expr.getKind() == AffineExprKind::Mul; }
 
+// Matches an affine dimension, optionally shifted by an integer constant.
+//
+// @param expr Expression to inspect.
+// @param[out] dimPos Position of the matched dimension in the affine map.
+// @param[out] offset Constant added to the dimension; zero when no constant
+// is present.
+// @return `true` for `d` and `d + c`/`c + d`; `false` for every other
+// expression, including expressions containing more than one dimension or a
+// non-constant addend.
 static bool matchDimPlusConst(AffineExpr expr, unsigned &dimPos, int64_t &offset) {
   if (auto d = llvm::dyn_cast<AffineDimExpr>(expr)) {
     dimPos = d.getPosition();
@@ -73,6 +82,21 @@ static bool matchDimPlusConst(AffineExpr expr, unsigned &dimPos, int64_t &offset
   return false;
 }
 
+// Parses one multiplicative factor of a flat-array affine access.
+//
+// The accepted product contains at most one dimension-plus-constant factor,
+// any number of symbol factors, and literal factors equal to one. The output
+// accumulates into the supplied arguments, which allows this function to
+// recurse through nested multiplication expressions.
+//
+// @param expr Expression or product to parse.
+// @param[out] dimPos Optional dimension position; set on the first
+// dimension factor and unchanged thereafter.
+// @param[out] offset Offset belonging to the dimension factor.
+// @param[out] symbols Positions of symbol factors in encounter order.
+// @return `true` when the complete expression is composed of supported
+// factors. Returns `false` for a second dimension factor, a non-unit
+// constant, or any unsupported affine operation.
 static bool parseProduct(AffineExpr expr, std::optional<unsigned> &dimPos,
                          int64_t &offset, SmallVectorImpl<unsigned> &symbols) {
   unsigned localDimPos = 0;
@@ -102,6 +126,15 @@ static bool parseProduct(AffineExpr expr, std::optional<unsigned> &dimPos,
          parseProduct(mul.getRHS(), dimPos, offset, symbols);
 }
 
+// Converts one additive term into its structured representation.
+//
+// @param expr Additive term expected to contain one dimension factor and
+// zero or more symbol factors.
+// @param[out] term Parsed dimension position, dimension offset, and symbol
+// positions.
+// @return `true` when `expr` contains exactly one dimension factor and
+// only factors accepted by parseProduct; `false` when the dimension is
+// missing or the term contains an unsupported factor.
 static bool parseTerm(AffineExpr expr, ParsedTerm &term) {
   std::optional<unsigned> dimPos;
   int64_t offset = 0;
@@ -116,6 +149,13 @@ static bool parseTerm(AffineExpr expr, ParsedTerm &term) {
   return true;
 }
 
+// Flattens a tree of additions into its non-additive leaf terms.
+//
+// @param expr Expression whose additions should be recursively flattened.
+// @param[out] terms Destination receiving leaves from left to right.
+// @return Nothing. An expression with no addition contributes itself as
+// one term, and an empty input vector remains unchanged only if no leaf is
+// reached (which cannot occur for a valid AffineExpr).
 static void collectAddTerms(AffineExpr expr, SmallVectorImpl<AffineExpr> &terms) {
   if (isAdd(expr)) {
     auto add = llvm::cast<AffineBinaryOpExpr>(expr);
@@ -126,6 +166,13 @@ static void collectAddTerms(AffineExpr expr, SmallVectorImpl<AffineExpr> &terms)
   terms.push_back(expr);
 }
 
+// Finds the nearest enclosing affine loop whose induction variable is `iv`.
+//
+// @param op Operation from which the parent chain is searched. The
+// operation itself is not tested.
+// @param iv Induction variable to match.
+// @return The nearest matching `affine.for`, or a null operation when no
+// enclosing loop uses `iv` as its induction variable.
 static affine::AffineForOp findParentForByIV(Operation *op, Value iv) {
   Operation *cursor = op->getParentOp();
   while (cursor) {
@@ -138,6 +185,20 @@ static affine::AffineForOp findParentForByIV(Operation *op, Value iv) {
   return {};
 }
 
+// Materializes a simple affine loop bound as an index value.
+//
+// Constant bounds become new `arith.constant` operations. A one-result bound
+// that is directly a dimension or symbol returns the corresponding bound
+// operand. Compound maps and maps with no result are unsupported.
+//
+// @param builder Builder used for materializing constant bounds.
+// @param loc Location for any operation created by this helper.
+// @param forOp Loop whose bound is requested.
+// @param upperBound Select the upper bound when `true`, otherwise the lower
+// bound.
+// @return An index `Value` for a supported bound, or a null `Value` when
+// `forOp` is null, the map has anything other than one result, or its result
+// cannot be mapped directly to an operand or constant.
 static Value getSimpleBoundAsValue(OpBuilder &builder, Location loc,
                                    affine::AffineForOp forOp,
                                    bool upperBound) {
@@ -175,6 +236,14 @@ static Value getSimpleBoundAsValue(OpBuilder &builder, Location loc,
   return {};
 }
 
+// Adds an integer offset to an index, preserving the original value at zero.
+//
+// @param builder Builder used to create a non-zero offset operation.
+// @param loc Location for the generated `affine.apply`.
+// @param base Base index value.
+// @param offset Integer offset to add to `base`.
+// @return `base` unchanged when `offset` is zero; otherwise the result of
+// a one-dimensional `affine.apply` computing `base + offset`.
 static Value createIndexWithOffset(OpBuilder &builder, Location loc, Value base,
                                    int64_t offset) {
   if (offset == 0)
@@ -187,6 +256,26 @@ static Value createIndexWithOffset(OpBuilder &builder, Location loc, Value base,
       .getResult();
 }
 
+    // Recognizes a supported flat-array access and fills its multidimensional
+    // interpretation.
+    //
+    // The map must have one result that is a sum of one plain term, one term with
+    // one symbol, and optionally one term with two symbols. These terms describe
+    // the innermost `i` dimension, the `j` dimension, and optionally the `k`
+    // dimension. For rank two, the enclosing `j` loop's upper bound supplies the
+    // outer size. For rank three, the enclosing `k` loop's upper bound supplies
+    // the outer size and the second symbol supplies the `j` size.
+    //
+    // @param map Affine access map to parse.
+    // @param mapOperands Values bound to the map dimensions and symbols.
+    // @param at Operation being rewritten, used to find enclosing loops and its
+    // location.
+    // @param builder Builder used to materialize bound values.
+    // @param[out] info Parsed indices, offsets, sizes, and inferred rank.
+    // @return `true` and initializes `info` for a supported rank-2 or rank-3
+    // access. Returns `false` for multiple map results, unsupported terms,
+    // duplicate term categories, missing operands, mismatched symbols, or a
+    // missing/non-simple enclosing loop bound.
 static bool parseFlatAccess(AffineMap map, ValueRange mapOperands, Operation *at,
                             OpBuilder &builder, FlatAccessInfo &info) {
   if (map.getNumResults() != 1)
@@ -269,6 +358,19 @@ static bool parseFlatAccess(AffineMap map, ValueRange mapOperands, Operation *at
   return true;
 }
 
+// Builds the strided memref type used for a multidimensional reinterpretation.
+//
+// The shape is dynamic in every dimension. Rank two uses strides
+// `[dynamic, 1]`; rank three uses `[dynamic, dynamic, 1]`. The element type
+// and memory space are preserved from the one-dimensional source type.
+//
+// @param ctx Context in which the layout and type are created.
+// @param srcType Source one-dimensional memref type.
+// @param rank Target rank, expected to be two or three for callers in this
+// pass.
+// @return A strided memref type with zero offset and dynamic shape/outer
+// strides. This helper does not validate `rank`; other ranks produce a shape
+// of that rank but use the rank-three stride fallback.
 static MemRefType buildReinterpretedType(MLIRContext *ctx, MemRefType srcType,
                                          unsigned rank) {
   SmallVector<int64_t> shape(rank, ShapedType::kDynamic);
@@ -283,6 +385,20 @@ static MemRefType buildReinterpretedType(MLIRContext *ctx, MemRefType srcType,
                          srcType.getMemorySpace());
 }
 
+// Creates a `memref.reinterpret_cast` view for a parsed flat access.
+//
+// Rank two creates a `[j, i]` view with strides `[iSize, 1]`. Rank three
+// creates a `[k, j, i]` view with strides `[iSize * jSize, iSize, 1]`.
+// The source offset is always zero; sizes and strides are taken from `info`.
+//
+// @param builder Builder used to create the view and any rank-three stride
+// multiplication.
+// @param loc Location for generated operations.
+// @param base Flat memref to reinterpret.
+// @param info Parsed access metadata, including rank and dimension sizes.
+// @return The result of a `memref.reinterpret_cast`, or a null `Value` if
+// `base` is not a `MemRefType`. The helper assumes `info` contains the
+// required values for its rank.
 static Value createViewForAccess(OpBuilder &builder, Location loc, Value base,
                                  const FlatAccessInfo &info) {
   auto srcType = llvm::dyn_cast<MemRefType>(base.getType());
@@ -313,6 +429,18 @@ struct ReinterpretFlatArrayAccess
     : impl::ReinterpretFlatArrayAccessBase<ReinterpretFlatArrayAccess> {
   using ReinterpretFlatArrayAccessBase::ReinterpretFlatArrayAccessBase;
 
+  // Rewrites supported one-dimensional affine loads and stores in place.
+  //
+  // Each supported access is replaced by a zero-offset
+  // `memref.reinterpret_cast` view followed by a conventional rank-two or
+  // rank-three affine load/store. The original dimension offsets are retained
+  // through `affine.apply` operations when non-zero. Unsupported accesses are
+  // left unchanged, including non-memref values, memrefs with rank other than
+  // one, maps that do not match the supported flat-access form, and accesses
+  // whose required loop bounds cannot be materialized.
+  //
+  // @return Nothing. The pass mutates the operation tree directly; the
+  // local change flag is intentionally not exposed as a pass result.
   void runOnOperation() override {
     Operation *root = getOperation();
     SmallVector<Operation *> accesses;
