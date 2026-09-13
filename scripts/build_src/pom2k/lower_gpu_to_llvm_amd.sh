@@ -50,6 +50,9 @@ PROJECT_ROOT="$(cd "$SCRIPT_DIR/../../.." && pwd)"
 LLVM_ROOT_DIR="$PROJECT_ROOT/externals/llvm-project"
 MLIR_OPT="$LLVM_ROOT_DIR/build/bin/mlir-opt"
 MLIR_TRANSLATE="$LLVM_ROOT_DIR/build/bin/mlir-translate"
+LOOP_FUSION_SCRIPT="$SCRIPT_DIR/apply_loop_fusion_pom2k.sh"
+GENERATED_INPUT_DIR="$PROJECT_ROOT/src/pom2k_generated_affine_loops/mlir"
+FUSED_INPUT_DIR="$PROJECT_ROOT/src/loop_fusion/pom2k"
 OUTPUT_DIR_LL="$PROJECT_ROOT/artifacts/llvm/pom2k/amd"
 OUTPUT_DIR_MLIR="$PROJECT_ROOT/artifacts/mlir/pom2k/amd"
 mkdir -p "$OUTPUT_DIR_LL"
@@ -107,16 +110,25 @@ join_by() {
 PIPELINE="builtin.module($(join_by ',' "${PIPELINE_PASSES[@]}"))"
 
 for INPUT_FILE in "${INPUT_FILES[@]}"; do
-	INPUT_DIR="$(dirname "$INPUT_FILE")"
 	INPUT_BASE="$(basename "$INPUT_FILE" .mlir)"
+	GENERATED_INPUT_FILE="$GENERATED_INPUT_DIR/${INPUT_BASE}.mlir"
+	FUSED_INPUT_FILE="$FUSED_INPUT_DIR/${INPUT_BASE}.mlir"
 	ROCDL_FILE="$OUTPUT_DIR_MLIR/${INPUT_BASE}-rocdl.mlir"
 	LLVM_FILE="$OUTPUT_DIR_LL/${INPUT_BASE}_gpu_amd.ll"
 
-  echo "$MLIR_OPT $INPUT_FILE \
+	if [[ ! -f "$GENERATED_INPUT_FILE" ]]; then
+		echo "Error: generated MLIR input not found for selected target: $GENERATED_INPUT_FILE" >&2
+		exit 1
+	fi
+
+	echo "Applying loop fusion to $INPUT_BASE"
+	"$LOOP_FUSION_SCRIPT" --file "${INPUT_BASE}.mlir"
+
+	echo "$MLIR_OPT $FUSED_INPUT_FILE \
 		${MLIR_OPT_FLAGS[*]} \
 		--pass-pipeline=$PIPELINE \
 		-o $ROCDL_FILE"
-	"$MLIR_OPT" "$INPUT_FILE" \
+	"$MLIR_OPT" "$FUSED_INPUT_FILE" \
 		"${MLIR_OPT_FLAGS[@]}" \
 		--pass-pipeline="$PIPELINE" \
 		-o "$ROCDL_FILE"

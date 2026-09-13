@@ -4,8 +4,8 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/../../.." && pwd)"
 
-INPUT_MLIR="${INPUT_MLIR:-$PROJECT_ROOT/src/loop_fusion/pom2k/ext_add_ad_2d_.mlir}"
-LOWER_SCRIPT="${LOWER_SCRIPT:-$PROJECT_ROOT/scripts/build_src/pom2k/lower_gpu_to_llvm.sh}"
+INPUT_MLIR="${INPUT_MLIR:-$PROJECT_ROOT/src/pom2k_generated_affine_loops/mlir/ext_add_ad_2d_.mlir}"
+COMBINED_SCRIPT="${COMBINED_SCRIPT:-${LOWER_SCRIPT:-$PROJECT_ROOT/scripts/build_src/pom2k/lower_gpu_to_llvm.sh}}"
 GENERATED_LL="${GENERATED_LL:-$PROJECT_ROOT/artifacts/llvm/pom2k/ext_add_ad_2d_.ll}"
 EXAMPLE_LL="${EXAMPLE_LL:-$SCRIPT_DIR/ext_add_ad_2d_.ll}"
 
@@ -15,7 +15,7 @@ BUILD_DIR="${BUILD_DIR:-$PROJECT_ROOT/externals/llvm-project/build}"
 OUT_BIN="${OUT_BIN:-$SCRIPT_DIR/bench_gpu_nvcc.out}"
 
 echo "[1/3] Lowering to NVVM/LLVM with sm_80"
-"$LOWER_SCRIPT" "$INPUT_MLIR"
+"$COMBINED_SCRIPT" "$INPUT_MLIR"
 
 if [[ -f "$GENERATED_LL" ]]; then
   cp "$GENERATED_LL" "$EXAMPLE_LL"
