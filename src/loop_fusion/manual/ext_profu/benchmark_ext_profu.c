@@ -16,204 +16,169 @@ static void ext_profu_original(real_t *h, real_t *etf, real_t *c, real_t *km,
                                real_t *vb, real_t *dum, real_t *wubot,
                                real_t *dhloc)
 {
- for (int j = 0; j < jm; j++)
+  for (int j = 0; j < jm; j++)
+  {
+    for (int i = 0; i < im; i++)
     {
-        for (int i = 0; i < im; i++)
-        {
-            dhloc[ACC2(i, j)] = 1.0f;
-        }
+      dhloc[ACC2(i, j)] = 1.0f;
     }
-    /*
+  }
+  for (int j = 1; j < jm; j++)
+  {
+    for (int i = 1; i < im; i++)
+    {
+      dhloc[ACC2(i, j)] =
+          (h[ACC2(i, j)] + etf[ACC2(i, j)] + h[ACC2(i - 1, j)] + etf[ACC2(i - 1, j)]) * 0.5f;
+    }
+  }
+  /*
+        do k=1,kb
           do j=2,jm
             do i=2,im
-              dhloc(i,j)=(h(i,j)+etf(i,j)+h(i-1,j)+etf(i-1,j))*.5e0
+              c(i,j,k)=(km(i,j,k)+km(i-1,j,k))*.5e0
             end do
           end do
-    */
+        end do
+  */
+  for (int k = 0; k < kb; k++)
+  {
     for (int j = 1; j < jm; j++)
     {
-        for (int i = 1; i < im; i++)
-        {
-            dhloc[ACC2(i, j)] =
-                (h[ACC2(i, j)] + etf[ACC2(i, j)] + h[ACC2(i - 1, j)] + etf[ACC2(i - 1, j)]) * 0.5f;
-        }
+      for (int i = 1; i < im; i++)
+      {
+        c[ACC3(i, j, k)] = (km[ACC3(i, j, k)] + km[ACC3(i - 1, j, k)]) * 0.5f;
+      }
     }
-    /*
-          do k=1,kb
-            do j=2,jm
-              do i=2,im
-                c(i,j,k)=(km(i,j,k)+km(i-1,j,k))*.5e0
-              end do
-            end do
-          end do
-    */
-    for (int k = 0; k < kb; k++)
-    {
-        for (int j = 1; j < jm; j++)
-        {
-            for (int i = 1; i < im; i++)
-            {
-                c[ACC3(i, j, k)] = (km[ACC3(i, j, k)] + km[ACC3(i - 1, j, k)]) * 0.5f;
-            }
-        }
-    }
-    /*
-          do k=2,kbm1
-            do j=1,jm
-              do i=1,im
-                a(i,j,k-1)=-dti2*(c(i,j,k)+umol)
-         $                  /(dz(k-1)*dzz(k-1)*dhloc(i,j)*dhloc(i,j))
-                c(i,j,k)=-dti2*(c(i,j,k)+umol)
-         $                /(dz(k)*dzz(k-1)*dhloc(i,j)*dhloc(i,j))
-              end do
-            end do
-          end do
-    */
-    for (int k = 0; k < kbm2; k++)
-    {
-        for (int j = 0; j < jm; j++)
-        {
-            for (int i = 0; i < im; i++)
-            {
-                a[ACC3(i, j, k)] = -(dti2) * (c[ACC3(i, j, k + 1)] + umol) /
-                                   (dz[k] * dzz[k] * dhloc[ACC2(i, j)] * dhloc[ACC2(i, j)]);
-            }
-        }
-    }
-
-    for (int k = 1; k < kbm1; k++)
-    {
-        for (int j = 0; j < jm; j++)
-        {
-            for (int i = 0; i < im; i++)
-            {
-                c[ACC3(i, j, k)] = -(dti2) * (c[ACC3(i, j, k)] + umol) /
-                                   (dz[k] * dzz[k - 1] * dhloc[ACC2(i, j)] * dhloc[ACC2(i, j)]);
-            }
-        }
-    }
-    /*
+  }
+  /*
+        do k=2,kbm1
           do j=1,jm
             do i=1,im
-              ee(i,j,1)=a(i,j,1)/(a(i,j,1)-1.e0)
-              gg(i,j,1)=(-dti2*wusurf(i,j)/(-dz(1)*dhloc(i,j))
-         $               -uf(i,j,1))
-         $               /(a(i,j,1)-1.e0)
+              a(i,j,k-1)=-dti2*(c(i,j,k)+umol)
+       $                  /(dz(k-1)*dzz(k-1)*dhloc(i,j)*dhloc(i,j))
+              c(i,j,k)=-dti2*(c(i,j,k)+umol)
+       $                /(dz(k)*dzz(k-1)*dhloc(i,j)*dhloc(i,j))
             end do
           end do
-    */
+        end do
+  */
+  for (int k = 0; k < kbm2; k++)
+  {
     for (int j = 0; j < jm; j++)
     {
-        for (int i = 0; i < im; i++)
-        {
-            ee[ACC3(i, j, 0)] = a[ACC3(i, j, 0)] / (a[ACC3(i, j, 0)] - 1.0f);
-            gg[ACC3(i, j, 0)] =
-                (-(dti2)*wusurf[ACC2(i, j)] / (-dz[0] * dhloc[ACC2(i, j)]) - uf[ACC3(i, j, 0)]) /
-                (a[ACC3(i, j, 0)] - 1.0f);
-        }
+      for (int i = 0; i < im; i++)
+      {
+        a[ACC3(i, j, k)] = -(dti2) * (c[ACC3(i, j, k + 1)] + umol) /
+                           (dz[k] * dzz[k] * dhloc[ACC2(i, j)] * dhloc[ACC2(i, j)]);
+      }
     }
-    /*
-          do k=2,kbm2
-            do j=1,jm
-              do i=1,im
-                gg(i,j,k)=1.e0/(a(i,j,k)+c(i,j,k)*(1.e0-ee(i,j,k-1))-1.e0)
-                ee(i,j,k)=a(i,j,k)*gg(i,j,k)
-                gg(i,j,k)=(c(i,j,k)*gg(i,j,k-1)-uf(i,j,k))*gg(i,j,k)
-              end do
-            end do
-          end do
-    */
-    for (int k = 1; k < kbm2; k++)
-    {
-        for (int j = 0; j < jm; j++)
-        {
-            for (int i = 0; i < im; i++)
-            {
-                gg[ACC3(i, j, k)] =
-                    1.0f /
-                    (a[ACC3(i, j, k)] + c[ACC3(i, j, k)] * (1.0f - ee[ACC3(i, j, k - 1)]) - 1.0f);
-                ee[ACC3(i, j, k)] = a[ACC3(i, j, k)] * gg[ACC3(i, j, k)];
-                gg[ACC3(i, j, k)] = (c[ACC3(i, j, k)] * gg[ACC3(i, j, k - 1)] - uf[ACC3(i, j, k)]) *
-                                    gg[ACC3(i, j, k)];
-            }
-        }
-    }
-    /*
-          do j=2,jmm1
-            do i=2,imm1
-              tps(i,j)=0.5e0*(cbc(i,j)+cbc(i-1,j))
-         $              *sqrt(ub(i,j,kbm1)**2
-         $                +(.25e0*(vb(i,j,kbm1)+vb(i,j+1,kbm1)
-         $                         +vb(i-1,j,kbm1)+vb(i-1,j+1,kbm1)))**2)
-              uf(i,j,kbm1)=(c(i,j,kbm1)*gg(i,j,kbm2)-uf(i,j,kbm1))
-         $                  /(tps(i,j)*dti2/(-dz(kbm1)*dhloc(i,j))-1.e0
-         $                    -(ee(i,j,kbm2)-1.e0)*c(i,j,kbm1))
-              uf(i,j,kbm1)=uf(i,j,kbm1)*dum(i,j)
-            end do
-          end do
-    */
-    // kbm1 -> kbm1-1
-    for (int j = 1; j < jmm1; j++)
-    {
-        for (int i = 1; i < imm1; i++)
-        {
-            tps[ACC2(i, j)] =
-                0.5f * (cbc[ACC2(i, j)] + cbc[ACC2(i - 1, j)]) *
-                sqrtf(ub[ACC3(i, j, kbm2)] * ub[ACC3(i, j, kbm2)] +
-                      (0.25f * (vb[ACC3(i, j, kbm2)] + vb[ACC3(i, j + 1, kbm2)] +
-                                vb[ACC3(i - 1, j, kbm2)] + vb[ACC3(i - 1, j + 1, kbm2)])) *
-                          (0.25f * (vb[ACC3(i, j, kbm2)] + vb[ACC3(i, j + 1, kbm2)] +
-                                    vb[ACC3(i - 1, j, kbm2)] + vb[ACC3(i - 1, j + 1, kbm2)])));
-            uf[ACC3(i, j, kbm2)] =
-                (c[ACC3(i, j, kbm2)] * gg[ACC3(i, j, kbm2 - 1)] - uf[ACC3(i, j, kbm2)]) /
-                (tps[ACC2(i, j)] * (dti2) / (-dz[kbm2] * dhloc[ACC2(i, j)]) - 1.0f -
-                 (ee[ACC3(i, j, kbm2 - 1)] - 1.0f) * c[ACC3(i, j, kbm2)]);
-            uf[ACC3(i, j, kbm2)] = uf[ACC3(i, j, kbm2)] * dum[ACC2(i, j)];
-        }
-    }
-    /*
+  }
 
-          do k=2,kbm1
-            ki=kb-k
-            do j=2,jmm1
-              do i=2,imm1
-                uf(i,j,ki)=(ee(i,j,ki)*uf(i,j,ki+1)+gg(i,j,ki))*dum(i,j)
-              end do
-            end do
-          end do
-    */
-    // ki -> ki-1
-    for (int k = kb - 3; k >= 0; k--)
+  for (int k = 1; k < kbm1; k++)
+  {
+    for (int j = 0; j < jm; j++)
     {
-        for (int j = 1; j < jmm1; j++)
-        {
-            for (int i = 1; i < imm1; i++)
-            {
-                uf[ACC3(i, j, k)] =
-                    (ee[ACC3(i, j, k)] * uf[ACC3(i, j, k + 1)] + gg[ACC3(i, j, k)]) *
-                    dum[ACC2(i, j)];
-            }
-        }
+      for (int i = 0; i < im; i++)
+      {
+        c[ACC3(i, j, k)] = -(dti2) * (c[ACC3(i, j, k)] + umol) /
+                           (dz[k] * dzz[k - 1] * dhloc[ACC2(i, j)] * dhloc[ACC2(i, j)]);
+      }
     }
-    /*
+  }
+  /*
+        do j=1,jm
+          do i=1,im
+            ee(i,j,1)=a(i,j,1)/(a(i,j,1)-1.e0)
+            gg(i,j,1)=(-dti2*wusurf(i,j)/(-dz(1)*dhloc(i,j))
+       $               -uf(i,j,1))
+       $               /(a(i,j,1)-1.e0)
+          end do
+        end do
+  */
+  for (int j = 0; j < jm; j++)
+  {
+    for (int i = 0; i < im; i++)
+    {
+      ee[ACC3(i, j, 0)] = a[ACC3(i, j, 0)] / (a[ACC3(i, j, 0)] - 1.0f);
+      gg[ACC3(i, j, 0)] =
+          (-(dti2)*wusurf[ACC2(i, j)] / (-dz[0] * dhloc[ACC2(i, j)]) - uf[ACC3(i, j, 0)]) /
+          (a[ACC3(i, j, 0)] - 1.0f);
+    }
+  }
+  
+  for (int k = 1; k < kbm2; k++)
+  {
+    for (int j = 0; j < jm; j++)
+    {
+      for (int i = 0; i < im; i++)
+      {
+        gg[ACC3(i, j, k)] =
+            1.0f /
+            (a[ACC3(i, j, k)] + c[ACC3(i, j, k)] * (1.0f - ee[ACC3(i, j, k - 1)]) - 1.0f);
+        ee[ACC3(i, j, k)] = a[ACC3(i, j, k)] * gg[ACC3(i, j, k)];
+        gg[ACC3(i, j, k)] = (c[ACC3(i, j, k)] * gg[ACC3(i, j, k - 1)] - uf[ACC3(i, j, k)]) *
+                            gg[ACC3(i, j, k)];
+      }
+    }
+  }
+  for (int j = 1; j < jmm1; j++)
+  {
+    for (int i = 1; i < imm1; i++)
+    {
+      tps[ACC2(i, j)] =
+          0.5f * (cbc[ACC2(i, j)] + cbc[ACC2(i - 1, j)]) *
+          sqrtf(ub[ACC3(i, j, kbm2)] * ub[ACC3(i, j, kbm2)] +
+                (0.25f * (vb[ACC3(i, j, kbm2)] + vb[ACC3(i, j + 1, kbm2)] +
+                          vb[ACC3(i - 1, j, kbm2)] + vb[ACC3(i - 1, j + 1, kbm2)])) *
+                    (0.25f * (vb[ACC3(i, j, kbm2)] + vb[ACC3(i, j + 1, kbm2)] +
+                              vb[ACC3(i - 1, j, kbm2)] + vb[ACC3(i - 1, j + 1, kbm2)])));
+      uf[ACC3(i, j, kbm2)] =
+          (c[ACC3(i, j, kbm2)] * gg[ACC3(i, j, kbm2 - 1)] - uf[ACC3(i, j, kbm2)]) /
+          (tps[ACC2(i, j)] * (dti2) / (-dz[kbm2] * dhloc[ACC2(i, j)]) - 1.0f -
+           (ee[ACC3(i, j, kbm2 - 1)] - 1.0f) * c[ACC3(i, j, kbm2)]);
+      uf[ACC3(i, j, kbm2)] = uf[ACC3(i, j, kbm2)] * dum[ACC2(i, j)];
+    }
+  }
+  /*
+
+        do k=2,kbm1
+          ki=kb-k
           do j=2,jmm1
             do i=2,imm1
-              wubot(i,j)=-tps(i,j)*uf(i,j,kbm1)
+              uf(i,j,ki)=(ee(i,j,ki)*uf(i,j,ki+1)+gg(i,j,ki))*dum(i,j)
             end do
           end do
-      */
-    // kbm1 -> kbm1-1
+        end do
+  */
+  // ki -> ki-1
+  for (int k = kb - 3; k >= 0; k--)
+  {
     for (int j = 1; j < jmm1; j++)
     {
-        for (int i = 1; i < imm1; i++)
-        {
-            wubot[ACC2(i, j)] = -tps[ACC2(i, j)] * uf[ACC3(i, j, kbm2)];
-        }
+      for (int i = 1; i < imm1; i++)
+      {
+        uf[ACC3(i, j, k)] =
+            (ee[ACC3(i, j, k)] * uf[ACC3(i, j, k + 1)] + gg[ACC3(i, j, k)]) *
+            dum[ACC2(i, j)];
+      }
     }
+  }
+  /*
+        do j=2,jmm1
+          do i=2,imm1
+            wubot(i,j)=-tps(i,j)*uf(i,j,kbm1)
+          end do
+        end do
+    */
+  // kbm1 -> kbm1-1
+  for (int j = 1; j < jmm1; j++)
+  {
+    for (int i = 1; i < imm1; i++)
+    {
+      wubot[ACC2(i, j)] = -tps[ACC2(i, j)] * uf[ACC3(i, j, kbm2)];
+    }
+  }
 }
-
-
-
 
 typedef struct
 {
