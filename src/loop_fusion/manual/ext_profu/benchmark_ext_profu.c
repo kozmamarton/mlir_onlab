@@ -1,24 +1,13 @@
-#define _POSIX_C_SOURCE 200809L
+#include "../imports/pom2k_c_header.h"
 
-#include "imports/pom2k_c_header.h"
-
+#include <chrono>
 #include <errno.h>
 #include <math.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <time.h>
-#include "pom2k_fun.h"
-int im;
-int jm;
-int kb;
-int imm1;
-int jmm1;
-int kbm1;
-int kbm2;
-real_t dti2;
-real_t umol;
+#include "../pom2k_fun.h"
 
 static void ext_profu_original(real_t *h, real_t *etf, real_t *c, real_t *km,
                                real_t *a, real_t *dz, real_t *dzz, real_t *ee,
@@ -27,115 +16,203 @@ static void ext_profu_original(real_t *h, real_t *etf, real_t *c, real_t *km,
                                real_t *vb, real_t *dum, real_t *wubot,
                                real_t *dhloc)
 {
-  for (int j = 0; j < jm; ++j)
-  {
-    for (int i = 0; i < im; ++i)
-      dhloc[ACC2(i, j)] = 1.0f;
-  }
-  for (int j = 1; j < jm; ++j)
-  {
-    for (int i = 1; i < im; ++i)
+ for (int j = 0; j < jm; j++)
     {
-      dhloc[ACC2(i, j)] =
-          (h[ACC2(i, j)] + etf[ACC2(i, j)] + h[ACC2(i - 1, j)] +
-           etf[ACC2(i - 1, j)]) *
-          0.5f;
+        for (int i = 0; i < im; i++)
+        {
+            dhloc[ACC2(i, j)] = 1.0f;
+        }
     }
-  }
-  for (int k = 0; k < kb; ++k)
-  {
-    for (int j = 1; j < jm; ++j)
+    /*
+          do j=2,jm
+            do i=2,im
+              dhloc(i,j)=(h(i,j)+etf(i,j)+h(i-1,j)+etf(i-1,j))*.5e0
+            end do
+          end do
+    */
+    for (int j = 1; j < jm; j++)
     {
-      for (int i = 1; i < im; ++i)
-        c[ACC3(i, j, k)] =
-            (km[ACC3(i, j, k)] + km[ACC3(i - 1, j, k)]) * 0.5f;
+        for (int i = 1; i < im; i++)
+        {
+            dhloc[ACC2(i, j)] =
+                (h[ACC2(i, j)] + etf[ACC2(i, j)] + h[ACC2(i - 1, j)] + etf[ACC2(i - 1, j)]) * 0.5f;
+        }
     }
-  }
-  for (int k = 0; k < kbm2; ++k)
-  {
-    for (int j = 0; j < jm; ++j)
+    /*
+          do k=1,kb
+            do j=2,jm
+              do i=2,im
+                c(i,j,k)=(km(i,j,k)+km(i-1,j,k))*.5e0
+              end do
+            end do
+          end do
+    */
+    for (int k = 0; k < kb; k++)
     {
-      for (int i = 0; i < im; ++i)
-      {
-        a[ACC3(i, j, k)] = -(dti2) * (c[ACC3(i, j, k + 1)] + umol) /
-                           (dz[k] * dzz[k] * dhloc[ACC2(i, j)] * dhloc[ACC2(i, j)]);
-      }
+        for (int j = 1; j < jm; j++)
+        {
+            for (int i = 1; i < im; i++)
+            {
+                c[ACC3(i, j, k)] = (km[ACC3(i, j, k)] + km[ACC3(i - 1, j, k)]) * 0.5f;
+            }
+        }
     }
-  }
-  for (int k = 1; k < kbm1; ++k)
-  {
-    for (int j = 0; j < jm; ++j)
+    /*
+          do k=2,kbm1
+            do j=1,jm
+              do i=1,im
+                a(i,j,k-1)=-dti2*(c(i,j,k)+umol)
+         $                  /(dz(k-1)*dzz(k-1)*dhloc(i,j)*dhloc(i,j))
+                c(i,j,k)=-dti2*(c(i,j,k)+umol)
+         $                /(dz(k)*dzz(k-1)*dhloc(i,j)*dhloc(i,j))
+              end do
+            end do
+          end do
+    */
+    for (int k = 0; k < kbm2; k++)
     {
-      for (int i = 0; i < im; ++i)
-      {
-        c[ACC3(i, j, k)] = -(dti2) * (c[ACC3(i, j, k)] + umol) /
-                           (dz[k] * dzz[k - 1] * dhloc[ACC2(i, j)] * dhloc[ACC2(i, j)]);
-      }
+        for (int j = 0; j < jm; j++)
+        {
+            for (int i = 0; i < im; i++)
+            {
+                a[ACC3(i, j, k)] = -(dti2) * (c[ACC3(i, j, k + 1)] + umol) /
+                                   (dz[k] * dzz[k] * dhloc[ACC2(i, j)] * dhloc[ACC2(i, j)]);
+            }
+        }
     }
-  }
-  for (int j = 0; j < jm; ++j)
-  {
-    for (int i = 0; i < im; ++i)
+
+    for (int k = 1; k < kbm1; k++)
     {
-      ee[ACC3(i, j, 0)] = a[ACC3(i, j, 0)] / (a[ACC3(i, j, 0)] - 1.0f);
-      gg[ACC3(i, j, 0)] =
-          (-(dti2)*wusurf[ACC2(i, j)] / (-dz[0] * dhloc[ACC2(i, j)]) -
-           uf[ACC3(i, j, 0)]) /
-          (a[ACC3(i, j, 0)] - 1.0f);
+        for (int j = 0; j < jm; j++)
+        {
+            for (int i = 0; i < im; i++)
+            {
+                c[ACC3(i, j, k)] = -(dti2) * (c[ACC3(i, j, k)] + umol) /
+                                   (dz[k] * dzz[k - 1] * dhloc[ACC2(i, j)] * dhloc[ACC2(i, j)]);
+            }
+        }
     }
-  }
-  for (int k = 1; k < kbm2; ++k)
-  {
-    for (int j = 0; j < jm; ++j)
+    /*
+          do j=1,jm
+            do i=1,im
+              ee(i,j,1)=a(i,j,1)/(a(i,j,1)-1.e0)
+              gg(i,j,1)=(-dti2*wusurf(i,j)/(-dz(1)*dhloc(i,j))
+         $               -uf(i,j,1))
+         $               /(a(i,j,1)-1.e0)
+            end do
+          end do
+    */
+    for (int j = 0; j < jm; j++)
     {
-      for (int i = 0; i < im; ++i)
-      {
-        gg[ACC3(i, j, k)] = 1.0f /
-                            (a[ACC3(i, j, k)] + c[ACC3(i, j, k)] * (1.0f - ee[ACC3(i, j, k - 1)]) - 1.0f);
-        ee[ACC3(i, j, k)] = a[ACC3(i, j, k)] * gg[ACC3(i, j, k)];
-        gg[ACC3(i, j, k)] =
-            (c[ACC3(i, j, k)] * gg[ACC3(i, j, k - 1)] - uf[ACC3(i, j, k)]) *
-            gg[ACC3(i, j, k)];
-      }
+        for (int i = 0; i < im; i++)
+        {
+            ee[ACC3(i, j, 0)] = a[ACC3(i, j, 0)] / (a[ACC3(i, j, 0)] - 1.0f);
+            gg[ACC3(i, j, 0)] =
+                (-(dti2)*wusurf[ACC2(i, j)] / (-dz[0] * dhloc[ACC2(i, j)]) - uf[ACC3(i, j, 0)]) /
+                (a[ACC3(i, j, 0)] - 1.0f);
+        }
     }
-  }
-  for (int j = 1; j < jmm1; ++j)
-  {
-    for (int i = 1; i < imm1; ++i)
+    /*
+          do k=2,kbm2
+            do j=1,jm
+              do i=1,im
+                gg(i,j,k)=1.e0/(a(i,j,k)+c(i,j,k)*(1.e0-ee(i,j,k-1))-1.e0)
+                ee(i,j,k)=a(i,j,k)*gg(i,j,k)
+                gg(i,j,k)=(c(i,j,k)*gg(i,j,k-1)-uf(i,j,k))*gg(i,j,k)
+              end do
+            end do
+          end do
+    */
+    for (int k = 1; k < kbm2; k++)
     {
-      real_t vb_average = 0.25f *
-                          (vb[ACC3(i, j, kbm2)] + vb[ACC3(i, j + 1, kbm2)] +
-                           vb[ACC3(i - 1, j, kbm2)] + vb[ACC3(i - 1, j + 1, kbm2)]);
-      tps[ACC2(i, j)] =
-          0.5f * (cbc[ACC2(i, j)] + cbc[ACC2(i - 1, j)]) *
-          sqrtf(ub[ACC3(i, j, kbm2)] * ub[ACC3(i, j, kbm2)] +
-                vb_average * vb_average);
-      uf[ACC3(i, j, kbm2)] =
-          (c[ACC3(i, j, kbm2)] * gg[ACC3(i, j, kbm2 - 1)] -
-           uf[ACC3(i, j, kbm2)]) /
-          (tps[ACC2(i, j)] * dti2 / (-dz[kbm2] * dhloc[ACC2(i, j)]) -
-           1.0f - (ee[ACC3(i, j, kbm2 - 1)] - 1.0f) * c[ACC3(i, j, kbm2)]);
-      uf[ACC3(i, j, kbm2)] *= dum[ACC2(i, j)];
+        for (int j = 0; j < jm; j++)
+        {
+            for (int i = 0; i < im; i++)
+            {
+                gg[ACC3(i, j, k)] =
+                    1.0f /
+                    (a[ACC3(i, j, k)] + c[ACC3(i, j, k)] * (1.0f - ee[ACC3(i, j, k - 1)]) - 1.0f);
+                ee[ACC3(i, j, k)] = a[ACC3(i, j, k)] * gg[ACC3(i, j, k)];
+                gg[ACC3(i, j, k)] = (c[ACC3(i, j, k)] * gg[ACC3(i, j, k - 1)] - uf[ACC3(i, j, k)]) *
+                                    gg[ACC3(i, j, k)];
+            }
+        }
     }
-  }
-  for (int k = kb - 3; k >= 0; --k)
-  {
-    for (int j = 1; j < jmm1; ++j)
+    /*
+          do j=2,jmm1
+            do i=2,imm1
+              tps(i,j)=0.5e0*(cbc(i,j)+cbc(i-1,j))
+         $              *sqrt(ub(i,j,kbm1)**2
+         $                +(.25e0*(vb(i,j,kbm1)+vb(i,j+1,kbm1)
+         $                         +vb(i-1,j,kbm1)+vb(i-1,j+1,kbm1)))**2)
+              uf(i,j,kbm1)=(c(i,j,kbm1)*gg(i,j,kbm2)-uf(i,j,kbm1))
+         $                  /(tps(i,j)*dti2/(-dz(kbm1)*dhloc(i,j))-1.e0
+         $                    -(ee(i,j,kbm2)-1.e0)*c(i,j,kbm1))
+              uf(i,j,kbm1)=uf(i,j,kbm1)*dum(i,j)
+            end do
+          end do
+    */
+    // kbm1 -> kbm1-1
+    for (int j = 1; j < jmm1; j++)
     {
-      for (int i = 1; i < imm1; ++i)
-      {
-        uf[ACC3(i, j, k)] =
-            (ee[ACC3(i, j, k)] * uf[ACC3(i, j, k + 1)] + gg[ACC3(i, j, k)]) *
-            dum[ACC2(i, j)];
-      }
+        for (int i = 1; i < imm1; i++)
+        {
+            tps[ACC2(i, j)] =
+                0.5f * (cbc[ACC2(i, j)] + cbc[ACC2(i - 1, j)]) *
+                sqrtf(ub[ACC3(i, j, kbm2)] * ub[ACC3(i, j, kbm2)] +
+                      (0.25f * (vb[ACC3(i, j, kbm2)] + vb[ACC3(i, j + 1, kbm2)] +
+                                vb[ACC3(i - 1, j, kbm2)] + vb[ACC3(i - 1, j + 1, kbm2)])) *
+                          (0.25f * (vb[ACC3(i, j, kbm2)] + vb[ACC3(i, j + 1, kbm2)] +
+                                    vb[ACC3(i - 1, j, kbm2)] + vb[ACC3(i - 1, j + 1, kbm2)])));
+            uf[ACC3(i, j, kbm2)] =
+                (c[ACC3(i, j, kbm2)] * gg[ACC3(i, j, kbm2 - 1)] - uf[ACC3(i, j, kbm2)]) /
+                (tps[ACC2(i, j)] * (dti2) / (-dz[kbm2] * dhloc[ACC2(i, j)]) - 1.0f -
+                 (ee[ACC3(i, j, kbm2 - 1)] - 1.0f) * c[ACC3(i, j, kbm2)]);
+            uf[ACC3(i, j, kbm2)] = uf[ACC3(i, j, kbm2)] * dum[ACC2(i, j)];
+        }
     }
-  }
-  for (int j = 1; j < jmm1; ++j)
-  {
-    for (int i = 1; i < imm1; ++i)
-      wubot[ACC2(i, j)] = -tps[ACC2(i, j)] * uf[ACC3(i, j, kbm2)];
-  }
+    /*
+
+          do k=2,kbm1
+            ki=kb-k
+            do j=2,jmm1
+              do i=2,imm1
+                uf(i,j,ki)=(ee(i,j,ki)*uf(i,j,ki+1)+gg(i,j,ki))*dum(i,j)
+              end do
+            end do
+          end do
+    */
+    // ki -> ki-1
+    for (int k = kb - 3; k >= 0; k--)
+    {
+        for (int j = 1; j < jmm1; j++)
+        {
+            for (int i = 1; i < imm1; i++)
+            {
+                uf[ACC3(i, j, k)] =
+                    (ee[ACC3(i, j, k)] * uf[ACC3(i, j, k + 1)] + gg[ACC3(i, j, k)]) *
+                    dum[ACC2(i, j)];
+            }
+        }
+    }
+    /*
+          do j=2,jmm1
+            do i=2,imm1
+              wubot(i,j)=-tps(i,j)*uf(i,j,kbm1)
+            end do
+          end do
+      */
+    // kbm1 -> kbm1-1
+    for (int j = 1; j < jmm1; j++)
+    {
+        for (int i = 1; i < imm1; i++)
+        {
+            wubot[ACC2(i, j)] = -tps[ACC2(i, j)] * uf[ACC3(i, j, kbm2)];
+        }
+    }
 }
+
+
 
 
 typedef struct
@@ -165,10 +242,10 @@ typedef struct
 static int allocate_fields(Fields *fields, size_t count_2d, size_t count_3d,
                            size_t levels)
 {
-  fields->two_d = malloc(8 * count_2d * sizeof(real_t));
-  fields->three_d = malloc(8 * count_3d * sizeof(real_t));
-  fields->dz = malloc(levels * sizeof(real_t));
-  fields->dzz = malloc(levels * sizeof(real_t));
+  fields->two_d = static_cast<real_t *>(malloc(8 * count_2d * sizeof(real_t)));
+  fields->three_d = static_cast<real_t *>(malloc(8 * count_3d * sizeof(real_t)));
+  fields->dz = static_cast<real_t *>(malloc(levels * sizeof(real_t)));
+  fields->dzz = static_cast<real_t *>(malloc(levels * sizeof(real_t)));
   if (!fields->two_d || !fields->three_d || !fields->dz || !fields->dzz)
     return 0;
 
@@ -247,40 +324,30 @@ static int64_t timed_call_original(Fields *fields, const Fields *initial,
                                    size_t count_2d, size_t count_3d,
                                    size_t levels)
 {
-  struct timespec start;
-  struct timespec end;
   copy_fields(fields, initial, count_2d, count_3d, levels);
-  if (clock_gettime(CLOCK_MONOTONIC, &start) != 0)
-    return -1;
+  const auto start = std::chrono::steady_clock::now();
   ext_profu_original(fields->h, fields->etf, fields->c, fields->km,
                      fields->a, fields->dz, fields->dzz, fields->ee,
                      fields->gg, fields->wusurf, fields->uf, fields->tps,
                      fields->cbc, fields->ub, fields->vb, fields->dum,
                      fields->wubot, fields->dhloc);
-  if (clock_gettime(CLOCK_MONOTONIC, &end) != 0)
-    return -1;
-  return (int64_t)(end.tv_sec - start.tv_sec) * INT64_C(1000000000) +
-         (int64_t)end.tv_nsec - (int64_t)start.tv_nsec;
+  const auto end = std::chrono::steady_clock::now();
+  return std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
 }
 
 static int64_t timed_call_transformed(Fields *fields, const Fields *initial,
                                       size_t count_2d, size_t count_3d,
                                       size_t levels)
 {
-  struct timespec start;
-  struct timespec end;
   copy_fields(fields, initial, count_2d, count_3d, levels);
-  if (clock_gettime(CLOCK_MONOTONIC, &start) != 0)
-    return -1;
+  const auto start = std::chrono::steady_clock::now();
   ext_profu_transformed(fields->h, fields->etf, fields->c, fields->km,
                         fields->a, fields->dz, fields->dzz, fields->ee,
                         fields->gg, fields->wusurf, fields->uf, fields->tps,
                         fields->cbc, fields->ub, fields->vb, fields->dum,
                         fields->wubot, fields->dhloc);
-  if (clock_gettime(CLOCK_MONOTONIC, &end) != 0)
-    return -1;
-  return (int64_t)(end.tv_sec - start.tv_sec) * INT64_C(1000000000) +
-         (int64_t)end.tv_nsec - (int64_t)start.tv_nsec;
+  const auto end = std::chrono::steady_clock::now();
+  return std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
 }
 
 static real_t checksum(const Fields *fields, size_t count_2d,
