@@ -5,7 +5,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/../../.." && pwd)"
 
 INPUT_MLIR="${INPUT_MLIR:-$PROJECT_ROOT/src/pom2k_generated_affine_loops/mlir/ext_adjust_u_v_.mlir}"
-COMBINED_SCRIPT="${COMBINED_SCRIPT:-${LOWER_SCRIPT:-$PROJECT_ROOT/scripts/build_src/pom2k/lower_gpu_to_llvm.sh}}"
+COMBINED_SCRIPT="${COMBINED_SCRIPT:-${LOWER_SCRIPT:-$PROJECT_ROOT/scripts/build_src/pom2k/fuse_and_lower_gpu_to_llvm.sh}}"
 GENERATED_LL="${GENERATED_LL:-$PROJECT_ROOT/artifacts/llvm/pom2k/ext_adjust_u_v_.ll}"
 EXAMPLE_LL="${EXAMPLE_LL:-$SCRIPT_DIR/ext_adjust_u_v_.ll}"
 
