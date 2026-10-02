@@ -190,7 +190,7 @@ void ext_advq_transformed(real_t *qb, real_t *q, real_t *qf, real_t *xflux, real
 {
 
   // Calculate horizontal advection.
-  for (int k = 1; k < kbm1; k++)
+  /*for (int k = 1; k < kbm1; k++)
   {
     for (int j = 1; j < jm; j++)
     {
@@ -204,7 +204,7 @@ void ext_advq_transformed(real_t *qb, real_t *q, real_t *qf, real_t *xflux, real
                                (v[ACC3(i, j, k)] + v[ACC3(i, j, k - 1)]);
       }
     }
-  }
+  }*/
 
   // Calculate horizontal diffusion.
   for (int k = 1; k < kbm1; k++)
@@ -213,12 +213,12 @@ void ext_advq_transformed(real_t *qb, real_t *q, real_t *qf, real_t *xflux, real
     {
       for (int i = 1; i < im; i++)
       {
-        /* xflux[ACC3(i, j, k)] = 0.125f * (q[ACC3(i, j, k)] + q[ACC3(i - 1, j, k)]) *
+         xflux[ACC3(i, j, k)] = 0.125f * (q[ACC3(i, j, k)] + q[ACC3(i - 1, j, k)]) *
                                (dt[ACC2(i, j)] + dt[ACC2(i - 1, j)]) *
                                (u[ACC3(i, j, k)] + u[ACC3(i, j, k - 1)]);
         yflux[ACC3(i, j, k)] = 0.125f * (q[ACC3(i, j, k)] + q[ACC3(i, j - 1, k)]) *
                                (dt[ACC2(i, j)] + dt[ACC2(i, j - 1)]) *
-                               (v[ACC3(i, j, k)] + v[ACC3(i, j, k - 1)]);*/
+                               (v[ACC3(i, j, k)] + v[ACC3(i, j, k - 1)]);
         // dum masks xflux over land (dum=0)!
         xflux[ACC3(i, j, k)] -= dum[ACC2(i, j)] * 0.25f *
                                 (aam[ACC3(i, j, k)] + aam[ACC3(i - 1, j, k)] +
