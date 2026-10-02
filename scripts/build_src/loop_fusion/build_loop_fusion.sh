@@ -21,9 +21,9 @@ FUNC_PASSES=(
   "mem2reg"
   "affine-scalrep" # cleans up useles write/read pairs after loop fusion
   #"affine-loop-tile" #option: cache size? ---
-  "affine-parallelize" #option: parallel-reductions?
-  "scf-parallel-loop-fusion"
-  "lower-affine"
+  #"affine-parallelize" #option: parallel-reductions?
+  #"scf-parallel-loop-fusion"
+  #"lower-affine"
   #-affine-pipeline-data-transfer #try?
 )
 

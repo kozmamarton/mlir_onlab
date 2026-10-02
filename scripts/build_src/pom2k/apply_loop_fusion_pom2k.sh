@@ -6,7 +6,7 @@ PROJECT_ROOT="$(cd "$SCRIPT_DIR/../../.." && pwd)"
 LLVM_ROOT_DIR="$PROJECT_ROOT/externals/llvm-project"
 MLIR_OPT="$LLVM_ROOT_DIR/build/bin/mlir-opt"
 TUTORIAL_OPT="$PROJECT_ROOT/build/tools/tutorial-opt"
-OUTPUT_DIR="$PROJECT_ROOT/src/loop_fusion/pom2k"
+OUTPUT_DIR="$PROJECT_ROOT/src/loop_fusion/manual/mlir"
 BUILTIN_INPUT_BASE_DIR="$PROJECT_ROOT/src/pom2k_generated_affine_loops/mlir"
 
 # Shared mlir-opt flags applied to every generated loop-fusion example.
@@ -57,15 +57,7 @@ POST_FUNC_MODULE_PASSES=(
 )
 
 # Test cases to process.
-CASES=(  "ext_aam_.mlir"         "ext_advv_.mlir"          "ext_etf_update_.mlir"                  "ext_smol_adif_.mlir"
-  "ext_add_ad_2d_.mlir"   "ext_apply_filter_.mlir"  "ext_final_internal_update_.mlir"       "ext_time_internal_forward_.mlir"
-  "ext_adjust_u_v_.mlir"  "ext_baropg_.mlir"        "ext_flux_update_.mlir"                 "ext_uaf_.mlir"
-  "ext_advave_.mlir"      "ext_bcond_1_.mlir"       "ext_init_horizontal_velocities_.mlir"  "ext_update_turbulane_.mlir"
-  "ext_advct_.mlir"       "ext_bcond_2_.mlir"       "ext_init_internal_.mlir"               "ext_update_u_v_.mlir"
-  "ext_advq_.mlir"        "ext_bcond_3_.mlir"       "ext_profq_.mlir"                       "ext_updeta_t_s_.mlir"
-  "ext_advt1_.mlir"       "ext_bcond_5_.mlir"       "ext_proft_.mlir"                       "ext_vaf_.mlir"
-  "ext_advt2_.mlir"       "ext_dens_.mlir"          "ext_profu_.mlir"                       "ext_vert_avgs_.mlir"
-  "ext_advu_.mlir"        "ext_elf_update_.mlir"    "ext_profv_.mlir"                       "ext_vertvl_.mlir")
+CASES=( "ext_profu_.mlir" "ext_advq_.mlir" )
 
 usage() {
   cat <<EOF
