@@ -50,10 +50,7 @@ PROJECT_ROOT="$(cd "$SCRIPT_DIR/../../.." && pwd)"
 LLVM_ROOT_DIR="$PROJECT_ROOT/externals/llvm-project"
 MLIR_OPT="$LLVM_ROOT_DIR/build/bin/mlir-opt"
 MLIR_TRANSLATE="$LLVM_ROOT_DIR/build/bin/mlir-translate"
-LOOP_FUSION_SCRIPT="$SCRIPT_DIR/apply_loop_fusion_pom2k.sh"
-GENERATED_INPUT_DIR="$PROJECT_ROOT/src/pom2k_generated_affine_loops/mlir"
-FUSED_INPUT_DIR="$PROJECT_ROOT/src/loop_fusion/pom2k"
-OUTPUT_DIR_LL="$PROJECT_ROOT/artifacts/llvm/pom2k"
+OUTPUT_DIR_LL="$PROJECT_ROOT/src/loop_fusion/manual/llvm"
 OUTPUT_DIR_MLIR="$PROJECT_ROOT/artifacts/mlir/pom2k"
 mkdir -p "$OUTPUT_DIR_LL"
 mkdir -p "$OUTPUT_DIR_MLIR"
@@ -78,7 +75,7 @@ __not_used_passes_reserved_for_study__=(
   "convert-parallel-loops-to-gpu"
 	"func.func(scf-parallel-for-to-nested-fors)"
 	"gpu-kernel-outlining"
-	"nvvm-attach-target{chip=sm_80 O=3}"
+	"nvvm-attach-target{chip=sm_70 O=3}"
 	"gpu.module(convert-gpu-to-nvvm)"
 	"gpu-to-llvm"
 	"expand-strided-metadata"
@@ -102,24 +99,14 @@ PIPELINE="builtin.module($(join_by ',' "${PIPELINE_PASSES[@]}"))"
 
 for INPUT_FILE in "${INPUT_FILES[@]}"; do
 	INPUT_BASE="$(basename "$INPUT_FILE" .mlir)"
-	GENERATED_INPUT_FILE="$GENERATED_INPUT_DIR/${INPUT_BASE}.mlir"
-	FUSED_INPUT_FILE="$FUSED_INPUT_DIR/${INPUT_BASE}.mlir"
 	NVVM_FILE="$OUTPUT_DIR_MLIR/${INPUT_BASE}-nvvm.mlir"
 	LLVM_FILE="$OUTPUT_DIR_LL/${INPUT_BASE}.ll"
 
-	if [[ ! -f "$GENERATED_INPUT_FILE" ]]; then
-		echo "Error: generated MLIR input not found for selected target: $GENERATED_INPUT_FILE" >&2
-		exit 1
-	fi
-
-	echo "Applying loop fusion to $INPUT_BASE"
-	"$LOOP_FUSION_SCRIPT" --file "${INPUT_BASE}.mlir"
-
-	echo "$MLIR_OPT $FUSED_INPUT_FILE \
+	echo "$MLIR_OPT $INPUT_FILE \
 		${MLIR_OPT_FLAGS[*]} \
 		--pass-pipeline=$PIPELINE \
 		-o $NVVM_FILE"
-	"$MLIR_OPT" "$FUSED_INPUT_FILE" \
+	"$MLIR_OPT" "$INPUT_FILE" \
 		"${MLIR_OPT_FLAGS[@]}" \
 		--pass-pipeline="$PIPELINE" \
 		-o "$NVVM_FILE"
