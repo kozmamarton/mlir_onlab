@@ -28,15 +28,16 @@ FUNC_PASSES=(
   "affine-loop-invariant-code-motion"
   "affine-loop-fusion{maximal=true}"
   "mem2reg"
-  "affine-scalrep" # cleans up useles write/read pairs after loop fusion
+  "affine-scalrep" # cleans up useless write/read pairs after loop fusion
   "affine-parallelize" #option: parallel-reductions?
+  "scf-parallel-loop-fusion"
   "lower-affine"
 	#"scf-parallel-loop-tiling"
-	"scf-parallel-loop-fusion"
+  "scf-parallel-loop-fusion"
   # Note: scf-parallel-loop-fusion is intentionally not run here. The pass
   # operates on scf.parallel and is more effective in the lowering pipeline,
   # right before convert-scf-to-openmp.
-  #-affine-pipeline-data-transfer #try?
+ #try?
 )
 
 # Passes to insert between each function-level pass (after each func.func pass).
@@ -57,7 +58,7 @@ POST_FUNC_MODULE_PASSES=(
 )
 
 # Test cases to process.
-CASES=( "ext_profu_.mlir" "ext_advq_.mlir" )
+CASES=( "ext_profu_.mlir" "ext_profu_manual.mlir" "ext_advq_.mlir" )
 
 usage() {
   cat <<EOF
