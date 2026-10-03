@@ -66,9 +66,9 @@ void ext_profu_transformed(real_t *h, real_t *etf, real_t *c, real_t *km, real_t
 
   for (int k = 0; k < kbm2; k++)
   {
-    for (int j = 1; j < jm; j++)
+    for (int j = 0; j < jm; j++)
     {
-      for (int i = 1; i < im; i++)
+      for (int i = 0; i < im; i++)
       {
         a[ACC3(i, j, k)] = -dti2 * (c[ACC3(i, j, k + 1)] + umol) /
                            (dz[k] * dzz[k] * dhloc[ACC2(i, j)] * dhloc[ACC2(i, j)]);
@@ -126,7 +126,7 @@ void ext_profu_transformed(real_t *h, real_t *etf, real_t *c, real_t *km, real_t
   }
 
   // kbm1 -> kbm1-1
-  /*for (int j = 1; j < jmm1; j++)
+ /* for (int j = 1; j < jmm1; j++)
   {
     for (int i = 1; i < imm1; i++)
     {
