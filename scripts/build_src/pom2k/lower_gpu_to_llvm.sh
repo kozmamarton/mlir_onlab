@@ -56,7 +56,7 @@ mkdir -p "$OUTPUT_DIR_LL"
 mkdir -p "$OUTPUT_DIR_MLIR"
 
 PIPELINE_PASSES=(
-  "func.func(scf-parallel-loop-tiling{parallel-loop-tile-sizes=32,8}, gpu-map-parallel-loops{mapping-policy=innermost-first})"
+  "func.func(scf-parallel-loop-tiling{parallel-loop-tile-sizes=32,4,2}, gpu-map-parallel-loops{mapping-policy=innermost-first})"
   "canonicalize"
   "cse"
   "convert-parallel-loops-to-gpu"
