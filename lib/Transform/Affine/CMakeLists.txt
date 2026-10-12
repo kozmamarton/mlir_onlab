@@ -1,6 +1,7 @@
 add_mlir_library(AffineFullUnroll
     AffineFullUnroll.cpp
     AffineFullUnrollPatternRewrite.cpp
+    AffineLoopFusionNonConservative.cpp
     ReinterpretFlatArrayAccess.cpp
     ADDITIONAL_HEADER_DIRS
     ${PROJECT_SOURCE_DIR}/include/Transform/Affine/
@@ -13,6 +14,10 @@ add_mlir_library(AffineFullUnroll
     MLIRSupport
     MLIRAffineDialect
     MLIRAffineUtils
+    MLIRFuncDialect
+    MLIRMemRefDialect
+    MLIRSideEffectInterfaces
+    MLIRViewLikeInterface
 )
 set(LLVM_TARGET_DEFINITIONS ${PROJECT_SOURCE_DIR}/include/Transform/Affine/Passes.td)
 mlir_tablegen(Passes.h.inc -gen-pass-decls -name Affine)
