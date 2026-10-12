@@ -398,17 +398,17 @@ static void copy_outputs_from_device(DeviceBufferSet &device, Fields *fields)
   device.synchronize();
 }
 
-static int64_t timed_call_llvm(Fields *fields, const Fields *initial,
-                               DeviceBufferSet &device, size_t count_2d,
-                               size_t count_3d, size_t levels)
+static int64_t timed_call_llvm(const Fields *initial, DeviceBufferSet &device,
+                               size_t count_2d, size_t count_3d,
+                               size_t levels)
 {
-  copy_fields(fields, initial, count_2d, count_3d, levels);
   copy_initial_to_device(device, initial);
   const auto start = std::chrono::steady_clock::now();
+  // The generated entry point synchronizes its launch stream before returning.
   call_llvm(device, count_2d, count_3d, levels);
   const auto end = std::chrono::steady_clock::now();
-  copy_outputs_from_device(device, fields);
-  return std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
+  return std::chrono::duration_cast<std::chrono::nanoseconds>(end - start)
+      .count();
 }
 
 static real_t checksum(const Fields *fields, size_t count_2d,
@@ -531,8 +531,7 @@ int main(int argc, char **argv)
   {
     (void)timed_call_original(&original, &initial, count_2d, count_3d,
                               (size_t)kb);
-    (void)timed_call_llvm(&transformed, &initial, device, count_2d, count_3d,
-                          (size_t)kb);
+    (void)timed_call_llvm(&initial, device, count_2d, count_3d, (size_t)kb);
   }
 
   int64_t original_total_ns = 0;
@@ -553,14 +552,14 @@ int main(int argc, char **argv)
         return EXIT_FAILURE;
       }
       original_total_ns += elapsed;
-      elapsed = timed_call_llvm(&transformed, &initial, device, count_2d,
-                count_3d, (size_t)kb);
+      elapsed = timed_call_llvm(&initial, device, count_2d, count_3d,
+                                (size_t)kb);
       transformed_total_ns += elapsed;
     }
     else
     {
-      elapsed = timed_call_llvm(&transformed, &initial, device, count_2d,
-                count_3d, (size_t)kb);
+      elapsed = timed_call_llvm(&initial, device, count_2d, count_3d,
+                                (size_t)kb);
       if (elapsed < 0)
       {
         fprintf(stderr, "clock_gettime failed.\n");
@@ -575,6 +574,8 @@ int main(int argc, char **argv)
       original_total_ns += elapsed;
     }
   }
+
+  copy_outputs_from_device(device, &transformed);
 
   double original_average_ns = (double)original_total_ns / dimensions[3];
   double transformed_average_ns = (double)transformed_total_ns / dimensions[3];
@@ -606,7 +607,7 @@ int main(int argc, char **argv)
   printf("Original:    total %.3f ms, average %.3f us/call, checksum %.9g\n",
          original_total_ns / 1.0e6, original_average_ns / 1.0e3,
          (double)checksum(&original, count_2d, count_3d));
-  printf("LLVM:        total %.3f ms, average %.3f us/call, checksum %.9g\n",
+  printf("LLVM:        total %.3f ms, average %.3f us/launch+sync, checksum %.9g\n",
          transformed_total_ns / 1.0e6, transformed_average_ns / 1.0e3,
          (double)checksum(&transformed, count_2d, count_3d));
   printf("Difference (LLVM - original): %.3f us/call (%+.2f%%)\n",
