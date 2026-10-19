@@ -21,13 +21,6 @@ module attributes {dlti.dl_spec = #dlti.dl_spec<#dlti.dl_entry<"dlti.endianness"
     %6 = affine.load %4[0] : memref<1xi32>
     %7 = arith.index_cast %5 : i32 to index
     %8 = arith.index_cast %6 : i32 to index
-    affine.for %arg18 = 0 to %2 {
-      affine.for %arg19 = 0 to %7 {
-        affine.for %arg20 = 0 to %8 {
-          affine.store %cst_2, %arg1[%arg20 + %arg19 * symbol(%8) + (%arg18 * symbol(%8)) * symbol(%7)] : memref<?xf32>
-        } {constants = [], locals = [], mlirclang.direction = "forward", mlirclang.indvar = "i", mlirclang.lb_src = "0", mlirclang.loop_kind = "scf.for", mlirclang.ub_src = "im"}
-      } {constants = [], locals = [], mlirclang.direction = "forward", mlirclang.indvar = "j", mlirclang.lb_src = "0", mlirclang.loop_kind = "scf.for", mlirclang.ub_src = "jm"}
-    } {constants = [], locals = [], mlirclang.direction = "forward", mlirclang.indvar = "k", mlirclang.lb_src = "0", mlirclang.loop_kind = "scf.for", mlirclang.ub_src = "kb"}
     %9 = memref.get_global @kbm1 : memref<1xi32>
     %10 = affine.load %9[0] : memref<1xi32>
     %11 = arith.index_cast %10 : i32 to index
@@ -35,6 +28,13 @@ module attributes {dlti.dl_spec = #dlti.dl_spec<#dlti.dl_entry<"dlti.endianness"
     %13 = affine.load %4[0] : memref<1xi32>
     %14 = arith.index_cast %12 : i32 to index
     %15 = arith.index_cast %13 : i32 to index
+    affine.for %arg18 = 0 to %2 {
+      affine.for %arg19 = 0 to %7 {
+        affine.for %arg20 = 0 to %8 {
+          affine.store %cst_2, %arg1[%arg20 + %arg19 * symbol(%8) + (%arg18 * symbol(%8)) * symbol(%7)] : memref<?xf32>
+        } {constants = [], locals = [], mlirclang.direction = "forward", mlirclang.indvar = "i", mlirclang.lb_src = "0", mlirclang.loop_kind = "scf.for", mlirclang.ub_src = "im"}
+      } {constants = [], locals = [], mlirclang.direction = "forward", mlirclang.indvar = "j", mlirclang.lb_src = "0", mlirclang.loop_kind = "scf.for", mlirclang.ub_src = "jm"}
+    } {constants = [], locals = [], mlirclang.direction = "forward", mlirclang.indvar = "k", mlirclang.lb_src = "0", mlirclang.loop_kind = "scf.for", mlirclang.ub_src = "kb"}
     affine.for %arg18 = 1 to %11 {
       affine.for %arg19 = 0 to %14 {
         affine.for %arg20 = 1 to %15 {

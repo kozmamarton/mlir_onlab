@@ -27,15 +27,22 @@ module attributes {dlti.dl_spec = #dlti.dl_spec<#dlti.dl_entry<"dlti.endianness"
     %5 = memref.get_global @im : memref<1xi32>
     %6 = affine.load %5[0] : memref<1xi32>
     %7 = arith.index_cast %6 : i32 to index
+    %8 = affine.load %2[0] : memref<1xi32>
+    %9 = arith.index_cast %8 : i32 to index
+    %10 = affine.load %5[0] : memref<1xi32>
+    %11 = arith.index_cast %10 : i32 to index
+    %12 = memref.get_global @kb : memref<1xi32>
+    %13 = affine.load %12[0] : memref<1xi32>
+    %14 = arith.index_cast %13 : i32 to index
+    %15 = affine.load %2[0] : memref<1xi32>
+    %16 = affine.load %5[0] : memref<1xi32>
+    %17 = arith.index_cast %15 : i32 to index
+    %18 = arith.index_cast %16 : i32 to index
     affine.for %arg18 = 0 to %4 {
       affine.for %arg19 = 0 to %7 {
         affine.store %cst_1, %arg17[%arg19 + %arg18 * symbol(%7)] : memref<?xf32>
       } {constants = [], locals = [], mlirclang.direction = "forward", mlirclang.indvar = "i", mlirclang.lb_src = "0", mlirclang.loop_kind = "scf.for", mlirclang.ub_src = "im"}
     } {constants = [], locals = [], mlirclang.direction = "forward", mlirclang.indvar = "j", mlirclang.lb_src = "0", mlirclang.loop_kind = "scf.for", mlirclang.ub_src = "jm"}
-    %8 = affine.load %2[0] : memref<1xi32>
-    %9 = arith.index_cast %8 : i32 to index
-    %10 = affine.load %5[0] : memref<1xi32>
-    %11 = arith.index_cast %10 : i32 to index
     affine.for %arg18 = 1 to %9 {
       affine.for %arg19 = 1 to %11 {
         %89 = affine.load %arg1[%arg19 + %arg18 * symbol(%11)] : memref<?xf32>
@@ -49,13 +56,6 @@ module attributes {dlti.dl_spec = #dlti.dl_spec<#dlti.dl_entry<"dlti.endianness"
         affine.store %96, %arg17[%arg19 + %arg18 * symbol(%11)] : memref<?xf32>
       } {constants = [], locals = [], mlirclang.direction = "forward", mlirclang.indvar = "i", mlirclang.lb_src = "1", mlirclang.loop_kind = "scf.for", mlirclang.ub_src = "im"}
     } {constants = [], locals = [], mlirclang.direction = "forward", mlirclang.indvar = "j", mlirclang.lb_src = "1", mlirclang.loop_kind = "scf.for", mlirclang.ub_src = "jm"}
-    %12 = memref.get_global @kb : memref<1xi32>
-    %13 = affine.load %12[0] : memref<1xi32>
-    %14 = arith.index_cast %13 : i32 to index
-    %15 = affine.load %2[0] : memref<1xi32>
-    %16 = affine.load %5[0] : memref<1xi32>
-    %17 = arith.index_cast %15 : i32 to index
-    %18 = arith.index_cast %16 : i32 to index
     affine.for %arg18 = 0 to %14 {
       affine.for %arg19 = 1 to %17 {
         affine.for %arg20 = 1 to %18 {
@@ -131,6 +131,12 @@ module attributes {dlti.dl_spec = #dlti.dl_spec<#dlti.dl_entry<"dlti.endianness"
     %46 = arith.index_cast %43 : i32 to index
     %47 = arith.negf %44 : f32
     %48 = arith.negf %45 : f32
+    %49 = affine.load %19[0] : memref<1xi32>
+    %50 = arith.index_cast %49 : i32 to index
+    %51 = affine.load %2[0] : memref<1xi32>
+    %52 = affine.load %5[0] : memref<1xi32>
+    %53 = arith.index_cast %51 : i32 to index
+    %54 = arith.index_cast %52 : i32 to index
     affine.for %arg18 = 0 to %42 {
       affine.for %arg19 = 0 to %46 {
         %89 = affine.load %arg4[%arg19 + %arg18 * symbol(%46)] : memref<?xf32>
@@ -150,12 +156,6 @@ module attributes {dlti.dl_spec = #dlti.dl_spec<#dlti.dl_entry<"dlti.endianness"
         affine.store %101, %arg8[%arg19 + %arg18 * symbol(%46)] : memref<?xf32>
       } {constants = [], locals = [], mlirclang.direction = "forward", mlirclang.indvar = "i", mlirclang.lb_src = "0", mlirclang.loop_kind = "scf.for", mlirclang.ub_src = "im"}
     } {constants = [], locals = [], mlirclang.direction = "forward", mlirclang.indvar = "j", mlirclang.lb_src = "0", mlirclang.loop_kind = "scf.for", mlirclang.ub_src = "jm"}
-    %49 = affine.load %19[0] : memref<1xi32>
-    %50 = arith.index_cast %49 : i32 to index
-    %51 = affine.load %2[0] : memref<1xi32>
-    %52 = affine.load %5[0] : memref<1xi32>
-    %53 = arith.index_cast %51 : i32 to index
-    %54 = arith.index_cast %52 : i32 to index
     affine.for %arg18 = 1 to %50 {
       affine.for %arg19 = 0 to %53 {
         affine.for %arg20 = 0 to %54 {

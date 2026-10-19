@@ -10,6 +10,13 @@ module attributes {dlti.dl_spec = #dlti.dl_spec<#dlti.dl_entry<"dlti.endianness"
     %3 = memref.get_global @im : memref<1xi32>
     %4 = affine.load %3[0] : memref<1xi32>
     %5 = arith.index_cast %4 : i32 to index
+    %6 = memref.get_global @kbm1 : memref<1xi32>
+    %7 = affine.load %6[0] : memref<1xi32>
+    %8 = arith.index_cast %7 : i32 to index
+    %9 = affine.load %0[0] : memref<1xi32>
+    %10 = affine.load %3[0] : memref<1xi32>
+    %11 = arith.index_cast %9 : i32 to index
+    %12 = arith.index_cast %10 : i32 to index
     affine.for %arg11 = 0 to %2 {
       affine.for %arg12 = 0 to %5 {
         affine.store %cst, %arg0[%arg12 + %arg11 * symbol(%5)] : memref<?xf32>
@@ -19,13 +26,6 @@ module attributes {dlti.dl_spec = #dlti.dl_spec<#dlti.dl_entry<"dlti.endianness"
         affine.store %cst, %arg4[%arg12 + %arg11 * symbol(%5)] : memref<?xf32>
       } {constants = [], locals = [], mlirclang.direction = "forward", mlirclang.indvar = "i", mlirclang.lb_src = "0", mlirclang.loop_kind = "scf.for", mlirclang.ub_src = "im"}
     } {constants = [], locals = [], mlirclang.direction = "forward", mlirclang.indvar = "j", mlirclang.lb_src = "0", mlirclang.loop_kind = "scf.for", mlirclang.ub_src = "jm"}
-    %6 = memref.get_global @kbm1 : memref<1xi32>
-    %7 = affine.load %6[0] : memref<1xi32>
-    %8 = arith.index_cast %7 : i32 to index
-    %9 = affine.load %0[0] : memref<1xi32>
-    %10 = affine.load %3[0] : memref<1xi32>
-    %11 = arith.index_cast %9 : i32 to index
-    %12 = arith.index_cast %10 : i32 to index
     affine.for %arg11 = 0 to %8 {
       %13 = affine.load %arg10[%arg11] : memref<?xf32>
       affine.for %arg12 = 0 to %11 {
