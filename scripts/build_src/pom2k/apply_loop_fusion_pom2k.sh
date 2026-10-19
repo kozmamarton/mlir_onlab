@@ -19,7 +19,7 @@ COMMON_FLAGS=(
 
 CUSTOM_PASSES=(
   "reinterpret-flat-array-access" # custom pass to reinterpret 1D arrays as multi-dimensional for better affine analysis
-  "func.func(affine-loop-fusion-non-conservative{fuse-producer-consumer=true})" # custom pass fusing independent sibling affine loops (func.func-anchored)
+  "func.func(affine-loop-fusion-non-conservative{fuse-producer-consumer=true fuse-war-waw=true fuse-across-intervening-ops=true equate-reloads=true})" # custom pass fusing independent sibling affine loops (func.func-anchored)
 )
 
 # Function-level passes.

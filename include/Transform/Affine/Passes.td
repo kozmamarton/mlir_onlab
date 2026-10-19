@@ -45,7 +45,13 @@ def AffineLoopFusionNonConservative : Pass<"affine-loop-fusion-non-conservative"
     With fuse-producer-consumer, a pair whose only conflicts are RAW (the
     earlier loop writes a memref that the later loop only reads) is also
     fused when affine dependence analysis proves that every value read at
-    fused iteration i is written at an iteration <= i.
+    fused iteration i is written at an iteration <= i. fuse-war-waw applies
+    the same check to WAR and WAW pairs.
+
+    With fuse-across-intervening-ops, ops with memory effects between the
+    loops are allowed when they commute with the earlier loop. With
+    equate-reloads, re-loads of an unchanged location count as equal values
+    when comparing loop bounds and reinterpret_cast views.
   }];
   let dependentDialects = ["mlir::affine::AffineDialect"];
   let options = [
@@ -59,7 +65,16 @@ def AffineLoopFusionNonConservative : Pass<"affine-loop-fusion-non-conservative"
            "Assume distinct root memrefs may alias unless both are only read">,
     Option<"fuseProducerConsumer", "fuse-producer-consumer", "bool", /*default=*/"false",
            "Also fuse RAW producer-consumer pairs when affine dependence analysis "
-           "proves the fused order preserves every dependence">
+           "proves the fused order preserves every dependence">,
+    Option<"fuseWarWaw", "fuse-war-waw", "bool", /*default=*/"false",
+           "Also fuse same-root WAR/WAW pairs when affine dependence analysis "
+           "proves the fused order preserves every dependence">,
+    Option<"fuseAcrossInterveningOps", "fuse-across-intervening-ops", "bool", /*default=*/"false",
+           "Allow ops with memory effects between the two loops when they "
+           "commute with the earlier loop (no RAW/WAR/WAW against its footprint)">,
+    Option<"equateReloads", "equate-reloads", "bool", /*default=*/"false",
+           "Treat loads of the same location as equal values when nothing "
+           "between them may write it (used for loop bounds and memref views)">
   ];
 }
 
