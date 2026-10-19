@@ -41,6 +41,11 @@ def AffineLoopFusionNonConservative : Pass<"affine-loop-fusion-non-conservative"
     when one range contains the other the smaller loop body is guarded with
     an affine.if. The earlier loop is sunk to the later one, so any op with
     memory effects between the two loops blocks the fusion.
+
+    With fuse-producer-consumer, a pair whose only conflicts are RAW (the
+    earlier loop writes a memref that the later loop only reads) is also
+    fused when affine dependence analysis proves that every value read at
+    fused iteration i is written at an iteration <= i.
   }];
   let dependentDialects = ["mlir::affine::AffineDialect"];
   let options = [
@@ -51,7 +56,10 @@ def AffineLoopFusionNonConservative : Pass<"affine-loop-fusion-non-conservative"
     Option<"maxFusedLoops", "max-fused-loops", "unsigned", /*default=*/"2",
            "Maximum number of original loops merged into one fused loop">,
     Option<"aliasConservative", "alias-conservative", "bool", /*default=*/"false",
-           "Assume distinct root memrefs may alias unless both are only read">
+           "Assume distinct root memrefs may alias unless both are only read">,
+    Option<"fuseProducerConsumer", "fuse-producer-consumer", "bool", /*default=*/"false",
+           "Also fuse RAW producer-consumer pairs when affine dependence analysis "
+           "proves the fused order preserves every dependence">
   ];
 }
 
