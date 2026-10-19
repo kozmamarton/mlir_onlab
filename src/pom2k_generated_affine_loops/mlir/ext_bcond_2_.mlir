@@ -74,6 +74,11 @@ module attributes {dlti.dl_spec = #dlti.dl_spec<#dlti.dl_entry<"dlti.endianness"
     %29 = arith.muli %27, %28 : index
     %30 = arith.index_cast %24 : i32 to index
     %31 = arith.muli %30, %28 : index
+    %32 = memref.get_global @jm : memref<1xi32>
+    %33 = affine.load %32[0] : memref<1xi32>
+    %34 = arith.index_cast %33 : i32 to index
+    %35 = affine.load %4[0] : memref<1xi32>
+    %36 = arith.index_cast %35 : i32 to index
     affine.for %arg19 = 1 to %18 {
       %37 = affine.load %arg4[%arg19] : memref<?xf32>
       %38 = affine.load %arg6[%arg19 + symbol(%31)] : memref<?xf32>
@@ -108,11 +113,6 @@ module attributes {dlti.dl_spec = #dlti.dl_spec<#dlti.dl_entry<"dlti.endianness"
       affine.store %61, %arg1[%arg19] : memref<?xf32>
       affine.store %cst, %arg0[%arg19] : memref<?xf32>
     } {constants = [], locals = [], mlirclang.direction = "forward", mlirclang.indvar = "i", mlirclang.lb_src = "1", mlirclang.loop_kind = "scf.for", mlirclang.ub_src = "imm1"}
-    %32 = memref.get_global @jm : memref<1xi32>
-    %33 = affine.load %32[0] : memref<1xi32>
-    %34 = arith.index_cast %33 : i32 to index
-    %35 = affine.load %4[0] : memref<1xi32>
-    %36 = arith.index_cast %35 : i32 to index
     affine.for %arg19 = 0 to %34 {
       affine.for %arg20 = 0 to %36 {
         %37 = affine.load %arg0[%arg20 + %arg19 * symbol(%36)] : memref<?xf32>
