@@ -13,6 +13,7 @@ add_mlir_library(AffineFullUnroll
     MLIRPass
     MLIRSupport
     MLIRAffineDialect
+    MLIRAffineAnalysis
     MLIRAffineUtils
     MLIRFuncDialect
     MLIRMemRefDialect
