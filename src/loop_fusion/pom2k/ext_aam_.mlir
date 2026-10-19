@@ -28,16 +28,16 @@ module attributes {dlti.dl_spec = #dlti.dl_spec<"dlti.endianness" = "little", i6
     %14 = arith.index_cast %9 : i32 to index
     %15 = arith.index_cast %10 : i32 to index
     %16 = arith.index_cast %11 : i32 to index
-    %reinterpret_cast = memref.reinterpret_cast %arg1 to offset: [0], sizes: [%13, %15], strides: [%15, 1] : memref<?xf32> to memref<?x?xf32, strided<[?, 1]>>
-    %reinterpret_cast_1 = memref.reinterpret_cast %arg2 to offset: [0], sizes: [%13, %15], strides: [%15, 1] : memref<?xf32> to memref<?x?xf32, strided<[?, 1]>>
     %17 = arith.muli %15, %16 : index
-    %reinterpret_cast_2 = memref.reinterpret_cast %arg3 to offset: [0], sizes: [%2, %16, %15], strides: [%17, %15, 1] : memref<?xf32> to memref<?x?x?xf32, strided<[?, ?, 1]>>
-    %reinterpret_cast_3 = memref.reinterpret_cast %arg4 to offset: [0], sizes: [%2, %16, %15], strides: [%17, %15, 1] : memref<?xf32> to memref<?x?x?xf32, strided<[?, ?, 1]>>
-    %reinterpret_cast_4 = memref.reinterpret_cast %arg0 to offset: [0], sizes: [%2, %16, %15], strides: [%17, %15, 1] : memref<?xf32> to memref<?x?x?xf32, strided<[?, ?, 1]>>
+    %reinterpret_cast = memref.reinterpret_cast %arg3 to offset: [0], sizes: [%2, %16, %15], strides: [%17, %15, 1] : memref<?xf32> to memref<?x?x?xf32, strided<[?, ?, 1]>>
+    %reinterpret_cast_1 = memref.reinterpret_cast %arg4 to offset: [0], sizes: [%2, %16, %15], strides: [%17, %15, 1] : memref<?xf32> to memref<?x?x?xf32, strided<[?, ?, 1]>>
+    %reinterpret_cast_2 = memref.reinterpret_cast %arg0 to offset: [0], sizes: [%2, %16, %15], strides: [%17, %15, 1] : memref<?xf32> to memref<?x?x?xf32, strided<[?, ?, 1]>>
+    %reinterpret_cast_3 = memref.reinterpret_cast %arg1 to offset: [0], sizes: [%13, %15], strides: [%15, 1] : memref<?xf32> to memref<?x?xf32, strided<[?, 1]>>
+    %reinterpret_cast_4 = memref.reinterpret_cast %arg2 to offset: [0], sizes: [%13, %15], strides: [%15, 1] : memref<?xf32> to memref<?x?xf32, strided<[?, 1]>>
     scf.parallel (%arg5, %arg6, %arg7) = (%c0, %c1, %c1) to (%2, %13, %14) step (%c1, %c1, %c1) {
-      %18 = memref.load %reinterpret_cast[%arg6, %arg7] : memref<?x?xf32, strided<[?, 1]>>
+      %18 = memref.load %reinterpret_cast_3[%arg6, %arg7] : memref<?x?xf32, strided<[?, 1]>>
       %19 = arith.mulf %12, %18 : f32
-      %20 = memref.load %reinterpret_cast_1[%arg6, %arg7] : memref<?x?xf32, strided<[?, 1]>>
+      %20 = memref.load %reinterpret_cast_4[%arg6, %arg7] : memref<?x?xf32, strided<[?, 1]>>
       %21 = arith.mulf %19, %20 : f32
       %22 = arith.muli %arg6, %15 overflow<nsw> : index
       %23 = arith.addi %arg7, %22 : index
@@ -46,18 +46,18 @@ module attributes {dlti.dl_spec = #dlti.dl_spec<"dlti.endianness" = "little", i6
       %26 = arith.addi %23, %25 : index
       %27 = arith.addi %26, %c1 : index
       %28 = memref.load %arg3[%27] : memref<?xf32>
-      %29 = memref.load %reinterpret_cast_2[%arg5, %arg6, %arg7] : memref<?x?x?xf32, strided<[?, ?, 1]>>
+      %29 = memref.load %reinterpret_cast[%arg5, %arg6, %arg7] : memref<?x?x?xf32, strided<[?, ?, 1]>>
       %30 = arith.subf %28, %29 : f32
       %31 = arith.divf %30, %18 : f32
       %32 = arith.mulf %31, %31 : f32
       %33 = arith.addi %arg6, %c1 : index
-      %34 = memref.load %reinterpret_cast_3[%arg5, %33, %arg7] : memref<?x?x?xf32, strided<[?, ?, 1]>>
-      %35 = memref.load %reinterpret_cast_3[%arg5, %arg6, %arg7] : memref<?x?x?xf32, strided<[?, ?, 1]>>
+      %34 = memref.load %reinterpret_cast_1[%arg5, %33, %arg7] : memref<?x?x?xf32, strided<[?, ?, 1]>>
+      %35 = memref.load %reinterpret_cast_1[%arg5, %arg6, %arg7] : memref<?x?x?xf32, strided<[?, ?, 1]>>
       %36 = arith.subf %34, %35 : f32
       %37 = arith.divf %36, %20 : f32
       %38 = arith.mulf %37, %37 : f32
       %39 = arith.addf %32, %38 : f32
-      %40 = memref.load %reinterpret_cast_2[%arg5, %33, %arg7] : memref<?x?x?xf32, strided<[?, ?, 1]>>
+      %40 = memref.load %reinterpret_cast[%arg5, %33, %arg7] : memref<?x?x?xf32, strided<[?, ?, 1]>>
       %41 = arith.muli %33, %15 overflow<nsw> : index
       %42 = arith.addi %arg7, %41 : index
       %43 = arith.addi %42, %25 : index
@@ -65,7 +65,7 @@ module attributes {dlti.dl_spec = #dlti.dl_spec<"dlti.endianness" = "little", i6
       %45 = memref.load %arg3[%44] : memref<?xf32>
       %46 = arith.addf %40, %45 : f32
       %47 = arith.addi %arg6, %c-1 : index
-      %48 = memref.load %reinterpret_cast_2[%arg5, %47, %arg7] : memref<?x?x?xf32, strided<[?, ?, 1]>>
+      %48 = memref.load %reinterpret_cast[%arg5, %47, %arg7] : memref<?x?x?xf32, strided<[?, ?, 1]>>
       %49 = arith.subf %46, %48 : f32
       %50 = arith.muli %47, %15 overflow<nsw> : index
       %51 = arith.addi %arg7, %50 : index
@@ -92,7 +92,7 @@ module attributes {dlti.dl_spec = #dlti.dl_spec<"dlti.endianness" = "little", i6
       %72 = arith.addf %39, %71 : f32
       %73 = math.sqrt %72 : f32
       %74 = arith.mulf %21, %73 : f32
-      memref.store %74, %reinterpret_cast_4[%arg5, %arg6, %arg7] : memref<?x?x?xf32, strided<[?, ?, 1]>>
+      memref.store %74, %reinterpret_cast_2[%arg5, %arg6, %arg7] : memref<?x?x?xf32, strided<[?, ?, 1]>>
       scf.reduce 
     }
     return
