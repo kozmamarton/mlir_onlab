@@ -74,8 +74,8 @@ module attributes {dlti.dl_spec = #dlti.dl_spec<"dlti.endianness" = "little", i6
     %18 = arith.negf %14 : f32
     %19 = arith.muli %17, %16 : index
     %reinterpret_cast_20 = memref.reinterpret_cast %arg8 to offset: [0], sizes: [%9, %16, %17], strides: [%19, %17, 1] : memref<?xf32> to memref<?x?x?xf32, strided<[?, ?, 1]>>
-    %reinterpret_cast_21 = memref.reinterpret_cast %arg4 to offset: [0], sizes: [%16, %17], strides: [%17, 1] : memref<?xf32> to memref<?x?xf32, strided<[?, 1]>>
-    %reinterpret_cast_22 = memref.reinterpret_cast %arg7 to offset: [0], sizes: [%9, %16, %17], strides: [%19, %17, 1] : memref<?xf32> to memref<?x?x?xf32, strided<[?, ?, 1]>>
+    %reinterpret_cast_21 = memref.reinterpret_cast %arg7 to offset: [0], sizes: [%9, %16, %17], strides: [%19, %17, 1] : memref<?xf32> to memref<?x?x?xf32, strided<[?, ?, 1]>>
+    %reinterpret_cast_22 = memref.reinterpret_cast %arg4 to offset: [0], sizes: [%16, %17], strides: [%17, 1] : memref<?xf32> to memref<?x?xf32, strided<[?, 1]>>
     scf.parallel (%arg17) = (%c0) to (%9) step (%c1) {
       %67 = memref.load %arg14[%arg17] : memref<?xf32>
       %68 = memref.load %arg15[%arg17] : memref<?xf32>
@@ -85,11 +85,11 @@ module attributes {dlti.dl_spec = #dlti.dl_spec<"dlti.endianness" = "little", i6
         %71 = memref.load %reinterpret_cast_20[%70, %arg18, %arg19] : memref<?x?x?xf32, strided<[?, ?, 1]>>
         %72 = arith.addf %71, %15 : f32
         %73 = arith.mulf %18, %72 : f32
-        %74 = memref.load %reinterpret_cast_21[%arg18, %arg19] : memref<?x?xf32, strided<[?, 1]>>
+        %74 = memref.load %reinterpret_cast_22[%arg18, %arg19] : memref<?x?xf32, strided<[?, 1]>>
         %75 = arith.mulf %69, %74 : f32
         %76 = arith.mulf %75, %74 : f32
         %77 = arith.divf %73, %76 : f32
-        memref.store %77, %reinterpret_cast_22[%arg17, %arg18, %arg19] : memref<?x?x?xf32, strided<[?, ?, 1]>>
+        memref.store %77, %reinterpret_cast_21[%arg17, %arg18, %arg19] : memref<?x?x?xf32, strided<[?, ?, 1]>>
         scf.reduce 
       }
       scf.reduce 
@@ -104,15 +104,15 @@ module attributes {dlti.dl_spec = #dlti.dl_spec<"dlti.endianness" = "little", i6
     %27 = arith.index_cast %23 : i32 to index
     %28 = arith.index_cast %24 : i32 to index
     %29 = arith.negf %25 : f32
-    %30 = arith.muli %28, %27 : index
-    %reinterpret_cast_23 = memref.reinterpret_cast %arg8 to offset: [0], sizes: [%22, %27, %28], strides: [%30, %28, 1] : memref<?xf32> to memref<?x?x?xf32, strided<[?, ?, 1]>>
-    %reinterpret_cast_24 = memref.reinterpret_cast %arg4 to offset: [0], sizes: [%27, %28], strides: [%28, 1] : memref<?xf32> to memref<?x?xf32, strided<[?, 1]>>
-    %reinterpret_cast_25 = memref.reinterpret_cast %arg9 to offset: [0], sizes: [%22, %27, %28], strides: [%30, %28, 1] : memref<?xf32> to memref<?x?x?xf32, strided<[?, ?, 1]>>
-    %31 = memref.get_global @kb : memref<1xi32>
-    %32 = memref.load %31[%c0] : memref<1xi32>
-    %33 = arith.index_cast %32 : i32 to index
-    %reinterpret_cast_26 = memref.reinterpret_cast %arg16 to offset: [0], sizes: [%33, %27, %28], strides: [%30, %28, 1] : memref<?xf32> to memref<?x?x?xf32, strided<[?, ?, 1]>>
-    scf.parallel (%arg17, %arg18, %arg19) = (%c0, %c0, %c0) to (%33, %27, %28) step (%c1, %c1, %c1) {
+    %30 = memref.get_global @kb : memref<1xi32>
+    %31 = memref.load %30[%c0] : memref<1xi32>
+    %32 = arith.index_cast %31 : i32 to index
+    %33 = arith.muli %28, %27 : index
+    %reinterpret_cast_23 = memref.reinterpret_cast %arg8 to offset: [0], sizes: [%22, %27, %28], strides: [%33, %28, 1] : memref<?xf32> to memref<?x?x?xf32, strided<[?, ?, 1]>>
+    %reinterpret_cast_24 = memref.reinterpret_cast %arg9 to offset: [0], sizes: [%22, %27, %28], strides: [%33, %28, 1] : memref<?xf32> to memref<?x?x?xf32, strided<[?, ?, 1]>>
+    %reinterpret_cast_25 = memref.reinterpret_cast %arg4 to offset: [0], sizes: [%27, %28], strides: [%28, 1] : memref<?xf32> to memref<?x?xf32, strided<[?, 1]>>
+    %reinterpret_cast_26 = memref.reinterpret_cast %arg16 to offset: [0], sizes: [%32, %27, %28], strides: [%33, %28, 1] : memref<?xf32> to memref<?x?x?xf32, strided<[?, ?, 1]>>
+    scf.parallel (%arg17, %arg18, %arg19) = (%c0, %c0, %c0) to (%32, %27, %28) step (%c1, %c1, %c1) {
       memref.store %cst_14, %reinterpret_cast_26[%arg17, %arg18, %arg19] : memref<?x?x?xf32, strided<[?, ?, 1]>>
       scf.reduce 
     }
@@ -302,11 +302,11 @@ module attributes {dlti.dl_spec = #dlti.dl_spec<"dlti.endianness" = "little", i6
         %72 = memref.load %reinterpret_cast_23[%arg17, %arg18, %arg19] : memref<?x?x?xf32, strided<[?, ?, 1]>>
         %73 = arith.addf %72, %26 : f32
         %74 = arith.mulf %29, %73 : f32
-        %75 = memref.load %reinterpret_cast_24[%arg18, %arg19] : memref<?x?xf32, strided<[?, 1]>>
+        %75 = memref.load %reinterpret_cast_25[%arg18, %arg19] : memref<?x?xf32, strided<[?, 1]>>
         %76 = arith.mulf %70, %75 : f32
         %77 = arith.mulf %76, %75 : f32
         %78 = arith.divf %74, %77 : f32
-        memref.store %78, %reinterpret_cast_25[%arg17, %arg18, %arg19] : memref<?x?x?xf32, strided<[?, ?, 1]>>
+        memref.store %78, %reinterpret_cast_24[%arg17, %arg18, %arg19] : memref<?x?x?xf32, strided<[?, ?, 1]>>
         scf.reduce 
       }
       %71 = memref.load %arg14[%arg17] : memref<?xf32>
@@ -348,7 +348,7 @@ module attributes {dlti.dl_spec = #dlti.dl_spec<"dlti.endianness" = "little", i6
     %49 = memref.load %4[%c0] : memref<1xi32>
     %50 = memref.load %7[%c0] : memref<1xi32>
     %51 = memref.load %10[%c0] : memref<1xf32>
-    %52 = memref.load %31[%c0] : memref<1xi32>
+    %52 = memref.load %30[%c0] : memref<1xi32>
     %53 = arith.index_cast %49 : i32 to index
     %54 = arith.index_cast %50 : i32 to index
     %55 = arith.muli %54, %53 : index
@@ -390,7 +390,7 @@ module attributes {dlti.dl_spec = #dlti.dl_spec<"dlti.endianness" = "little", i6
         memref.store %89, %arg0[%69] : memref<?xf32>
       }
     }
-    %65 = memref.load %31[%c0] : memref<1xi32>
+    %65 = memref.load %30[%c0] : memref<1xi32>
     %66 = arith.addi %65, %c-3_i32 : i32
     memref.store %66, %alloca[] : memref<i32>
     scf.while : () -> () {
