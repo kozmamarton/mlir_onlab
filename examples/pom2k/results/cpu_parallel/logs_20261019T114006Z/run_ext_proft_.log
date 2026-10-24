@@ -1,0 +1,42 @@
+[ext_proft_] lowering old and new variants
+[ext_proft_] building /home/marton/uni/onlab/mlir-tutorial/examples/pom2k/pom2k_proft/diff_cpu_parallel.out
+[ext_proft_] running /home/marton/uni/onlab/mlir-tutorial/examples/pom2k/pom2k_proft/diff_cpu_parallel.out --size 1024x1024x20 --samples 20
+kernel: ext_proft_
+target: cpu_parallel
+size: im=1024 jm=1024 kb=20
+samples: 20
+threads: 16
+global dti2 = 1.32153535
+global im = 1024
+global jm = 1024
+global kb = 20
+global kbm1 = 19
+global kbm2 = 18
+global ntp = 2
+global umol = 1.01578474
+
+arg  name         type ext      elements   mismatches      max_abs      max_rel written
+0    f            f32  3D       20971520            0            0            0 yes
+1    wfsurf       f32  3D       20971520            0            0            0 no
+2    fsurf        f32  3D       20971520            0            0            0 no
+3    nbc          i32  sel             1            0            0            0 no
+4    dh           f32  3D       20971520            0            0            0 yes
+5    h            f32  2D        1048576            0            0            0 no
+6    etf          f32  2D        1048576            0            0            0 no
+7    a            f32  3D       20971520            0            0            0 yes
+8    kh           f32  3D       20971520            0            0            0 no
+9    c            f32  3D       20971520            0            0            0 yes
+10   z            f32  3D       20971520            0            0            0 no
+11   swrad        f32  3D       20971520            0            0            0 no
+12   ee           f32  3D       20971520            0            0            0 yes
+13   gg           f32  3D       20971520            0            0            0 yes
+14   dz           f32  3D       20971520            0            0            0 no
+15   dzz          f32  3D       20971520            0            0            0 no
+16   rad2         f32  3D       20971520            0            0            0 yes
+
+result: PASS (0 of 17 arrays differ)
+time_old_ms: avg 78.227 min 46.094
+time_new_ms: avg 66.259 min 43.810
+speedup_new_vs_old: 1.181
+SUMMARY kernel=ext_proft_ status=PASS mismatched_arrays=0 arrays=17 old_avg_ms=78.227 new_avg_ms=66.259 speedup=1.181
+SUMMARY kernel=ext_proft_ status=PASS mismatched_arrays=0 old_avg_ms=78.227 new_avg_ms=66.259 speedup=1.181

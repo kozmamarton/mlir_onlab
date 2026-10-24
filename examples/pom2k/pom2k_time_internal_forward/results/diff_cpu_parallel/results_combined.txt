@@ -1,0 +1,33 @@
+ext_time_internal_forward_ differential benchmark
+timestamp_utc: 2026-10-24T14:02:54Z
+target: cpu_parallel
+size: 1024x1024x20
+samples: 20
+cpu_model: AMD Ryzen 7 9700X 8-Core Processor
+status: PASS
+raw_output_file: /home/marton/uni/onlab/mlir-tutorial/examples/pom2k/pom2k_time_internal_forward/results/diff_cpu_parallel/raw/20261024T140254Z.log
+----------------------------------------------------------------
+kernel: ext_time_internal_forward_
+target: cpu_parallel
+size: im=1024 jm=1024 kb=20
+samples: 20
+threads: 16
+global im = 1024
+global jm = 1024
+
+arg  name         type ext      elements   mismatches      max_abs      max_rel written
+0    egf          f32  2D        1048576            0            0            0 yes
+1    el           f32  2D        1048576            0            0            0 no
+2    ispi         f32  3D       20971520            0            0            0 no
+3    utf          f32  2D        1048576            0            0            0 yes
+4    ua           f32  2D        1048576            0            0            0 no
+5    d            f32  3D       20971520            0            0            0 no
+6    isp2i        f32  3D       20971520            0            0            0 no
+7    vtf          f32  2D        1048576            0            0            0 yes
+8    va           f32  2D        1048576            0            0            0 no
+
+result: PASS (0 of 9 arrays differ)
+time_old_ms: median 0.588 avg 0.789 min 0.444
+time_new_ms: median 0.587 avg 0.823 min 0.304
+speedup_new_vs_old (median): 1.001
+SUMMARY kernel=ext_time_internal_forward_ status=PASS mismatched_arrays=0 arrays=9 old_median_ms=0.588 new_median_ms=0.587 speedup=1.001

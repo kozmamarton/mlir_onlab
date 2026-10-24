@@ -1,0 +1,34 @@
+ext_adjust_u_v_ differential benchmark
+timestamp_utc: 2026-10-24T14:02:55Z
+target: cpu_parallel
+size: 1024x1024x20
+samples: 20
+cpu_model: AMD Ryzen 7 9700X 8-Core Processor
+status: PASS
+raw_output_file: /home/marton/uni/onlab/mlir-tutorial/examples/pom2k/pom2k_adjust_u_v/results/diff_cpu_parallel/raw/20261024T140255Z.log
+----------------------------------------------------------------
+kernel: ext_adjust_u_v_
+target: cpu_parallel
+size: im=1024 jm=1024 kb=20
+samples: 20
+threads: 16
+global im = 1024
+global jm = 1024
+global kbm1 = 19
+
+arg  name         type ext      elements   mismatches      max_abs      max_rel written
+0    tps          f32  2D        1048576            0            0            0 yes
+1    u            f32  3D       20971520            0            0            0 yes
+2    v            f32  3D       20971520            0            0            0 yes
+3    dz           f32  3D       20971520            0            0            0 no
+4    utb          f32  2D        1048576            0            0            0 no
+5    utf          f32  2D        1048576            0            0            0 no
+6    vtb          f32  2D        1048576            0            0            0 no
+7    vtf          f32  2D        1048576            0            0            0 no
+8    dt           f32  2D        1048576            0            0            0 no
+
+result: PASS (0 of 9 arrays differ)
+time_old_ms: median 53.032 avg 83.468 min 31.287
+time_new_ms: median 51.716 avg 78.376 min 31.291
+speedup_new_vs_old (median): 1.025
+SUMMARY kernel=ext_adjust_u_v_ status=PASS mismatched_arrays=0 arrays=9 old_median_ms=53.032 new_median_ms=51.716 speedup=1.025

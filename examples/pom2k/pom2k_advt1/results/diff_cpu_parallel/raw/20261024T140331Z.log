@@ -1,0 +1,43 @@
+kernel: ext_advt1_
+target: cpu_parallel
+size: im=1024 jm=1024 kb=20
+samples: 20
+threads: 16
+global dti2 = 1.32153535
+global im = 1024
+global imm1 = 1023
+global jm = 1024
+global jmm1 = 1023
+global kb = 20
+global kbm1 = 19
+global kbm2 = 18
+global tprni = 1.18565023
+
+arg  name         type ext      elements   mismatches      max_abs      max_rel written
+0    fb           f32  3D       20971520            0            0            0 yes
+1    f            f32  3D       20971520            0            0            0 yes
+2    fclim        f32  3D       20971520            0            0            0 no
+3    ff           f32  3D       20971520            0            0            0 yes
+4    xflux        f32  3D       20971520            0            0            0 yes
+5    yflux        f32  3D       20971520            0            0            0 yes
+6    zflux        f32  3D       20971520            0            0            0 yes
+7    u            f32  3D       20971520            0            0            0 no
+8    v            f32  3D       20971520            0            0            0 no
+9    dt           f32  3D       20971520            0            0            0 no
+10   aam          f32  3D       20971520            0            0            0 no
+11   dum          f32  2D        1048576            0            0            0 no
+12   dvm          f32  2D        1048576            0            0            0 no
+13   dx           f32  3D       20971520            0            0            0 no
+14   dy           f32  3D       20971520            0            0            0 no
+15   dz           f32  3D       20971520            0            0            0 no
+16   h            f32  3D       20971520            0            0            0 no
+17   w            f32  3D       20971520            0            0            0 no
+18   art          f32  2D        1048576            0            0            0 no
+19   etb          f32  2D        1048576            0            0            0 no
+20   etf          f32  2D        1048576            0            0            0 no
+
+result: PASS (0 of 21 arrays differ)
+time_old_ms: median 103.948 avg 109.533 min 79.315
+time_new_ms: median 98.881 avg 103.325 min 85.630
+speedup_new_vs_old (median): 1.051
+SUMMARY kernel=ext_advt1_ status=PASS mismatched_arrays=0 arrays=21 old_median_ms=103.948 new_median_ms=98.881 speedup=1.051

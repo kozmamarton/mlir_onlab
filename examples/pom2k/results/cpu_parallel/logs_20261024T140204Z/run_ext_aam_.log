@@ -1,0 +1,28 @@
+[ext_aam_] lowering old and new variants
+[ext_aam_] building /home/marton/uni/onlab/mlir-tutorial/examples/pom2k/pom2k_aam/diff_cpu_parallel.out
+[ext_aam_] running /home/marton/uni/onlab/mlir-tutorial/examples/pom2k/pom2k_aam/diff_cpu_parallel.out --size 1024x1024x20 --samples 20
+kernel: ext_aam_
+target: cpu_parallel
+size: im=1024 jm=1024 kb=20
+samples: 20
+threads: 16
+global horcon = 0.587375224
+global im = 1024
+global imm1 = 1023
+global jm = 1024
+global jmm1 = 1023
+global kbm1 = 19
+
+arg  name         type ext      elements   mismatches      max_abs      max_rel written
+0    aam          f32  3D       20971520            0            0            0 yes
+1    dx           f32  2D        1048576            0            0            0 no
+2    dy           f32  2D        1048576            0            0            0 no
+3    u            f32  3D       20971520            0            0            0 no
+4    v            f32  3D       20971520            0            0            0 no
+
+result: PASS (0 of 5 arrays differ)
+time_old_ms: median 17.558 avg 18.199 min 15.364
+time_new_ms: median 16.589 avg 16.679 min 12.747
+speedup_new_vs_old (median): 1.058
+SUMMARY kernel=ext_aam_ status=PASS mismatched_arrays=0 arrays=5 old_median_ms=17.558 new_median_ms=16.589 speedup=1.058
+SUMMARY kernel=ext_aam_ status=PASS mismatched_arrays=0 old_median_ms=17.558 new_median_ms=16.589 speedup=1.058

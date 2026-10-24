@@ -1,0 +1,25 @@
+kernel: ext_adjust_u_v_
+target: cpu_parallel
+size: im=1024 jm=1024 kb=20
+samples: 20
+threads: 16
+global im = 1024
+global jm = 1024
+global kbm1 = 19
+
+arg  name         type ext      elements   mismatches      max_abs      max_rel written
+0    tps          f32  2D        1048576            0            0            0 yes
+1    u            f32  3D       20971520            0            0            0 yes
+2    v            f32  3D       20971520            0            0            0 yes
+3    dz           f32  3D       20971520            0            0            0 no
+4    utb          f32  2D        1048576            0            0            0 no
+5    utf          f32  2D        1048576            0            0            0 no
+6    vtb          f32  2D        1048576            0            0            0 no
+7    vtf          f32  2D        1048576            0            0            0 no
+8    dt           f32  2D        1048576            0            0            0 no
+
+result: PASS (0 of 9 arrays differ)
+time_old_ms: median 39.197 avg 49.926 min 19.531
+time_new_ms: median 40.531 avg 47.623 min 21.681
+speedup_new_vs_old (median): 0.967
+SUMMARY kernel=ext_adjust_u_v_ status=PASS mismatched_arrays=0 arrays=9 old_median_ms=39.197 new_median_ms=40.531 speedup=0.967

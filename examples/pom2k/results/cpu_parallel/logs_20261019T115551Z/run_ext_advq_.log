@@ -1,0 +1,42 @@
+[ext_advq_] lowering old and new variants
+[ext_advq_] building /home/marton/uni/onlab/mlir-tutorial/examples/pom2k/pom2k_advq/diff_cpu_parallel.out
+[ext_advq_] running /home/marton/uni/onlab/mlir-tutorial/examples/pom2k/pom2k_advq/diff_cpu_parallel.out --size 1024x1024x20 --samples 20
+kernel: ext_advq_
+target: cpu_parallel
+size: im=1024 jm=1024 kb=20
+samples: 20
+threads: 16
+global dti2 = 1.32153535
+global im = 1024
+global imm1 = 1023
+global jm = 1024
+global jmm1 = 1023
+global kbm1 = 19
+
+arg  name         type ext      elements   mismatches      max_abs      max_rel written
+0    qb           f32  3D       20971520            0            0            0 no
+1    q            f32  3D       20971520            0            0            0 no
+2    qf           f32  3D       20971520            0            0            0 yes
+3    xflux        f32  3D       20971520            0            0            0 yes
+4    yflux        f32  3D       20971520            0            0            0 yes
+5    dt           f32  3D       20971520            0            0            0 no
+6    u            f32  3D       20971520            0            0            0 no
+7    v            f32  3D       20971520            0            0            0 no
+8    aam          f32  3D       20971520            0            0            0 no
+9    h            f32  3D       20971520            0            0            0 no
+10   dum          f32  2D        1048576            0            0            0 no
+11   dx           f32  3D       20971520            0            0            0 no
+12   dvm          f32  2D        1048576            0            0            0 no
+13   dy           f32  3D       20971520            0            0            0 no
+14   w            f32  3D       20971520            0            0            0 no
+15   dz           f32  3D       20971520            0            0            0 no
+16   art          f32  2D        1048576            0            0            0 no
+17   etb          f32  2D        1048576            0            0            0 no
+18   etf          f32  2D        1048576            0            0            0 no
+
+result: PASS (0 of 19 arrays differ)
+time_old_ms: median 102.394 avg 106.915 min 84.280
+time_new_ms: median 97.255 avg 101.633 min 84.134
+speedup_new_vs_old (median): 1.053
+SUMMARY kernel=ext_advq_ status=PASS mismatched_arrays=0 arrays=19 old_median_ms=102.394 new_median_ms=97.255 speedup=1.053
+SUMMARY kernel=ext_advq_ status=PASS mismatched_arrays=0 old_median_ms=102.394 new_median_ms=97.255 speedup=1.053

@@ -1,0 +1,31 @@
+kernel: ext_baropg_
+target: cpu_parallel
+size: im=1024 jm=1024 kb=20
+samples: 20
+threads: 16
+global grav = 0.580879629
+global im = 1024
+global imm1 = 1023
+global jm = 1024
+global jmm1 = 1023
+global kb = 20
+global kbm1 = 19
+
+arg  name         type ext      elements   mismatches      max_abs      max_rel written
+0    rho          f32  3D       20971520            0            0            0 no
+1    rmean        f32  3D       20971520            0            0            0 no
+2    drhox        f32  3D       20971520            0            0            0 yes
+3    drhoy        f32  3D       20971520            0            0            0 yes
+4    zz           f32  3D       20971520            0            0            0 no
+5    dt           f32  3D       20971520            0            0            0 no
+6    dum          f32  2D        1048576            0            0            0 no
+7    dvm          f32  2D        1048576            0            0            0 no
+8    dx           f32  2D        1048576            0            0            0 no
+9    dy           f32  3D       20971520            0            0            0 no
+10   ramp         f32  3D       20971520            0            0            0 no
+
+result: PASS (0 of 11 arrays differ)
+time_old_ms: median 81.696 avg 105.684 min 61.353
+time_new_ms: median 95.586 avg 109.229 min 59.997
+speedup_new_vs_old (median): 0.855
+SUMMARY kernel=ext_baropg_ status=PASS mismatched_arrays=0 arrays=11 old_median_ms=81.696 new_median_ms=95.586 speedup=0.855

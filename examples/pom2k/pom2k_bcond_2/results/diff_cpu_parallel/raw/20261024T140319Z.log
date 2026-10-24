@@ -1,0 +1,39 @@
+kernel: ext_bcond_2_
+target: cpu_parallel
+size: im=1024 jm=1024 kb=20
+samples: 20
+threads: 16
+global grav = 0.580879629
+global im = 1024
+global imm1 = 1023
+global imm2 = 1022
+global jm = 1024
+global jmm1 = 1023
+global jmm2 = 1022
+
+arg  name         type ext      elements   mismatches      max_abs      max_rel written
+0    uaf          f32  3D       20971520            0            0            0 yes
+1    vaf          f32  3D       20971520            0            0            0 yes
+2    uabe         f32  3D       20971520            0            0            0 no
+3    uabw         f32  3D       20971520            0            0            0 no
+4    vabn         f32  3D       20971520            0            0            0 no
+5    vabs         f32  3D       20971520            0            0            0 no
+6    h            f32  3D       20971520            0            0            0 no
+7    el           f32  3D       20971520            0            0            0 no
+8    ele          f32  3D       20971520            0            0            0 no
+9    elw          f32  3D       20971520            0            0            0 no
+10   eln          f32  3D       20971520            0            0            0 no
+11   els          f32  3D       20971520            0            0            0 no
+12   dum          f32  2D        1048576            0            0            0 no
+13   dvm          f32  2D        1048576            0            0            0 no
+14   ramp         f32  3D       20971520            0            0            0 no
+15   rfe          f32  3D       20971520            0            0            0 no
+16   rfw          f32  3D       20971520            0            0            0 no
+17   rfn          f32  3D       20971520            0            0            0 no
+18   rfs          f32  3D       20971520            0            0            0 no
+
+result: PASS (0 of 19 arrays differ)
+time_old_ms: median 0.814 avg 2.295 min 0.617
+time_new_ms: median 1.128 avg 1.977 min 0.562
+speedup_new_vs_old (median): 0.722
+SUMMARY kernel=ext_bcond_2_ status=PASS mismatched_arrays=0 arrays=19 old_median_ms=0.814 new_median_ms=1.128 speedup=0.722

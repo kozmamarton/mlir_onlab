@@ -1,0 +1,19 @@
+kernel: ext_add_ad_2d_
+target: cpu_parallel
+size: im=1024 jm=1024 kb=20
+samples: 20
+threads: 16
+global im = 1024
+global jm = 1024
+
+arg  name         type ext      elements   mismatches      max_abs      max_rel written
+0    adx2d        f32  2D        1048576            0            0            0 yes
+1    ady2d        f32  2D        1048576            0            0            0 yes
+2    advua        f32  2D        1048576            0            0            0 no
+3    advva        f32  2D        1048576            0            0            0 no
+
+result: PASS (0 of 4 arrays differ)
+time_old_ms: median 0.266 avg 0.279 min 0.262
+time_new_ms: median 0.273 avg 0.496 min 0.264
+speedup_new_vs_old (median): 0.978
+SUMMARY kernel=ext_add_ad_2d_ status=PASS mismatched_arrays=0 arrays=4 old_median_ms=0.266 new_median_ms=0.273 speedup=0.978

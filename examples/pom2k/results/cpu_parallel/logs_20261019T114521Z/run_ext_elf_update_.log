@@ -1,0 +1,27 @@
+[ext_elf_update_] lowering old and new variants
+[ext_elf_update_] building /home/marton/uni/onlab/mlir-tutorial/examples/pom2k/pom2k_elf_update/diff_cpu_parallel.out
+[ext_elf_update_] running /home/marton/uni/onlab/mlir-tutorial/examples/pom2k/pom2k_elf_update/diff_cpu_parallel.out --size 1024x1024x20 --samples 20
+kernel: ext_elf_update_
+target: cpu_parallel
+size: im=1024 jm=1024 kb=20
+samples: 20
+threads: 16
+global dte2 = 1.13939095
+global im = 1024
+global imm1 = 1023
+global jmm1 = 1023
+
+arg  name         type ext      elements   mismatches      max_abs      max_rel written
+0    elf          f32  2D        1048576            0            0            0 yes
+1    elb          f32  2D        1048576            0            0            0 no
+2    fluxua       f32  3D       20971520            0            0            0 no
+3    fluxva       f32  2D        1048576            0            0            0 no
+4    art          f32  2D        1048576            0            0            0 no
+5    vfluxf       f32  2D        1048576            0            0            0 no
+
+result: PASS (0 of 6 arrays differ)
+time_old_ms: median 0.539 avg 0.704 min 0.313
+time_new_ms: median 0.489 avg 0.767 min 0.318
+speedup_new_vs_old (median): 1.102
+SUMMARY kernel=ext_elf_update_ status=PASS mismatched_arrays=0 arrays=6 old_median_ms=0.539 new_median_ms=0.489 speedup=1.102
+SUMMARY kernel=ext_elf_update_ status=PASS mismatched_arrays=0 old_median_ms=0.539 new_median_ms=0.489 speedup=1.102

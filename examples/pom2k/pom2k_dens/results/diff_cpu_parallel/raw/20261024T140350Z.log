@@ -1,0 +1,26 @@
+kernel: ext_dens_
+target: cpu_parallel
+size: im=1024 jm=1024 kb=20
+samples: 20
+threads: 16
+global grav = 0.580879629
+global im = 1024
+global jm = 1024
+global kbm1 = 19
+global rhoref = 1.44663072
+
+arg  name         type ext      elements   mismatches      max_abs      max_rel written
+0    si           f32  3D       20971520            0            0            0 no
+1    ti           f32  3D       20971520            0            0            0 no
+2    rhoo         f32  3D       20971520            0            0            0 yes
+3    h            f32  2D        1048576            0            0            0 no
+4    fsm          f32  2D        1048576            0            0            0 no
+5    zz           f32  3D       20971520            0            0            0 no
+6    tbias        f32  3D       20971520            0            0            0 no
+7    sbias        f32  3D       20971520            0            0            0 no
+
+result: PASS (0 of 8 arrays differ)
+time_old_ms: median 34.348 avg 36.376 min 27.054
+time_new_ms: median 34.615 avg 36.269 min 27.521
+speedup_new_vs_old (median): 0.992
+SUMMARY kernel=ext_dens_ status=PASS mismatched_arrays=0 arrays=8 old_median_ms=34.348 new_median_ms=34.615 speedup=0.992
