@@ -39,8 +39,11 @@ def AffineLoopFusionNonConservative : Pass<"affine-loop-fusion-non-conservative"
     Fuses pairs of sibling affine.for loops that have no memory conflicts
     (RAW/WAR/WAW) between them. Loops with matching bounds are concatenated;
     when one range contains the other the smaller loop body is guarded with
-    an affine.if. The earlier loop is sunk to the later one, so any op with
-    memory effects between the two loops blocks the fusion.
+    an affine.if. A guard whose body is a single loop is pushed into that
+    loop's body when it fuses with a sibling, so guarded nests fuse down to
+    the innermost loops with one merged affine.if per body. The earlier loop
+    is sunk to the later one, so any op with memory effects between the two
+    loops blocks the fusion.
 
     With fuse-producer-consumer, a pair whose only conflicts are RAW (the
     earlier loop writes a memref that the later loop only reads) is also
@@ -52,6 +55,13 @@ def AffineLoopFusionNonConservative : Pass<"affine-loop-fusion-non-conservative"
     loops are allowed when they commute with the earlier loop. With
     equate-reloads, re-loads of an unchanged location count as equal values
     when comparing loop bounds and reinterpret_cast views.
+
+    With fuse-symbolic-bounds, pairs whose bound difference is not a constant
+    or whose ranges only partially overlap are fused over the hull of both
+    ranges (affine.min/max of symbol bounds) with every body guarded by its
+    own range. With require-perfect-nests, a fusion is undone when the fused
+    nest, after its inner loops were fused, has more imperfectly nested
+    levels than the two input nests.
   }];
   let dependentDialects = ["mlir::affine::AffineDialect"];
   let options = [
@@ -74,7 +84,15 @@ def AffineLoopFusionNonConservative : Pass<"affine-loop-fusion-non-conservative"
            "commute with the earlier loop (no RAW/WAR/WAW against its footprint)">,
     Option<"equateReloads", "equate-reloads", "bool", /*default=*/"false",
            "Treat loads of the same location as equal values when nothing "
-           "between them may write it (used for loop bounds and memref views)">
+           "between them may write it (used for loop bounds and memref views)">,
+    Option<"fuseSymbolicBounds", "fuse-symbolic-bounds", "bool", /*default=*/"false",
+           "Also fuse pairs whose bound difference is not a compile-time "
+           "constant or whose ranges only partially overlap, over the hull of "
+           "both ranges (affine.min/max bounds) with every body guarded">,
+    Option<"requirePerfectNests", "require-perfect-nests", "bool", /*default=*/"false",
+           "Undo a fusion when the inner loops of the fused nest do not fuse "
+           "into a perfect nest, so fusion never leaves loops nested in a loop "
+           "with other loops or effectful ops">
   ];
 }
 
