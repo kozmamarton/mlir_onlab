@@ -1,0 +1,28 @@
+kernel: ext_bcond_3_
+target: cpu_parallel
+size: im=1024 jm=1024 kb=20
+samples: 20
+threads: 16
+global hmax = 0.510460198
+global im = 1024
+global imm1 = 1023
+global imm2 = 1022
+global jm = 1024
+global jmm1 = 1023
+global jmm2 = 1022
+global kbm1 = 19
+
+arg  name         type ext      elements   mismatches      max_abs      max_rel written
+0    h            f32  3D       20971520            0            0            0 no
+1    uf           f32  3D       20971520            0            0            0 yes
+2    u            f32  3D       20971520            0            0            0 no
+3    vf           f32  3D       20971520            0            0            0 yes
+4    v            f32  3D       20971520            0            0            0 no
+5    dum          f32  2D        1048576            0            0            0 no
+6    dvm          f32  2D        1048576            0            0            0 no
+
+result: PASS (0 of 7 arrays differ)
+time_old_ms: median 13.361 avg 15.045 min 9.139
+time_new_ms: median 13.463 avg 13.571 min 8.346
+speedup_new_vs_old (median): 0.992
+SUMMARY kernel=ext_bcond_3_ status=PASS mismatched_arrays=0 arrays=7 old_median_ms=13.361 new_median_ms=13.463 speedup=0.992

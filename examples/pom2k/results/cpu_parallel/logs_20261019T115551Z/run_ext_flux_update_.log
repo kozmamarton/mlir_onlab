@@ -1,0 +1,26 @@
+[ext_flux_update_] lowering old and new variants
+[ext_flux_update_] building /home/marton/uni/onlab/mlir-tutorial/examples/pom2k/pom2k_flux_update/diff_cpu_parallel.out
+[ext_flux_update_] running /home/marton/uni/onlab/mlir-tutorial/examples/pom2k/pom2k_flux_update/diff_cpu_parallel.out --size 1024x1024x20 --samples 20
+kernel: ext_flux_update_
+target: cpu_parallel
+size: im=1024 jm=1024 kb=20
+samples: 20
+threads: 16
+global im = 1024
+global jm = 1024
+
+arg  name         type ext      elements   mismatches      max_abs      max_rel written
+0    fluxua       f32  2D        1048576            0            0            0 yes
+1    fluxva       f32  2D        1048576            0            0            0 yes
+2    d            f32  3D       20971520            0            0            0 no
+3    dy           f32  3D       20971520            0            0            0 no
+4    dx           f32  2D        1048576            0            0            0 no
+5    ua           f32  2D        1048576            0            0            0 no
+6    va           f32  2D        1048576            0            0            0 no
+
+result: PASS (0 of 7 arrays differ)
+time_old_ms: median 0.775 avg 1.230 min 0.455
+time_new_ms: median 0.674 avg 1.039 min 0.418
+speedup_new_vs_old (median): 1.149
+SUMMARY kernel=ext_flux_update_ status=PASS mismatched_arrays=0 arrays=7 old_median_ms=0.775 new_median_ms=0.674 speedup=1.149
+SUMMARY kernel=ext_flux_update_ status=PASS mismatched_arrays=0 old_median_ms=0.775 new_median_ms=0.674 speedup=1.149

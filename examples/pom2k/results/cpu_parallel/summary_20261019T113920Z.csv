@@ -1,0 +1,3 @@
+kernel,target,size,samples,status,mismatched_arrays,old_avg_ms,new_avg_ms,speedup
+ext_profu_,cpu_parallel,64x64x8,2,PASS,0,0.369,0.353,1.045
+ext_adjust_u_v_,cpu_parallel,64x64x8,2,PASS,0,0.716,0.948,0.756

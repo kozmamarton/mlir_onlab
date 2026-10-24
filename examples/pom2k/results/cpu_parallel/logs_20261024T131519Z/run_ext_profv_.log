@@ -1,0 +1,44 @@
+[ext_profv_] lowering old and new variants
+[ext_profv_] building /home/marton/uni/onlab/mlir-tutorial/examples/pom2k/pom2k_profv/diff_cpu_parallel.out
+[ext_profv_] running /home/marton/uni/onlab/mlir-tutorial/examples/pom2k/pom2k_profv/diff_cpu_parallel.out --size 1024x1024x20 --samples 20
+kernel: ext_profv_
+target: cpu_parallel
+size: im=1024 jm=1024 kb=20
+samples: 20
+threads: 16
+global dti2 = 1.32153535
+global im = 1024
+global imm1 = 1023
+global jm = 1024
+global jmm1 = 1023
+global kb = 20
+global kbm1 = 19
+global kbm2 = 18
+global umol = 1.01578474
+
+arg  name         type ext      elements   mismatches      max_abs      max_rel written
+0    etf          f32  2D        1048576            0            0            0 no
+1    h            f32  2D        1048576            0            0            0 no
+2    c            f32  3D       20971520            0            0            0 yes
+3    km           f32  3D       20971520            0            0            0 no
+4    a            f32  3D       20971520            0            0            0 yes
+5    dz           f32  3D       20971520            0            0            0 no
+6    dzz          f32  3D       20971520            0            0            0 no
+7    ee           f32  3D       20971520            0            0            0 yes
+8    gg           f32  3D       20971520            0            0            0 yes
+9    wvsurf       f32  2D        1048576            0            0            0 no
+10   vf           f32  3D       20971520            0            0            0 yes
+11   tps          f32  2D        1048576            0            0            0 yes
+12   cbc          f32  2D        1048576            0            0            0 no
+13   ub           f32  3D       20971520            0            0            0 no
+14   vb           f32  3D       20971520            0            0            0 no
+15   dvm          f32  3D       20971520            0            0            0 no
+16   wvbot        f32  2D        1048576            0            0            0 yes
+17   dhloc        f32  2D        1048576            0            0            0 yes
+
+result: PASS (0 of 18 arrays differ)
+time_old_ms: median 91.158 avg 100.481 min 78.145
+time_new_ms: median 92.737 avg 97.196 min 72.009
+speedup_new_vs_old (median): 0.983
+SUMMARY kernel=ext_profv_ status=PASS mismatched_arrays=0 arrays=18 old_median_ms=91.158 new_median_ms=92.737 speedup=0.983
+SUMMARY kernel=ext_profv_ status=PASS mismatched_arrays=0 old_median_ms=91.158 new_median_ms=92.737 speedup=0.983

@@ -1,0 +1,35 @@
+kernel: ext_uaf_
+target: cpu_parallel
+size: im=1024 jm=1024 kb=20
+samples: 20
+threads: 16
+global alpha = 1.25256276
+global dte = 1.15305448
+global grav = 0.580879629
+global im = 1024
+global jmm1 = 1023
+
+arg  name         type ext      elements   mismatches      max_abs      max_rel written
+0    uaf          f32  2D        1048576            0            0            0 yes
+1    adx2d        f32  2D        1048576            0            0            0 no
+2    advua        f32  2D        1048576            0            0            0 no
+3    aru          f32  2D        1048576            0            0            0 no
+4    cor          f32  3D       20971520            0            0            0 no
+5    d            f32  3D       20971520            0            0            0 no
+6    va           f32  3D       20971520            0            0            0 no
+7    dy           f32  3D       20971520            0            0            0 no
+8    el           f32  3D       20971520            0            0            0 no
+9    elb          f32  3D       20971520            0            0            0 no
+10   elf          f32  3D       20971520            0            0            0 no
+11   e_atmos      f32  3D       20971520            0            0            0 no
+12   drx2d        f32  2D        1048576            0            0            0 no
+13   wusurf       f32  2D        1048576            0            0            0 no
+14   wubot        f32  2D        1048576            0            0            0 no
+15   h            f32  3D       20971520            0            0            0 no
+16   uab          f32  2D        1048576            0            0            0 no
+
+result: PASS (0 of 17 arrays differ)
+time_old_ms: median 3.345 avg 5.157 min 1.907
+time_new_ms: median 2.848 avg 4.257 min 2.343
+speedup_new_vs_old (median): 1.174
+SUMMARY kernel=ext_uaf_ status=PASS mismatched_arrays=0 arrays=17 old_median_ms=3.345 new_median_ms=2.848 speedup=1.174

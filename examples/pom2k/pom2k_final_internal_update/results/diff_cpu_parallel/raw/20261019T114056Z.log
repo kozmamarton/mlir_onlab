@@ -1,0 +1,28 @@
+kernel: ext_final_internal_update_
+target: cpu_parallel
+size: im=1024 jm=1024 kb=20
+samples: 20
+threads: 16
+global im = 1024
+global jm = 1024
+
+arg  name         type ext      elements   mismatches      max_abs      max_rel written
+0    egb          f32  2D        1048576            0            0            0 yes
+1    egf          f32  2D        1048576            0            0            0 no
+2    etb          f32  2D        1048576            0            0            0 yes
+3    et           f32  2D        1048576            0            0            0 yes
+4    etf          f32  2D        1048576            0            0            0 no
+5    dt           f32  2D        1048576            0            0            0 yes
+6    h            f32  2D        1048576            0            0            0 no
+7    utb          f32  2D        1048576            0            0            0 yes
+8    utf          f32  2D        1048576            0            0            0 no
+9    vtb          f32  2D        1048576            0            0            0 yes
+10   vtf          f32  2D        1048576            0            0            0 no
+11   vfluxb       f32  2D        1048576            0            0            0 yes
+12   vfluxf       f32  2D        1048576            0            0            0 no
+
+result: PASS (0 of 13 arrays differ)
+time_old_ms: avg 4.954 min 1.913
+time_new_ms: avg 5.117 min 1.779
+speedup_new_vs_old: 0.968
+SUMMARY kernel=ext_final_internal_update_ status=PASS mismatched_arrays=0 arrays=13 old_avg_ms=4.954 new_avg_ms=5.117 speedup=0.968

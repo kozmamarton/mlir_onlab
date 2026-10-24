@@ -1,0 +1,15 @@
+pom2k differential benchmarks (old = without custom fusion pass, new = with it)
+generated_at_utc: 2026-10-19T11:39:24Z
+target: cpu_parallel
+size: 64x64x8
+samples: 2
+cpu_model: AMD Ryzen 7 9700X 8-Core Processor
+logs: /home/marton/uni/onlab/mlir-tutorial/examples/pom2k/results/cpu_parallel/logs_20261019T113920Z
+
+kernel                             status         mismatched   old_avg_ms   new_avg_ms  speedup
+ext_profu_                         PASS           0                 0.369        0.353    1.045
+ext_adjust_u_v_                    PASS           0                 0.716        0.948    0.756
+
+PASS: 2
+FAIL: 0
+OTHER: 0

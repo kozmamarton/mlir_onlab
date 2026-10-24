@@ -1,0 +1,21 @@
+kernel: ext_etf_update_
+target: cpu_parallel
+size: im=1024 jm=1024 kb=20
+samples: 20
+threads: 16
+global im = 1024
+global jm = 1024
+
+arg  name         type ext      elements   mismatches      max_abs      max_rel written
+0    iext         i32  sel             1            0            0            0 no
+1    isplit       i32  sel             1            0            0            0 no
+2    smoth        f32  3D       20971520            0            0            0 no
+3    etf          f32  3D       20971520            0            0            0 no
+4    elf          f32  3D       20971520            0            0            0 no
+5    fsm          f32  3D       20971520            0            0            0 no
+
+result: PASS (0 of 6 arrays differ)
+time_old_ms: avg 0.000 min 0.000
+time_new_ms: avg 0.000 min 0.000
+speedup_new_vs_old: 1.163
+SUMMARY kernel=ext_etf_update_ status=PASS mismatched_arrays=0 arrays=6 old_avg_ms=0.000 new_avg_ms=0.000 speedup=1.163

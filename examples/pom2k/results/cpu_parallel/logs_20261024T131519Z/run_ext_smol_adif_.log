@@ -1,0 +1,34 @@
+[ext_smol_adif_] lowering old and new variants
+[ext_smol_adif_] building /home/marton/uni/onlab/mlir-tutorial/examples/pom2k/pom2k_smol_adif/diff_cpu_parallel.out
+[ext_smol_adif_] running /home/marton/uni/onlab/mlir-tutorial/examples/pom2k/pom2k_smol_adif/diff_cpu_parallel.out --size 1024x1024x20 --samples 20
+kernel: ext_smol_adif_
+target: cpu_parallel
+size: im=1024 jm=1024 kb=20
+samples: 20
+threads: 16
+global dti2 = 1.32153535
+global im = 1024
+global imm1 = 1023
+global jm = 1024
+global jmm1 = 1023
+global kb = 20
+global kbm1 = 19
+
+arg  name         type ext      elements   mismatches      max_abs      max_rel written
+0    xmassflux    f32  3D       20971520            0            0            0 yes
+1    ymassflux    f32  3D       20971520            0            0            0 yes
+2    zwflux       f32  3D       20971520            0            0            0 yes
+3    ff           f32  3D       20971520            0            0            0 yes
+4    sw           f32  3D       20971520            0            0            0 no
+5    fsm          f32  2D        1048576            0            0            0 no
+6    aru          f32  3D       20971520            0            0            0 no
+7    arv          f32  3D       20971520            0            0            0 no
+8    dt           f32  3D       20971520            0            0            0 no
+9    dzz          f32  3D       20971520            0            0            0 no
+
+result: PASS (0 of 10 arrays differ)
+time_old_ms: median 361.040 avg 363.955 min 345.329
+time_new_ms: median 352.406 avg 357.883 min 340.104
+speedup_new_vs_old (median): 1.024
+SUMMARY kernel=ext_smol_adif_ status=PASS mismatched_arrays=0 arrays=10 old_median_ms=361.040 new_median_ms=352.406 speedup=1.024
+SUMMARY kernel=ext_smol_adif_ status=PASS mismatched_arrays=0 old_median_ms=361.040 new_median_ms=352.406 speedup=1.024

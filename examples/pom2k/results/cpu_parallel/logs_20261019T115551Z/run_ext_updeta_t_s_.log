@@ -1,0 +1,27 @@
+[ext_updeta_t_s_] lowering old and new variants
+[ext_updeta_t_s_] building /home/marton/uni/onlab/mlir-tutorial/examples/pom2k/pom2k_updeta_t_s/diff_cpu_parallel.out
+[ext_updeta_t_s_] running /home/marton/uni/onlab/mlir-tutorial/examples/pom2k/pom2k_updeta_t_s/diff_cpu_parallel.out --size 1024x1024x20 --samples 20
+kernel: ext_updeta_t_s_
+target: cpu_parallel
+size: im=1024 jm=1024 kb=20
+samples: 20
+threads: 16
+global im = 1024
+global jm = 1024
+global kb = 20
+
+arg  name         type ext      elements   mismatches      max_abs      max_rel written
+0    t            f32  3D       20971520            0            0            0 yes
+1    tb           f32  3D       20971520            0            0            0 yes
+2    s            f32  3D       20971520            0            0            0 yes
+3    sb           f32  3D       20971520            0            0            0 yes
+4    uf           f32  3D       20971520            0            0            0 no
+5    vf           f32  3D       20971520            0            0            0 no
+6    smoth        f32  3D       20971520            0            0            0 no
+
+result: PASS (0 of 7 arrays differ)
+time_old_ms: median 20.281 avg 20.611 min 17.539
+time_new_ms: median 20.141 avg 20.679 min 17.552
+speedup_new_vs_old (median): 1.007
+SUMMARY kernel=ext_updeta_t_s_ status=PASS mismatched_arrays=0 arrays=7 old_median_ms=20.281 new_median_ms=20.141 speedup=1.007
+SUMMARY kernel=ext_updeta_t_s_ status=PASS mismatched_arrays=0 old_median_ms=20.281 new_median_ms=20.141 speedup=1.007

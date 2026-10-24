@@ -1,0 +1,2 @@
+timestamp,kernel,target,size,samples,cpu_model,status,mismatched_arrays,old_median_ms,new_median_ms,speedup,raw_output_file
+"2026-10-24T14:02:55Z","ext_adjust_u_v_","cpu_parallel","1024x1024x20","20","AMD Ryzen 7 9700X 8-Core Processor","PASS","0","53.032","51.716","1.025","/home/marton/uni/onlab/mlir-tutorial/examples/pom2k/pom2k_adjust_u_v/results/diff_cpu_parallel/raw/20261024T140255Z.log"

@@ -1,0 +1,18 @@
+kernel: ext_init_horizontal_velocities_
+target: cpu_parallel
+size: im=1024 jm=1024 kb=20
+samples: 20
+threads: 16
+global im = 1024
+global jm = 1024
+global kb = 20
+
+arg  name         type ext      elements   mismatches      max_abs      max_rel written
+0    uf           f32  3D       20971520            0            0            0 yes
+1    vf           f32  3D       20971520            0            0            0 yes
+
+result: PASS (0 of 2 arrays differ)
+time_old_ms: median 12.440 avg 12.680 min 7.911
+time_new_ms: median 12.830 avg 14.017 min 8.545
+speedup_new_vs_old (median): 0.970
+SUMMARY kernel=ext_init_horizontal_velocities_ status=PASS mismatched_arrays=0 arrays=2 old_median_ms=12.440 new_median_ms=12.830 speedup=0.970

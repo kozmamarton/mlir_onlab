@@ -1,0 +1,40 @@
+kernel: ext_profu_
+target: cpu_parallel
+size: im=64 jm=64 kb=8
+samples: 2
+threads: 16
+global dti2 = 1.32153535
+global im = 64
+global imm1 = 63
+global jm = 64
+global jmm1 = 63
+global kb = 8
+global kbm1 = 7
+global kbm2 = 6
+global umol = 1.01578474
+
+arg  name         type ext      elements   mismatches      max_abs      max_rel written
+0    h            f32  3D          32768            0            0            0 no
+1    etf          f32  3D          32768            0            0            0 no
+2    c            f32  3D          32768            0            0            0 yes
+3    km           f32  3D          32768            0            0            0 no
+4    a            f32  3D          32768            0            0            0 yes
+5    dz           f32  3D          32768            0            0            0 no
+6    dzz          f32  3D          32768            0            0            0 no
+7    ee           f32  3D          32768            0            0            0 yes
+8    gg           f32  3D          32768            0            0            0 yes
+9    wusurf       f32  2D           4096            0            0            0 no
+10   uf           f32  3D          32768            0            0            0 yes
+11   tps          f32  2D           4096            0            0            0 yes
+12   cbc          f32  3D          32768            0            0            0 no
+13   ub           f32  3D          32768            0            0            0 no
+14   vb           f32  3D          32768            0            0            0 no
+15   dum          f32  3D          32768            0            0            0 no
+16   wubot        f32  2D           4096            0            0            0 yes
+17   dhloc        f32  2D           4096            0            0            0 yes
+
+result: PASS (0 of 18 arrays differ)
+time_old_ms: avg 0.369 min 0.333
+time_new_ms: avg 0.353 min 0.301
+speedup_new_vs_old: 1.045
+SUMMARY kernel=ext_profu_ status=PASS mismatched_arrays=0 arrays=18 old_avg_ms=0.369 new_avg_ms=0.353 speedup=1.045

@@ -1,0 +1,41 @@
+[ext_advave_] lowering old and new variants
+[ext_advave_] building /home/marton/uni/onlab/mlir-tutorial/examples/pom2k/pom2k_advave/diff_cpu_parallel.out
+[ext_advave_] running /home/marton/uni/onlab/mlir-tutorial/examples/pom2k/pom2k_advave/diff_cpu_parallel.out --size 1024x1024x20 --samples 20
+kernel: ext_advave_
+target: cpu_parallel
+size: im=1024 jm=1024 kb=20
+samples: 20
+threads: 16
+global im = 1024
+global imm1 = 1023
+global jm = 1024
+global jmm1 = 1023
+global mode = 3
+
+arg  name         type ext      elements   mismatches      max_abs      max_rel written
+0    curv2d       f32  3D       20971520            0            0            0 no
+1    advua        f32  3D       20971520      1044484         14.8            2 yes
+2    advva        f32  3D       20971520      1044484         19.4            2 yes
+3    fluxua       f32  3D       20971520            0            0            0 yes
+4    fluxva       f32  2D        1048576      1045506        13.53            2 yes
+5    ua           f32  3D       20971520            0            0            0 no
+6    va           f32  3D       20971520            0            0            0 no
+7    uab          f32  3D       20971520            0            0            0 no
+8    vab          f32  3D       20971520            0            0            0 no
+9    wubot        f32  3D       20971520            0            0            0 no
+10   wvbot        f32  3D       20971520            0            0            0 no
+11   d            f32  3D       20971520            0            0            0 no
+12   dx           f32  3D       20971520            0            0            0 no
+13   dy           f32  3D       20971520            0            0            0 no
+14   aru          f32  3D       20971520            0            0            0 no
+15   arv          f32  3D       20971520            0            0            0 no
+16   aam2d        f32  3D       20971520            0            0            0 no
+17   tps          f32  2D        1048576            0            0            0 yes
+18   cbc          f32  3D       20971520            0            0            0 no
+
+result: FAIL (3 of 19 arrays differ)
+time_old_ms: median 7.709 avg 10.355 min 6.545
+time_new_ms: median 7.589 avg 14.453 min 4.798
+speedup_new_vs_old (median): 1.016
+SUMMARY kernel=ext_advave_ status=FAIL mismatched_arrays=3 arrays=19 old_median_ms=7.709 new_median_ms=7.589 speedup=1.016
+SUMMARY kernel=ext_advave_ status=FAIL mismatched_arrays=3 old_median_ms=7.709 new_median_ms=7.589 speedup=1.016

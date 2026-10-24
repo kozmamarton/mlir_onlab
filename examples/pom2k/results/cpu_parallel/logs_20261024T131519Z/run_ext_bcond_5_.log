@@ -1,0 +1,22 @@
+[ext_bcond_5_] lowering old and new variants
+[ext_bcond_5_] building /home/marton/uni/onlab/mlir-tutorial/examples/pom2k/pom2k_bcond_5/diff_cpu_parallel.out
+[ext_bcond_5_] running /home/marton/uni/onlab/mlir-tutorial/examples/pom2k/pom2k_bcond_5/diff_cpu_parallel.out --size 1024x1024x20 --samples 20
+kernel: ext_bcond_5_
+target: cpu_parallel
+size: im=1024 jm=1024 kb=20
+samples: 20
+threads: 16
+global im = 1024
+global jm = 1024
+global kbm1 = 19
+
+arg  name         type ext      elements   mismatches      max_abs      max_rel written
+0    w            f32  3D       20971520            0            0            0 yes
+1    fsm          f32  2D        1048576            0            0            0 no
+
+result: PASS (0 of 2 arrays differ)
+time_old_ms: median 9.637 avg 9.793 min 8.743
+time_new_ms: median 9.117 avg 9.672 min 8.072
+speedup_new_vs_old (median): 1.057
+SUMMARY kernel=ext_bcond_5_ status=PASS mismatched_arrays=0 arrays=2 old_median_ms=9.637 new_median_ms=9.117 speedup=1.057
+SUMMARY kernel=ext_bcond_5_ status=PASS mismatched_arrays=0 old_median_ms=9.637 new_median_ms=9.117 speedup=1.057

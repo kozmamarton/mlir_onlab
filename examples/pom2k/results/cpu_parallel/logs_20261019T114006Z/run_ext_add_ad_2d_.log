@@ -1,0 +1,23 @@
+[ext_add_ad_2d_] lowering old and new variants
+[ext_add_ad_2d_] building /home/marton/uni/onlab/mlir-tutorial/examples/pom2k/pom2k_ext_add_ad_2d/diff_cpu_parallel.out
+[ext_add_ad_2d_] running /home/marton/uni/onlab/mlir-tutorial/examples/pom2k/pom2k_ext_add_ad_2d/diff_cpu_parallel.out --size 1024x1024x20 --samples 20
+kernel: ext_add_ad_2d_
+target: cpu_parallel
+size: im=1024 jm=1024 kb=20
+samples: 20
+threads: 16
+global im = 1024
+global jm = 1024
+
+arg  name         type ext      elements   mismatches      max_abs      max_rel written
+0    adx2d        f32  2D        1048576            0            0            0 yes
+1    ady2d        f32  2D        1048576            0            0            0 yes
+2    advua        f32  2D        1048576            0            0            0 no
+3    advva        f32  2D        1048576            0            0            0 no
+
+result: PASS (0 of 4 arrays differ)
+time_old_ms: avg 1.091 min 0.263
+time_new_ms: avg 1.096 min 0.264
+speedup_new_vs_old: 0.995
+SUMMARY kernel=ext_add_ad_2d_ status=PASS mismatched_arrays=0 arrays=4 old_avg_ms=1.091 new_avg_ms=1.096 speedup=0.995
+SUMMARY kernel=ext_add_ad_2d_ status=PASS mismatched_arrays=0 old_avg_ms=1.091 new_avg_ms=1.096 speedup=0.995

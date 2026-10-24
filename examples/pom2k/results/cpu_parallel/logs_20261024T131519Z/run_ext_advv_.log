@@ -1,0 +1,43 @@
+[ext_advv_] lowering old and new variants
+[ext_advv_] building /home/marton/uni/onlab/mlir-tutorial/examples/pom2k/pom2k_advv/diff_cpu_parallel.out
+[ext_advv_] running /home/marton/uni/onlab/mlir-tutorial/examples/pom2k/pom2k_advv/diff_cpu_parallel.out --size 1024x1024x20 --samples 20
+kernel: ext_advv_
+target: cpu_parallel
+size: im=1024 jm=1024 kb=20
+samples: 20
+threads: 16
+global dti2 = 1.32153535
+global grav = 0.580879629
+global im = 1024
+global imm1 = 1023
+global jm = 1024
+global jmm1 = 1023
+global kb = 20
+global kbm1 = 19
+
+arg  name         type ext      elements   mismatches      max_abs      max_rel written
+0    v            f32  3D       20971520            0            0            0 no
+1    vf           f32  3D       20971520            0            0            0 yes
+2    vb           f32  3D       20971520            0            0            0 no
+3    u            f32  3D       20971520            0            0            0 no
+4    w            f32  3D       20971520            0            0            0 no
+5    advy         f32  3D       20971520            0            0            0 no
+6    arv          f32  2D        1048576            0            0            0 no
+7    dx           f32  2D        1048576            0            0            0 no
+8    dz           f32  3D       20971520            0            0            0 no
+9    cor          f32  2D        1048576            0            0            0 no
+10   dt           f32  2D        1048576            0            0            0 no
+11   egf          f32  2D        1048576            0            0            0 no
+12   egb          f32  2D        1048576            0            0            0 no
+13   e_atmos      f32  2D        1048576            0            0            0 no
+14   drhoy        f32  3D       20971520            0            0            0 no
+15   h            f32  2D        1048576            0            0            0 no
+16   etf          f32  2D        1048576            0            0            0 no
+17   etb          f32  2D        1048576            0            0            0 no
+
+result: PASS (0 of 18 arrays differ)
+time_old_ms: median 82.015 avg 107.018 min 58.490
+time_new_ms: median 105.037 avg 115.839 min 76.194
+speedup_new_vs_old (median): 0.781
+SUMMARY kernel=ext_advv_ status=PASS mismatched_arrays=0 arrays=18 old_median_ms=82.015 new_median_ms=105.037 speedup=0.781
+SUMMARY kernel=ext_advv_ status=PASS mismatched_arrays=0 old_median_ms=82.015 new_median_ms=105.037 speedup=0.781

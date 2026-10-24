@@ -1,0 +1,27 @@
+[ext_update_turbulane_] lowering old and new variants
+[ext_update_turbulane_] building /home/marton/uni/onlab/mlir-tutorial/examples/pom2k/pom2k_update_turbulane/diff_cpu_parallel.out
+[ext_update_turbulane_] running /home/marton/uni/onlab/mlir-tutorial/examples/pom2k/pom2k_update_turbulane/diff_cpu_parallel.out --size 1024x1024x20 --samples 20
+kernel: ext_update_turbulane_
+target: cpu_parallel
+size: im=1024 jm=1024 kb=20
+samples: 20
+threads: 16
+global im = 1024
+global jm = 1024
+global kb = 20
+
+arg  name         type ext      elements   mismatches      max_abs      max_rel written
+0    q2           f32  3D       20971520            0            0            0 yes
+1    q2b          f32  3D       20971520            0            0            0 yes
+2    q2l          f32  3D       20971520            0            0            0 yes
+3    q2lb         f32  3D       20971520            0            0            0 yes
+4    uf           f32  3D       20971520            0            0            0 no
+5    vf           f32  3D       20971520            0            0            0 no
+6    smoth        f32  3D       20971520            0            0            0 no
+
+result: PASS (0 of 7 arrays differ)
+time_old_ms: avg 23.680 min 17.580
+time_new_ms: avg 23.605 min 17.718
+speedup_new_vs_old: 1.003
+SUMMARY kernel=ext_update_turbulane_ status=PASS mismatched_arrays=0 arrays=7 old_avg_ms=23.680 new_avg_ms=23.605 speedup=1.003
+SUMMARY kernel=ext_update_turbulane_ status=PASS mismatched_arrays=0 old_avg_ms=23.680 new_avg_ms=23.605 speedup=1.003

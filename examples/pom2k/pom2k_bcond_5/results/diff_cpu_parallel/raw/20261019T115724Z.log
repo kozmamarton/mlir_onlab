@@ -1,0 +1,18 @@
+kernel: ext_bcond_5_
+target: cpu_parallel
+size: im=1024 jm=1024 kb=20
+samples: 20
+threads: 16
+global im = 1024
+global jm = 1024
+global kbm1 = 19
+
+arg  name         type ext      elements   mismatches      max_abs      max_rel written
+0    w            f32  3D       20971520            0            0            0 yes
+1    fsm          f32  2D        1048576            0            0            0 no
+
+result: PASS (0 of 2 arrays differ)
+time_old_ms: median 8.930 avg 10.709 min 8.378
+time_new_ms: median 8.918 avg 9.921 min 7.867
+speedup_new_vs_old (median): 1.001
+SUMMARY kernel=ext_bcond_5_ status=PASS mismatched_arrays=0 arrays=2 old_median_ms=8.930 new_median_ms=8.918 speedup=1.001
