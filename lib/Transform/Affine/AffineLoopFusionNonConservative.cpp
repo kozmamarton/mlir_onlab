@@ -1,4 +1,5 @@
 #include "Transform/Affine/AffineLoopFusionNonConservative.h"
+#include "Transform/MemoryModel.h"
 
 #include <optional>
 #include <string>
@@ -16,6 +17,7 @@
 #include "mlir/Dialect/Affine/IR/AffineValueMap.h"
 #include "mlir/Dialect/Func/IR/FuncOps.h"
 #include "mlir/Dialect/MemRef/IR/MemRef.h"
+#include "mlir/IR/IRMapping.h"
 #include "mlir/IR/IntegerSet.h"
 #include "mlir/Interfaces/SideEffectInterfaces.h"
 #include "mlir/Interfaces/ViewLikeInterface.h"
@@ -48,70 +50,13 @@ const char *depKindName(DepKind k) {
   llvm_unreachable("unknown dependence kind");
 }
 
-struct MemoryFootprint {
-  llvm::DenseSet<Value> reads;
-  llvm::DenseSet<Value> writes;
-};
-
 using RootConflict = std::pair<Value, DepKind>;
 
-// Resolves memrefs to the root they view and decides whether two roots may
-// alias. Separate memref.get_global ops of one symbol return the same memory,
-// so they all resolve to the first such value seen in the function.
-class MemoryModel {
+// The shared memory model plus the queries the fusion legality checks need.
+class FusionMemoryModel : public MemoryModel {
 public:
-  explicit MemoryModel(bool conservative) : conservative(conservative) {}
-
-  Value root(Value v) {
-    while (true) {
-      if (auto view = v.getDefiningOp<ViewLikeOpInterface>()) {
-        v = view.getViewSource();
-        continue;
-      }
-      if (auto cast = v.getDefiningOp<memref::CastOp>()) {
-        v = cast.getSource();
-        continue;
-      }
-      break;
-    }
-    if (auto global = v.getDefiningOp<memref::GetGlobalOp>())
-      return globalRoots.try_emplace(global.getNameAttr(), v).first->second;
-    return v;
-  }
-
-  static bool isDistinctAllocation(Value root) {
-    Operation *def = root.getDefiningOp();
-    return def &&
-           isa<memref::AllocOp, memref::AllocaOp, memref::GetGlobalOp>(def);
-  }
-
-  bool mayAlias(Value a, Value b) const {
-    if (a == b)
-      return true;
-    return conservative && !isDistinctAllocation(a) &&
-           !isDistinctAllocation(b);
-  }
-
-  // Footprint of `ops` and everything nested in them (excluding the ops
-  // themselves when `skipRoots`). std::nullopt when some op's memory behaviour
-  // cannot be summarised per root memref; `blocker` then receives that op.
-  std::optional<MemoryFootprint> footprint(ArrayRef<Operation *> ops,
-                                           bool skipRoots,
-                                           Operation **blocker = nullptr) {
-    MemoryFootprint fp;
-    for (Operation *top : ops) {
-      WalkResult result = top->walk([&](Operation *op) {
-        if ((skipRoots && op == top) || addEffects(op, fp))
-          return WalkResult::advance();
-        if (blocker)
-          *blocker = op;
-        return WalkResult::interrupt();
-      });
-      if (result.wasInterrupted())
-        return std::nullopt;
-    }
-    return fp;
-  }
+  using MemoryModel::MemoryModel;
+  using MemoryModel::footprint;
 
   std::optional<MemoryFootprint> footprint(AffineForOp loop,
                                            Operation **blocker = nullptr) {
@@ -172,23 +117,6 @@ public:
     return out;
   }
 
-  // Whether an op strictly between `x` and `y` may write `root`. Ops in
-  // different blocks are treated as separated by a write.
-  bool mayWriteBetween(Operation *x, Operation *y, Value root) {
-    if (x->getBlock() != y->getBlock())
-      return true;
-    if (y->isBeforeInBlock(x))
-      std::swap(x, y);
-    for (Operation *op = x->getNextNode(); op != y; op = op->getNextNode()) {
-      std::optional<MemoryFootprint> fp =
-          footprint(ArrayRef<Operation *>(op), /*skipRoots=*/false);
-      if (!fp)
-        return true;
-      if (llvm::any_of(fp->writes, [&](Value w) { return mayAlias(w, root); }))
-        return true;
-    }
-    return false;
-  }
 
   // Collects the ops in `loop` that write (`wantWrites`) or read `root`. Fails
   // when such an op is not an affine write/read, since the dependence analysis
@@ -236,35 +164,6 @@ public:
         if (mayAlias(w, r))
           os << "    WAR (a reads, b writes): " << w << "\n";
   }
-
-private:
-  // Adds the effects of `op` itself (not of nested ops) to `fp`. Returns false
-  // when they cannot be summarised per root memref.
-  bool addEffects(Operation *op, MemoryFootprint &fp) {
-    if (op->hasTrait<OpTrait::HasRecursiveMemoryEffects>())
-      return true;
-    auto iface = dyn_cast<MemoryEffectOpInterface>(op);
-    if (!iface)
-      return false;
-    SmallVector<MemoryEffects::EffectInstance> effects;
-    iface.getEffects(effects);
-    for (auto &effect : effects) {
-      Value v = effect.getValue();
-      if (!v || !isa<MemRefType>(v.getType()) ||
-          !isa<SideEffects::DefaultResource>(effect.getResource()))
-        return false;
-      if (isa<MemoryEffects::Read>(effect.getEffect()))
-        fp.reads.insert(root(v));
-      else if (isa<MemoryEffects::Write>(effect.getEffect()))
-        fp.writes.insert(root(v));
-      else
-        return false;
-    }
-    return true;
-  }
-
-  bool conservative;
-  llvm::DenseMap<Attribute, Value> globalRoots;
 };
 
 // Decides whether two SSA values are equal at runtime. Without `equateReloads`
@@ -381,7 +280,8 @@ const char *verdictReason(DependenceVerdict v) {
 // iv_a > iv_b.
 DependenceVerdict checkDependences(AffineForOp a, AffineForOp b,
                                    ArrayRef<RootConflict> conflicts,
-                                   MemoryModel &model, ValueEquivalence &eq) {
+                                   FusionMemoryModel &model,
+                                   ValueEquivalence &eq) {
   unsigned numCommon = 0;
   for (Operation *p = a->getParentOp(); p; p = p->getParentOp())
     if (isa<AffineForOp>(p))
@@ -450,25 +350,39 @@ std::string joinKinds(ArrayRef<RootConflict> conflicts) {
   return joinKinds(kinds);
 }
 
+// A fusion candidate: a loop, optionally inside a guard this pass built
+// around it. Fusing pushes the guard into the fused loop's body.
+struct GuardedLoop {
+  AffineForOp loop;
+  AffineIfOp guard; // null when the loop is not guarded
+
+  // The op that is a sibling of the other candidates.
+  Operation *op() {
+    return guard ? guard.getOperation() : loop.getOperation();
+  }
+};
+
 // Debug-only: function name, nesting depth, sibling ordinal, step and bounds.
-[[maybe_unused]] std::string describeLoop(AffineForOp loop) {
+[[maybe_unused]] std::string describeLoop(GuardedLoop c) {
   std::string s;
   llvm::raw_string_ostream os(s);
+  AffineForOp loop = c.loop;
   unsigned depth = 0;
   for (Operation *p = loop->getParentOp(); p; p = p->getParentOp())
     if (isa<AffineForOp>(p))
       ++depth;
   unsigned idx = 0;
-  for (Operation &op : *loop->getBlock()) {
-    if (&op == loop.getOperation())
+  for (Operation &op : *c.op()->getBlock()) {
+    if (&op == c.op())
       break;
     if (isa<AffineForOp>(op))
       ++idx;
   }
   auto fn = loop->getParentOfType<func::FuncOp>();
   os << "@" << (fn ? fn.getName() : StringRef("?")) << " depth=" << depth
-     << " loop#" << idx << " step=" << loop.getStepAsInt()
-     << " lb=" << loop.getLowerBoundMap() << " ub=" << loop.getUpperBoundMap();
+     << " loop#" << idx << (c.guard ? " guarded" : "")
+     << " step=" << loop.getStepAsInt() << " lb=" << loop.getLowerBoundMap()
+     << " ub=" << loop.getUpperBoundMap();
   return os.str();
 }
 
@@ -506,12 +420,115 @@ BoundOffsets boundOffsets(AffineForOp a, AffineForOp b, ValueEquivalence &eq) {
                              a.getUpperBoundOperands())};
 }
 
+// b's bounds minus a's bounds. A missing offset is not a compile-time constant
+// and the fused loop takes the affine.min (lower) or affine.max (upper) of
+// both bounds instead.
 struct FusionPlan {
-  int64_t dl = 0, du = 0;
-  bool matching = false;
-  bool aContainsB = false;
+  std::optional<int64_t> dl, du;
   std::string dependences; // conflict kinds proven legal, empty if none
+
+  bool constant() const { return dl && du; }
+  bool matching() const { return constant() && *dl == 0 && *du == 0; }
+  bool aContainsB() const { return constant() && *dl >= 0 && *du <= 0; }
+  bool bContainsA() const { return constant() && *dl <= 0 && *du >= 0; }
 };
+
+// One condition of a guard: iv >= map + shift when `lower`, otherwise
+// iv < map + shift, with `map` a single-result bound map over `operands`.
+struct GuardBound {
+  AffineMap map;
+  SmallVector<Value> operands;
+  int64_t shift;
+  bool lower;
+};
+
+// Bound conditions that keep `loop`'s own iterations when its body moves into
+// a fused loop running over [lb, ub). An offset is the loop's bound minus the
+// fused loop's bound (>= 0 for the lower, <= 0 for the upper bound);
+// std::nullopt means the fused bound is an affine.min/max, so the loop's own
+// bound is checked.
+SmallVector<GuardBound> guardBounds(AffineForOp fused, AffineForOp loop,
+                                    std::optional<int64_t> lowerOffset,
+                                    std::optional<int64_t> upperOffset) {
+  SmallVector<GuardBound> bounds;
+  if (!lowerOffset)
+    bounds.push_back({loop.getLowerBoundMap(),
+                      llvm::to_vector(loop.getLowerBoundOperands()), 0, true});
+  else if (*lowerOffset > 0)
+    bounds.push_back({fused.getLowerBoundMap(),
+                      llvm::to_vector(fused.getLowerBoundOperands()),
+                      *lowerOffset, true});
+  if (!upperOffset)
+    bounds.push_back({loop.getUpperBoundMap(),
+                      llvm::to_vector(loop.getUpperBoundOperands()), 0, false});
+  else if (*upperOffset < 0)
+    bounds.push_back({fused.getUpperBoundMap(),
+                      llvm::to_vector(fused.getUpperBoundOperands()),
+                      *upperOffset, false});
+  return bounds;
+}
+
+// Number of loops in the nest under `root` (inclusive) whose body holds a loop
+// but is not exactly one directly nested loop plus region-free ops that at
+// most read memory. Such loops stay wrapped around a loop after
+// parallelization; the read-only ops are left for sink-into-nested-parallel.
+unsigned countImperfectLevels(Operation *root) {
+  auto readOnly = [](Operation &op) {
+    if (op.getNumRegions() != 0)
+      return false;
+    if (isMemoryEffectFree(&op))
+      return true;
+    auto iface = dyn_cast<MemoryEffectOpInterface>(op);
+    return iface && iface.onlyHasEffect<MemoryEffects::Read>();
+  };
+  unsigned count = 0;
+  root->walk([&](AffineForOp loop) {
+    unsigned loops = 0;
+    bool other = false;
+    for (Operation &op : loop.getBody()->without_terminator()) {
+      if (isa<AffineForOp>(op)) {
+        ++loops;
+      } else if (op.walk([](AffineForOp) { return WalkResult::interrupt(); })
+                     .wasInterrupted()) {
+        ++loops;
+        other = true;
+      } else if (!readOnly(op)) {
+        other = true;
+      }
+    }
+    if (loops != 0 && (loops != 1 || other))
+      ++count;
+  });
+  return count;
+}
+
+// Inserts the affine.min (`lower`) or affine.max of two single-result bound
+// maps before `builder`'s insertion point. Every operand must be a valid
+// symbol, so the result is one as well and can bound an affine.for.
+Value buildHullBound(OpBuilder &builder, Location loc, AffineMap x,
+                     ValueRange xOperands, AffineMap y, ValueRange yOperands,
+                     bool lower) {
+  MLIRContext *ctx = builder.getContext();
+  SmallVector<Value> operands;
+  SmallVector<AffineExpr> results;
+  auto add = [&](AffineMap map, ValueRange ops) {
+    unsigned base = operands.size();
+    SmallVector<AffineExpr> dims, syms;
+    for (unsigned k = 0; k < map.getNumDims(); ++k)
+      dims.push_back(getAffineSymbolExpr(base + k, ctx));
+    for (unsigned k = 0; k < map.getNumSymbols(); ++k)
+      syms.push_back(getAffineSymbolExpr(base + map.getNumDims() + k, ctx));
+    operands.append(ops.begin(), ops.end());
+    results.push_back(map.getResult(0).replaceDimsAndSymbols(dims, syms));
+  };
+  add(x, xOperands);
+  add(y, yOperands);
+  AffineMap map = AffineMap::get(0, operands.size(), results, ctx);
+  affine::canonicalizeMapAndOperands(&map, &operands);
+  if (lower)
+    return builder.create<affine::AffineMinOp>(loc, map, operands);
+  return builder.create<affine::AffineMaxOp>(loc, map, operands);
+}
 
 struct AffineLoopFusionNonConservative
     : impl::AffineLoopFusionNonConservativeBase<
@@ -521,7 +538,9 @@ struct AffineLoopFusionNonConservative
 
   // Number of original loops merged into each loop; absent means 1.
   llvm::DenseMap<Operation *, unsigned> fusedCount;
-  std::optional<MemoryModel> model;
+  // Guards built by this pass. Only these are pushed down into a fused loop.
+  llvm::DenseSet<Operation *> guards;
+  std::optional<FusionMemoryModel> model;
 
   unsigned countOf(Operation *op) const {
     auto it = fusedCount.find(op);
@@ -530,20 +549,39 @@ struct AffineLoopFusionNonConservative
 
   void runOnOperation() override {
     fusedCount.clear();
+    guards.clear();
     model.emplace(aliasConservative);
     for (Region &region : getOperation()->getRegions())
       for (Block &block : region)
         processBlock(block);
   }
 
+  // An affine.for, or a guard of this pass whose body is exactly one
+  // affine.for.
+  std::optional<GuardedLoop> asCandidate(Operation *op) const {
+    if (auto loop = dyn_cast<AffineForOp>(op))
+      return GuardedLoop{loop, nullptr};
+    auto guard = dyn_cast<AffineIfOp>(op);
+    if (!guard || !guards.contains(op))
+      return std::nullopt;
+    Block *then = guard.getThenBlock();
+    auto loop = dyn_cast<AffineForOp>(then->front());
+    if (!loop || loop->getNextNode() != then->getTerminator())
+      return std::nullopt;
+    return GuardedLoop{loop, guard};
+  }
+
   void processBlock(Block &block) {
     Operation *cur = block.empty() ? nullptr : &block.front();
     while (cur) {
-      if (auto loop = dyn_cast<AffineForOp>(cur)) {
-        if (AffineForOp fused = tryFuseWithNext(loop)) {
+      if (std::optional<GuardedLoop> candidate = asCandidate(cur)) {
+        Operation *restored = nullptr;
+        if (AffineForOp fused = tryFuseWithNext(*candidate, restored)) {
           cur = fused.getOperation();
           continue;
         }
+        if (restored)
+          cur = restored;
       }
       cur = cur->getNextNode();
     }
@@ -554,56 +592,123 @@ struct AffineLoopFusionNonConservative
           processBlock(inner);
   }
 
-  // Guards the iterations that lie inside the fused loop's bounds shifted by
-  // lowerShift (>= 0) at the bottom and upperShift (<= 0) at the top.
-  AffineIfOp buildGuard(AffineForOp fused, int64_t lowerShift,
-                        int64_t upperShift) {
-    OpBuilder builder(fused.getBody()->getTerminator());
-    MLIRContext *ctx = fused.getContext();
-    SmallVector<Value> operands{fused.getInductionVar()};
-    SmallVector<AffineExpr> constraints;
-    AffineExpr iv = getAffineDimExpr(0, ctx);
+  // Detached copies of a fusion's two candidates, put back when
+  // require-perfect-nests undoes the fusion.
+  struct NestSnapshot {
+    Operation *a, *b;
+    Operation *aPos; // op `a` is restored before; null: before the fused loop
+    unsigned imperfect; // imperfect levels of the two input nests
+    SmallVector<std::pair<Operation *, unsigned>> counts; // copies' fusedCount
+    SmallVector<Operation *> guardCopies; // copies of this pass's guards
+  };
 
-    // Bound operands are appended as extra dims of the integer set.
-    auto appendBound = [&](AffineMap map, ValueRange ops) {
-      unsigned base = operands.size();
-      SmallVector<AffineExpr> dims, syms;
-      for (unsigned k = 0; k < map.getNumDims(); ++k)
-        dims.push_back(getAffineDimExpr(base + k, ctx));
-      for (unsigned k = 0; k < map.getNumSymbols(); ++k)
-        syms.push_back(getAffineDimExpr(base + map.getNumDims() + k, ctx));
-      operands.append(ops.begin(), ops.end());
-      return map.getResult(0).replaceDimsAndSymbols(dims, syms);
-    };
-
-    if (lowerShift > 0) {
-      AffineExpr lb = appendBound(fused.getLowerBoundMap(),
-                                  fused.getLowerBoundOperands());
-      constraints.push_back(iv - lb - lowerShift);
+  NestSnapshot takeSnapshot(GuardedLoop a, GuardedLoop b,
+                            ArrayRef<Operation *> gap) {
+    IRMapping mapping;
+    NestSnapshot s{a.op()->clone(mapping), b.op()->clone(mapping),
+                   gap.empty() ? nullptr : gap.front(),
+                   countImperfectLevels(a.op()) + countImperfectLevels(b.op()),
+                   {}, {}};
+    for (Operation *top : {a.op(), b.op()}) {
+      top->walk([&](Operation *op) {
+        if (auto it = fusedCount.find(op); it != fusedCount.end())
+          s.counts.push_back({mapping.lookup(op), it->second});
+        if (guards.contains(op))
+          s.guardCopies.push_back(mapping.lookup(op));
+      });
     }
-    if (upperShift < 0) {
-      AffineExpr ub = appendBound(fused.getUpperBoundMap(),
-                                  fused.getUpperBoundOperands());
-      constraints.push_back(ub + upperShift - 1 - iv);
-    }
-    SmallVector<bool> isEq(constraints.size(), false);
-    IntegerSet set = IntegerSet::get(operands.size(), 0, constraints, isEq);
-    affine::canonicalizeSetAndOperands(&set, &operands);
-    return builder.create<AffineIfOp>(fused.getLoc(), set, operands,
-                                      /*withElseRegion=*/false);
+    return s;
   }
 
-  void moveBody(AffineForOp src, AffineForOp fused, bool guarded,
-                int64_t lowerShift, int64_t upperShift) {
-    src.getInductionVar().replaceAllUsesWith(fused.getInductionVar());
+  // Replaces `fused` (and the hull bounds built for it) by the snapshot's
+  // copies at the original positions. Returns the restored first candidate.
+  Operation *restoreSnapshot(NestSnapshot &s, AffineForOp fused) {
+    fused->walk([&](Operation *op) {
+      fusedCount.erase(op);
+      guards.erase(op);
+    });
+    auto &ops = fused->getBlock()->getOperations();
+    ops.insert(Block::iterator(s.aPos ? s.aPos : fused.getOperation()), s.a);
+    ops.insert(Block::iterator(fused.getOperation()), s.b);
+    SmallVector<Value> bounds(fused->getOperands());
+    fused.erase();
+    for (Value v : bounds)
+      if (Operation *def = v.getDefiningOp();
+          isa_and_nonnull<affine::AffineMinOp, affine::AffineMaxOp>(def) &&
+          def->use_empty())
+        def->erase();
+    for (auto [op, n] : s.counts)
+      fusedCount[op] = n;
+    guards.insert(s.guardCopies.begin(), s.guardCopies.end());
+    return s.a;
+  }
+
+  // Builds one guard at the end of the fused loop's body that combines the
+  // conditions of `oldGuard` (when non-null) and `bounds`. Returns null when
+  // there is no condition.
+  AffineIfOp buildGuard(AffineForOp fused, AffineIfOp oldGuard,
+                        ArrayRef<GuardBound> bounds) {
+    MLIRContext *ctx = fused.getContext();
+    SmallVector<Value> operands;
+    SmallVector<AffineExpr> constraints;
+    SmallVector<bool> isEq;
+
+    // Appends `ops` (`numDims` dims, then symbols) as extra dims of the set
+    // and rewrites `exprs`, written over `ops`, to use them.
+    auto append = [&](ArrayRef<AffineExpr> exprs, unsigned numDims,
+                      unsigned numSymbols, ValueRange ops) {
+      unsigned base = operands.size();
+      SmallVector<AffineExpr> dims, syms;
+      for (unsigned k = 0; k < numDims; ++k)
+        dims.push_back(getAffineDimExpr(base + k, ctx));
+      for (unsigned k = 0; k < numSymbols; ++k)
+        syms.push_back(getAffineDimExpr(base + numDims + k, ctx));
+      operands.append(ops.begin(), ops.end());
+      return llvm::map_to_vector(exprs, [&](AffineExpr e) {
+        return e.replaceDimsAndSymbols(dims, syms);
+      });
+    };
+
+    if (oldGuard) {
+      IntegerSet old = oldGuard.getIntegerSet();
+      llvm::append_range(constraints,
+                         append(old.getConstraints(), old.getNumDims(),
+                                old.getNumSymbols(), oldGuard.getOperands()));
+      llvm::append_range(isEq, old.getEqFlags());
+    }
+    if (!bounds.empty()) {
+      AffineExpr iv =
+          append(getAffineDimExpr(0, ctx), 1, 0, fused.getInductionVar())[0];
+      for (const GuardBound &b : bounds) {
+        AffineExpr e = append(b.map.getResult(0), b.map.getNumDims(),
+                              b.map.getNumSymbols(), b.operands)[0];
+        constraints.push_back(b.lower ? iv - e - b.shift
+                                      : e + b.shift - 1 - iv);
+        isEq.push_back(false);
+      }
+    }
+    if (constraints.empty())
+      return nullptr;
+
+    IntegerSet set = IntegerSet::get(operands.size(), 0, constraints, isEq);
+    affine::canonicalizeSetAndOperands(&set, &operands);
+    OpBuilder builder(fused.getBody()->getTerminator());
+    auto guard = builder.create<AffineIfOp>(fused.getLoc(), set, operands,
+                                            /*withElseRegion=*/false);
+    guards.insert(guard);
+    return guard;
+  }
+
+  void moveBody(GuardedLoop src, AffineForOp fused,
+                ArrayRef<GuardBound> bounds) {
+    src.loop.getInductionVar().replaceAllUsesWith(fused.getInductionVar());
     Block *dstBlock = fused.getBody();
     Operation *before = dstBlock->getTerminator();
-    if (guarded) {
-      AffineIfOp guard = buildGuard(fused, lowerShift, upperShift);
+    if (AffineIfOp guard = buildGuard(fused, src.guard, bounds)) {
       dstBlock = guard.getThenBlock();
       before = dstBlock->getTerminator();
     }
-    Block *srcBlock = src.getBody();
+    Block *srcBlock = src.loop.getBody();
     dstBlock->getOperations().splice(
         before->getIterator(), srcBlock->getOperations(), srcBlock->begin(),
         Block::iterator(srcBlock->getTerminator()));
@@ -618,7 +723,7 @@ struct AffineLoopFusionNonConservative
                                          ArrayRef<Operation *> gap,
                                          SmallVectorImpl<std::string> &reasons,
                                          bool &memoryReason) {
-    MemoryModel &mm = *model;
+    FusionMemoryModel &mm = *model;
     ValueEquivalence eq(mm, equateReloads);
     Operation *blockerA = nullptr, *blockerB = nullptr;
     std::optional<MemoryFootprint> fa = mm.footprint(a, &blockerA);
@@ -668,38 +773,61 @@ struct AffineLoopFusionNonConservative
       reasons.push_back("multi-result-bound");
     } else {
       BoundOffsets off = boundOffsets(a, b, eq);
-      if (!off.dl || !off.du) {
-        std::string why = ("non-constant-bound-difference lower=" +
-                           Twine(off.dl ? "const" : "non-const") +
-                           " upper=" + (off.du ? "const" : "non-const"))
-                              .str();
+      plan.dl = off.dl;
+      plan.du = off.du;
+      // Pairs whose fused loop is neither loop's range run over the hull of
+      // both ranges with every body guarded (fuse-symbolic-bounds).
+      std::string hullReason;
+      if (!plan.constant()) {
+        hullReason = ("non-constant-bound-difference lower=" +
+                      Twine(off.dl ? "const" : "non-const") +
+                      " upper=" + (off.du ? "const" : "non-const"))
+                         .str();
         if (!equateReloads) {
           ValueEquivalence probe(mm, /*equateReloads=*/true);
           BoundOffsets withReloads = boundOffsets(a, b, probe);
           if (withReloads.dl && withReloads.du)
-            why += " (equate-reloads would make it constant)";
+            hullReason += " (equate-reloads would make it constant)";
         }
-        reasons.push_back(why);
-      } else {
-        plan.dl = *off.dl;
-        plan.du = *off.du;
-        plan.matching = plan.dl == 0 && plan.du == 0;
-        plan.aContainsB = plan.dl >= 0 && plan.du <= 0;
-        bool bContainsA = plan.dl <= 0 && plan.du >= 0;
-        if (plan.matching ? !fuseMatchingBounds : !fuseMismatchedBounds)
-          reasons.push_back(plan.matching ? "matching-bounds-disabled"
-                                          : "mismatched-bounds-disabled");
-        if (!plan.aContainsB && !bContainsA)
-          reasons.push_back(("partial-overlap dl=" + Twine(plan.dl) +
-                             " du=" + Twine(plan.du))
-                                .str());
-        // A shifted lower bound must keep the iteration phase of the step.
-        if (plan.dl % a.getStepAsInt() != 0)
-          reasons.push_back(("lower-offset-not-multiple-of-step dl=" +
-                             Twine(plan.dl) +
-                             " step=" + Twine(a.getStepAsInt()))
-                                .str());
+      } else if (!plan.aContainsB() && !plan.bContainsA()) {
+        hullReason = ("partial-overlap dl=" + Twine(*plan.dl) +
+                      " du=" + Twine(*plan.du))
+                         .str();
       }
+      if (!hullReason.empty()) {
+        // An affine.min/max bound needs symbol operands, and a lower bound
+        // of unknown offset keeps the step phase only for step 1.
+        auto symbols = [](ValueRange ops) {
+          return llvm::all_of(
+              ops, [](Value v) { return affine::isValidSymbol(v); });
+        };
+        std::string hullBlocker;
+        if ((!off.dl && !(symbols(a.getLowerBoundOperands()) &&
+                          symbols(b.getLowerBoundOperands()))) ||
+            (!off.du && !(symbols(a.getUpperBoundOperands()) &&
+                          symbols(b.getUpperBoundOperands()))))
+          hullBlocker = "hull-bound-not-symbolic";
+        else if (!off.dl && a.getStepAsInt() != 1)
+          hullBlocker = ("non-constant-lower-offset-with-step step=" +
+                         Twine(a.getStepAsInt()))
+                            .str();
+        if (!fuseSymbolicBounds)
+          reasons.push_back(hullReason +
+                            (hullBlocker.empty()
+                                 ? " (fuse-symbolic-bounds would allow it)"
+                                 : ""));
+        else if (!hullBlocker.empty())
+          reasons.push_back(hullBlocker);
+      }
+      if (plan.matching() ? !fuseMatchingBounds : !fuseMismatchedBounds)
+        reasons.push_back(plan.matching() ? "matching-bounds-disabled"
+                                          : "mismatched-bounds-disabled");
+      // A shifted lower bound must keep the iteration phase of the step.
+      if (plan.dl && *plan.dl % a.getStepAsInt() != 0)
+        reasons.push_back(("lower-offset-not-multiple-of-step dl=" +
+                           Twine(*plan.dl) +
+                           " step=" + Twine(a.getStepAsInt()))
+                              .str());
     }
 
     if (!fa || !fb) {
@@ -741,66 +869,136 @@ struct AffineLoopFusionNonConservative
     return plan;
   }
 
-  // Fuses `a` with the next sibling loop when allowed; returns the fused loop
-  // (placed where the later loop was) or a null op.
-  AffineForOp tryFuseWithNext(AffineForOp a) {
+  // Fuses `a` with the next sibling candidate when allowed; returns the fused
+  // loop (placed where the later candidate was) or a null op. Each candidate's
+  // guard is pushed into the fused loop's body, merged with any new bound
+  // guard into one affine.if. The rules are checked on the loops themselves:
+  // the dependence analysis sees the guard conditions in the iteration domain.
+  // With require-perfect-nests the fused body is processed right away, and
+  // the fusion is undone when the nest has more imperfect levels than the two
+  // inputs had; `restored` then receives the restored copy of `a`.
+  AffineForOp tryFuseWithNext(GuardedLoop a, Operation *&restored) {
     SmallVector<Operation *> gap;
-    Operation *next = a->getNextNode();
-    while (next && !isa<AffineForOp>(next)) {
+    Operation *next = a.op()->getNextNode();
+    std::optional<GuardedLoop> candidate;
+    while (next && !(candidate = asCandidate(next))) {
       gap.push_back(next);
       next = next->getNextNode();
     }
-    if (!next)
+    if (!candidate)
       return nullptr;
-    AffineForOp b = cast<AffineForOp>(next);
+    GuardedLoop b = *candidate;
 
     SmallVector<std::string> reasons;
     bool memoryReason = false;
     std::optional<FusionPlan> plan =
-        evaluatePair(a, b, gap, reasons, memoryReason);
+        evaluatePair(a.loop, b.loop, gap, reasons, memoryReason);
     if (!plan) {
       LLVM_DEBUG({
         llvm::dbgs() << "REJECT [" << llvm::join(reasons, "; ") << "]\n  a: "
                      << describeLoop(a) << "\n  b: " << describeLoop(b)
                      << "\n";
-        std::optional<MemoryFootprint> fa = model->footprint(a);
-        std::optional<MemoryFootprint> fb = model->footprint(b);
+        std::optional<MemoryFootprint> fa = model->footprint(a.loop);
+        std::optional<MemoryFootprint> fb = model->footprint(b.loop);
         if (memoryReason && fa && fb)
           model->explainConflict(*fa, *fb, llvm::dbgs());
       });
       return nullptr;
     }
 
-    LLVM_DEBUG(llvm::dbgs()
-               << "FUSE ["
-               << (plan->dependences.empty()
-                       ? std::string()
-                       : "dependences " + plan->dependences + " legal, ")
-               << (gap.empty() ? "" : "across gap, ")
-               << (plan->matching ? "matching"
-                                  : (plan->aContainsB ? "a-contains-b, guard b"
-                                                      : "b-contains-a, guard a"))
-               << " dl=" << plan->dl << " du=" << plan->du << "]\n  a: "
-               << describeLoop(a) << "\n  b: " << describeLoop(b) << "\n");
+    LLVM_DEBUG({
+      auto offset = [](std::optional<int64_t> d) {
+        return d ? std::to_string(*d) : std::string("?");
+      };
+      llvm::dbgs() << "FUSE ["
+                   << (plan->dependences.empty()
+                           ? std::string()
+                           : "dependences " + plan->dependences + " legal, ")
+                   << (gap.empty() ? "" : "across gap, ")
+                   << (plan->matching()     ? "matching"
+                       : plan->aContainsB() ? "a-contains-b, guard b"
+                       : plan->bContainsA() ? "b-contains-a, guard a"
+                                            : "hull, guard both")
+                   << " dl=" << offset(plan->dl) << " du=" << offset(plan->du)
+                   << "]\n  a: " << describeLoop(a)
+                   << "\n  b: " << describeLoop(b) << "\n";
+    });
 
-    AffineForOp big = plan->aContainsB ? a : b;
-    OpBuilder builder(b);
-    auto fused = builder.create<AffineForOp>(
-        a.getLoc(), big.getLowerBoundOperands(), big.getLowerBoundMap(),
-        big.getUpperBoundOperands(), big.getUpperBoundMap(), a.getStepAsInt());
+    std::optional<NestSnapshot> snapshot;
+    if (requirePerfectNests)
+      snapshot = takeSnapshot(a, b, gap);
 
-    bool guardA = !plan->matching && !plan->aContainsB;
-    bool guardB = !plan->matching && plan->aContainsB;
-    int64_t lowerShift = plan->aContainsB ? plan->dl : -plan->dl;
-    int64_t upperShift = plan->aContainsB ? plan->du : -plan->du;
-    moveBody(a, fused, guardA, lowerShift, upperShift);
-    moveBody(b, fused, guardB, lowerShift, upperShift);
+    // The fused loop starts with the loop starting first and ends with the
+    // loop ending last (a's bound on a tie); an unknown offset takes the
+    // affine.min/max of both.
+    MLIRContext *ctx = &getContext();
+    Location loc = a.loop.getLoc();
+    OpBuilder builder(b.op());
+    AffineMap symbolMap = AffineMap::get(0, 1, getAffineSymbolExpr(0, ctx));
+    AffineMap lbMap = symbolMap, ubMap = symbolMap;
+    SmallVector<Value> lbOperands, ubOperands;
+    if (plan->dl) {
+      AffineForOp first = *plan->dl >= 0 ? a.loop : b.loop;
+      lbMap = first.getLowerBoundMap();
+      lbOperands = llvm::to_vector(first.getLowerBoundOperands());
+    } else {
+      lbOperands.push_back(buildHullBound(
+          builder, loc, a.loop.getLowerBoundMap(),
+          a.loop.getLowerBoundOperands(), b.loop.getLowerBoundMap(),
+          b.loop.getLowerBoundOperands(), /*lower=*/true));
+    }
+    if (plan->du) {
+      AffineForOp last = *plan->du > 0 ? b.loop : a.loop;
+      ubMap = last.getUpperBoundMap();
+      ubOperands = llvm::to_vector(last.getUpperBoundOperands());
+    } else {
+      ubOperands.push_back(buildHullBound(
+          builder, loc, a.loop.getUpperBoundMap(),
+          a.loop.getUpperBoundOperands(), b.loop.getUpperBoundMap(),
+          b.loop.getUpperBoundOperands(), /*lower=*/false));
+    }
+    auto fused = builder.create<AffineForOp>(loc, lbOperands, lbMap,
+                                             ubOperands, ubMap,
+                                             a.loop.getStepAsInt());
 
-    fusedCount[fused] = countOf(a) + countOf(b);
-    fusedCount.erase(a);
-    fusedCount.erase(b);
-    a.erase();
-    b.erase();
+    // Offsets of each loop's bounds from the fused loop's bounds.
+    std::optional<int64_t> aLower, bLower, aUpper, bUpper;
+    if (plan->dl) {
+      aLower = std::max<int64_t>(-*plan->dl, 0);
+      bLower = std::max<int64_t>(*plan->dl, 0);
+    }
+    if (plan->du) {
+      aUpper = std::min<int64_t>(-*plan->du, 0);
+      bUpper = std::min<int64_t>(*plan->du, 0);
+    }
+    SmallVector<GuardBound> aBounds = guardBounds(fused, a.loop, aLower, aUpper);
+    SmallVector<GuardBound> bBounds = guardBounds(fused, b.loop, bLower, bUpper);
+    moveBody(a, fused, aBounds);
+    moveBody(b, fused, bBounds);
+
+    fusedCount[fused] = countOf(a.loop) + countOf(b.loop);
+    for (GuardedLoop c : {a, b}) {
+      fusedCount.erase(c.loop);
+      c.loop.erase();
+      if (c.guard) {
+        guards.erase(c.guard);
+        c.guard.erase();
+      }
+    }
+
+    if (snapshot) {
+      processBlock(*fused.getBody());
+      unsigned imperfect = countImperfectLevels(fused);
+      if (imperfect > snapshot->imperfect) {
+        LLVM_DEBUG(llvm::dbgs()
+                   << "UNDO [require-perfect-nests: imperfect levels "
+                   << snapshot->imperfect << " -> " << imperfect << "]\n");
+        restored = restoreSnapshot(*snapshot, fused);
+        return nullptr;
+      }
+      snapshot->a->erase();
+      snapshot->b->erase();
+    }
     return fused;
   }
 };
