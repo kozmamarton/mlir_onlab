@@ -228,14 +228,19 @@ func.func @nest_same_row(%a: memref<?x?xf32>, %b: memref<?x?xf32>, %n: index, %m
 
 // -----
 
-// Reading the previous row of a 2D producer is legal at the outer depth.
+// Reading the previous row of a 2D producer is legal at the outer depth. The
+// guard is pushed into the inner loops, which then fuse as well.
 // CHECK-LABEL: func @nest_previous_row
 // CHECK:       affine.for %[[I:.*]] = 0 to %arg2 {
-// CHECK-NEXT:    affine.for
-// CHECK:         affine.if {{.*}}(%[[I]])
-// CHECK-NEXT:      affine.for
-// CHECK:             affine.load %arg0[%[[I]] - 1,
-// CHECK-NOT:   affine.for %{{.*}} = 1 to
+// CHECK-NEXT:    affine.for %[[J:.*]] = 0 to %arg3 {
+// CHECK-NEXT:      affine.store {{.*}}, %arg0[%[[I]], %[[J]]]
+// CHECK-NEXT:      affine.if {{.*}}(%[[I]]) {
+// CHECK-NEXT:        affine.load %arg0[%[[I]] - 1, %[[J]]]
+// CHECK-NEXT:        affine.store {{.*}}, %arg1[%[[I]], %[[J]]]
+// CHECK-NEXT:      }
+// CHECK-NEXT:    }
+// CHECK-NEXT:  }
+// CHECK-NOT:   affine.for
 func.func @nest_previous_row(%a: memref<?x?xf32>, %b: memref<?x?xf32>, %n: index, %m: index) {
   %c = arith.constant 1.0 : f32
   affine.for %i = 0 to %n {

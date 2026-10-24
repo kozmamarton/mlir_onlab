@@ -10,7 +10,9 @@ set(LIBS
   MLIRPass
   MulToAdd
   NoisyPasses
+  TutorialSCFTransforms
   MLIRRegisterAllDialects
+  MLIRRegisterAllExtensions
   MLIRRegisterAllPasses
   ortools::ortools
 )
