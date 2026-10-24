@@ -24,12 +24,18 @@ func.func @nests_matching_outer(%a: memref<10x10xf32>, %b: memref<10x10xf32>) {
 
 // -----
 
-// Inner loops inside separate guard regions are not siblings and stay separate.
+// The guard of the smaller outer loop is pushed into the inner loops, which
+// fuse with the guard around the inner body.
 // CHECK-LABEL: func @nests_mismatched_outer
-// CHECK:       affine.for
-// CHECK:         affine.for
-// CHECK:         affine.if
-// CHECK:           affine.for
+// CHECK:       affine.for %[[I:.*]] = 0 to 10 {
+// CHECK-NEXT:    affine.for %[[J:.*]] = 0 to 10 {
+// CHECK-NEXT:      affine.store {{.*}}, %arg0[%[[I]], %[[J]]]
+// CHECK-NEXT:      affine.if {{.*}}(%[[I]]) {
+// CHECK-NEXT:        affine.store {{.*}}, %arg1[%[[I]], %[[J]]]
+// CHECK-NEXT:      }
+// CHECK-NEXT:    }
+// CHECK-NEXT:  }
+// CHECK-NOT:   affine.for
 func.func @nests_mismatched_outer(%a: memref<10x10xf32>, %b: memref<10x10xf32>) {
   %c = arith.constant 1.0 : f32
   affine.for %i = 0 to 10 {
@@ -40,6 +46,193 @@ func.func @nests_mismatched_outer(%a: memref<10x10xf32>, %b: memref<10x10xf32>) 
   affine.for %i = 1 to 10 {
     affine.for %j = 0 to 10 {
       affine.store %c, %b[%i, %j] : memref<10x10xf32>
+    }
+  }
+  return
+}
+
+// -----
+
+// Guards of every level are merged into one affine.if in the innermost body.
+// CHECK:       #[[SET3:.*]] = affine_set<(d0, d1, d2) : (d0 - 1 >= 0, -d1 + 8 >= 0, d2 - 2 >= 0, -d2 + 7 >= 0)>
+// CHECK-LABEL: func @nests_mismatched_three_levels
+// CHECK:       affine.for %[[I:.*]] = 0 to 10 {
+// CHECK-NEXT:    affine.for %[[J:.*]] = 0 to 10 {
+// CHECK-NEXT:      affine.for %[[K:.*]] = 0 to 10 {
+// CHECK-NEXT:        affine.store {{.*}}, %arg0[%[[I]], %[[J]], %[[K]]]
+// CHECK-NEXT:        affine.if #[[SET3]](%[[I]], %[[J]], %[[K]]) {
+// CHECK-NEXT:          affine.store {{.*}}, %arg1[%[[I]], %[[J]], %[[K]]]
+// CHECK-NEXT:        }
+// CHECK-NEXT:      }
+// CHECK-NEXT:    }
+// CHECK-NEXT:  }
+// CHECK-NOT:   affine.for
+func.func @nests_mismatched_three_levels(%a: memref<10x10x10xf32>, %b: memref<10x10x10xf32>) {
+  %c = arith.constant 1.0 : f32
+  affine.for %i = 0 to 10 {
+    affine.for %j = 0 to 10 {
+      affine.for %k = 0 to 10 {
+        affine.store %c, %a[%i, %j, %k] : memref<10x10x10xf32>
+      }
+    }
+  }
+  affine.for %i = 1 to 10 {
+    affine.for %j = 0 to 9 {
+      affine.for %k = 2 to 8 {
+        affine.store %c, %b[%i, %j, %k] : memref<10x10x10xf32>
+      }
+    }
+  }
+  return
+}
+
+// -----
+
+// The guarded loop may come first.
+// CHECK-LABEL: func @nests_guarded_first
+// CHECK:       affine.for %[[I:.*]] = 0 to 10 {
+// CHECK-NEXT:    affine.for %[[J:.*]] = 0 to 10 {
+// CHECK-NEXT:      affine.if {{.*}}(%[[I]]) {
+// CHECK-NEXT:        affine.store {{.*}}, %arg0[%[[I]], %[[J]]]
+// CHECK-NEXT:      }
+// CHECK-NEXT:      affine.store {{.*}}, %arg1[%[[I]], %[[J]]]
+// CHECK-NEXT:    }
+// CHECK-NEXT:  }
+// CHECK-NOT:   affine.for
+func.func @nests_guarded_first(%a: memref<10x10xf32>, %b: memref<10x10xf32>) {
+  %c = arith.constant 1.0 : f32
+  affine.for %i = 1 to 10 {
+    affine.for %j = 0 to 10 {
+      affine.store %c, %a[%i, %j] : memref<10x10xf32>
+    }
+  }
+  affine.for %i = 0 to 10 {
+    affine.for %j = 0 to 10 {
+      affine.store %c, %b[%i, %j] : memref<10x10xf32>
+    }
+  }
+  return
+}
+
+// -----
+
+// The outer level guards b, the inner level guards a: one guard per body.
+// CHECK-LABEL: func @nests_guard_per_body
+// CHECK:       affine.for %[[I:.*]] = 0 to 10 {
+// CHECK-NEXT:    affine.for %[[J:.*]] = 0 to 10 {
+// CHECK-NEXT:      affine.if {{.*}}(%[[J]]) {
+// CHECK-NEXT:        affine.store {{.*}}, %arg0[%[[I]], %[[J]]]
+// CHECK-NEXT:      }
+// CHECK-NEXT:      affine.if {{.*}}(%[[I]]) {
+// CHECK-NEXT:        affine.store {{.*}}, %arg1[%[[I]], %[[J]]]
+// CHECK-NEXT:      }
+// CHECK-NEXT:    }
+// CHECK-NEXT:  }
+// CHECK-NOT:   affine.for
+func.func @nests_guard_per_body(%a: memref<10x10xf32>, %b: memref<10x10xf32>) {
+  %c = arith.constant 1.0 : f32
+  affine.for %i = 0 to 10 {
+    affine.for %j = 1 to 10 {
+      affine.store %c, %a[%i, %j] : memref<10x10xf32>
+    }
+  }
+  affine.for %i = 1 to 10 {
+    affine.for %j = 0 to 10 {
+      affine.store %c, %b[%i, %j] : memref<10x10xf32>
+    }
+  }
+  return
+}
+
+// -----
+
+// Inner loops that cannot fuse keep the guard around the guarded loop.
+// CHECK-LABEL: func @nests_inner_rejected
+// CHECK:       affine.for %[[I:.*]] = 0 to 10 {
+// CHECK-NEXT:    affine.for %{{.*}} = 0 to 10 {
+// CHECK-NEXT:      affine.store {{.*}}, %arg0
+// CHECK-NEXT:    }
+// CHECK-NEXT:    affine.if {{.*}}(%[[I]]) {
+// CHECK-NEXT:      affine.for %{{.*}} = 0 to 10 step 2 {
+// CHECK-NEXT:        affine.store {{.*}}, %arg1
+// CHECK-NEXT:      }
+// CHECK-NEXT:    }
+// CHECK-NEXT:  }
+func.func @nests_inner_rejected(%a: memref<10x10xf32>, %b: memref<10x10xf32>) {
+  %c = arith.constant 1.0 : f32
+  affine.for %i = 0 to 10 {
+    affine.for %j = 0 to 10 {
+      affine.store %c, %a[%i, %j] : memref<10x10xf32>
+    }
+  }
+  affine.for %i = 1 to 10 {
+    affine.for %j = 0 to 10 step 2 {
+      affine.store %c, %b[%i, %j] : memref<10x10xf32>
+    }
+  }
+  return
+}
+
+// -----
+
+// A guard holding more than one op is not pushed down, so its loop is not a
+// sibling of the other inner loop.
+// CHECK-LABEL: func @nests_guard_with_other_ops
+// CHECK:       affine.for %[[I:.*]] = 0 to 10 {
+// CHECK-NEXT:    affine.for %{{.*}} = 0 to 10 {
+// CHECK-NEXT:      affine.store {{.*}}, %arg0
+// CHECK-NEXT:    }
+// CHECK-NEXT:    affine.if {{.*}}(%[[I]]) {
+// CHECK-NEXT:      affine.store {{.*}}, %arg2
+// CHECK-NEXT:      affine.for %{{.*}} = 0 to 10 {
+// CHECK-NEXT:        affine.store {{.*}}, %arg1
+// CHECK-NEXT:      }
+// CHECK-NEXT:    }
+// CHECK-NEXT:  }
+func.func @nests_guard_with_other_ops(%a: memref<10x10xf32>, %b: memref<10x10xf32>,
+                                      %d: memref<10xf32>) {
+  %c = arith.constant 1.0 : f32
+  affine.for %i = 0 to 10 {
+    affine.for %j = 0 to 10 {
+      affine.store %c, %a[%i, %j] : memref<10x10xf32>
+    }
+  }
+  affine.for %i = 1 to 10 {
+    affine.store %c, %d[%i] : memref<10xf32>
+    affine.for %j = 0 to 10 {
+      affine.store %c, %b[%i, %j] : memref<10x10xf32>
+    }
+  }
+  return
+}
+
+// -----
+
+// An affine.if from the input is not a guard of this pass and is not pushed
+// down; it is moved along with the body that contains it.
+// CHECK-LABEL: func @nests_source_if_kept
+// CHECK:       affine.for %[[I:.*]] = 0 to 10 {
+// CHECK-NEXT:    affine.for %{{.*}} = 0 to 10 {
+// CHECK-NEXT:      affine.store {{.*}}, %arg0
+// CHECK-NEXT:    }
+// CHECK-NEXT:    affine.if {{.*}}(%[[I]]) {
+// CHECK-NEXT:      affine.for %{{.*}} = 0 to 10 {
+// CHECK-NEXT:        affine.store {{.*}}, %arg1
+// CHECK-NEXT:      }
+// CHECK-NEXT:    }
+// CHECK-NEXT:  }
+func.func @nests_source_if_kept(%a: memref<10x10xf32>, %b: memref<10x10xf32>) {
+  %c = arith.constant 1.0 : f32
+  affine.for %i = 0 to 10 {
+    affine.for %j = 0 to 10 {
+      affine.store %c, %a[%i, %j] : memref<10x10xf32>
+    }
+  }
+  affine.for %i = 0 to 10 {
+    affine.if affine_set<(d0) : (d0 - 1 >= 0)>(%i) {
+      affine.for %j = 0 to 10 {
+        affine.store %c, %b[%i, %j] : memref<10x10xf32>
+      }
     }
   }
   return

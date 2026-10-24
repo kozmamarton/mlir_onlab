@@ -6,6 +6,9 @@ PROJECT_ROOT="$(cd "$SCRIPT_DIR/../../.." && pwd)"
 LLVM_ROOT_DIR="$PROJECT_ROOT/externals/llvm-project"
 MLIR_OPT="$LLVM_ROOT_DIR/build/bin/mlir-opt"
 TUTORIAL_OPT="$PROJECT_ROOT/build/tools/tutorial-opt"
+# The main pipeline also runs on tutorial-opt (it registers all upstream passes)
+# because it interleaves custom passes with upstream ones.
+MAIN_OPT="$TUTORIAL_OPT"
 OUTPUT_DIR="${OUTPUT_DIR:-$PROJECT_ROOT/src/loop_fusion/pom2k/}"
 BUILTIN_INPUT_BASE_DIR="$PROJECT_ROOT/src/pom2k_generated_affine_loops/mlir"
 
@@ -19,8 +22,18 @@ COMMON_FLAGS=(
 
 CUSTOM_PASSES=(
   "reinterpret-flat-array-access" # custom pass to reinterpret 1D arrays as multi-dimensional for better affine analysis
-  "func.func(affine-loop-fusion-non-conservative{fuse-producer-consumer=true fuse-war-waw=true fuse-across-intervening-ops=true equate-reloads=true})" # custom pass fusing independent sibling affine loops (func.func-anchored)
+  "func.func(affine-loop-fusion-non-conservative{fuse-producer-consumer=true fuse-war-waw=true fuse-across-intervening-ops=true equate-reloads=true fuse-symbolic-bounds=true require-perfect-nests=true})" # custom pass fusing independent sibling affine loops (func.func-anchored)
 )
+
+# DISABLE_CUSTOM_FUSION=1 drops the custom fusion pass (baseline for the
+# differential benchmarks in examples/pom2k).
+if [[ "${DISABLE_CUSTOM_FUSION:-0}" == "1" ]]; then
+  kept_custom_passes=()
+  for pass in "${CUSTOM_PASSES[@]}"; do
+    [[ "$pass" == *affine-loop-fusion-non-conservative* ]] || kept_custom_passes+=("$pass")
+  done
+  CUSTOM_PASSES=("${kept_custom_passes[@]}")
+fi
 
 # Function-level passes.
 FUNC_PASSES=(
@@ -33,6 +46,7 @@ FUNC_PASSES=(
   "affine-parallelize" #option: parallel-reductions?
   "scf-parallel-loop-fusion"
   "lower-affine"
+  "scf-sink-into-nested-parallel" # custom: makes nests perfect so canonicalize merges them
 	#"scf-parallel-loop-tiling"
   "scf-parallel-loop-fusion"
   # Note: scf-parallel-loop-fusion is intentionally not run here. The pass
@@ -239,15 +253,15 @@ run_pipeline() {
 
   if [[ -n "$custom_pipeline" ]]; then
     printf 'Running command:\n  %s -pass-pipeline="%s" < %s | %s %s -pass-pipeline="%s" > %s\n' \
-      "$TUTORIAL_OPT" "$custom_pipeline" "$input_file" "$MLIR_OPT" "${COMMON_FLAGS[*]}" "$main_pipeline" "$output_file"
+      "$TUTORIAL_OPT" "$custom_pipeline" "$input_file" "$MAIN_OPT" "${COMMON_FLAGS[*]}" "$main_pipeline" "$output_file"
     "$TUTORIAL_OPT" -pass-pipeline="$custom_pipeline" < "$input_file" |
-      "$MLIR_OPT" "${COMMON_FLAGS[@]}" -pass-pipeline="$main_pipeline" > "$output_file"
+      "$MAIN_OPT" "${COMMON_FLAGS[@]}" -pass-pipeline="$main_pipeline" > "$output_file"
     return
   fi
 
   printf 'Running command:\n  %s %s -pass-pipeline="%s" < %s > %s\n' \
-    "$MLIR_OPT" "${COMMON_FLAGS[*]}" "$main_pipeline" "$input_file" "$output_file"
-  "$MLIR_OPT" "${COMMON_FLAGS[@]}" -pass-pipeline="$main_pipeline" < "$input_file" > "$output_file"
+    "$MAIN_OPT" "${COMMON_FLAGS[*]}" "$main_pipeline" "$input_file" "$output_file"
+  "$MAIN_OPT" "${COMMON_FLAGS[@]}" -pass-pipeline="$main_pipeline" < "$input_file" > "$output_file"
 }
 
 run_builtin_case() {
