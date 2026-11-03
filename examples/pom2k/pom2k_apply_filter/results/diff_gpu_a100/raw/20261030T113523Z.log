@@ -1,0 +1,40 @@
+kernel: ext_apply_filter_
+target: gpu_a100
+gpu: NVIDIA A100-PCIE-40GB (sm_80, device 0)
+prefetch: yes
+size: im=1024 jm=1024 kb=20
+samples: 20
+compare: old/new bitwise, */cuda rtol=1e-05 atol=1e-06
+global im = 1024
+global jm = 1024
+
+arg  name         type ext      elements   mm_old_new  mm_old_cuda  mm_new_cuda tol_old_cuda tol_new_cuda      max_abs      max_rel written
+0    vamax        f32  3D       20971520            0            0            0            0            0            0            0 no
+1    vmaxl        f32  3D       20971520            0            0            0            0            0            0            0 no
+2    smoth        f32  3D       20971520            0            0            0            0            0            0            0 no
+3    iext         i32  sel             1            0            0            0            0            0            0            0 no
+4    isplit       i32  sel             1            0            0            0            0            0            0            0 no
+5    ispi         f32  3D       20971520            0            0            0            0            0            0            0 no
+6    isp2i        f32  3D       20971520            0            0            0            0            0            0            0 no
+7    ua           f32  3D       20971520            0            0            0            0            0            0            0 yes
+8    uab          f32  3D       20971520            0            0            0            0            0            0            0 yes
+9    uaf          f32  3D       20971520            0            0            0            0            0            0            0 no
+10   va           f32  3D       20971520            0            0            0            0            0            0            0 yes
+11   vab          f32  3D       20971520            0            0            0            0            0            0            0 yes
+12   vaf          f32  3D       20971520            0            0            0            0            0            0            0 no
+13   el           f32  3D       20971520            0            0            0            0            0            0            0 yes
+14   elb          f32  3D       20971520            0            0            0            0            0            0            0 yes
+15   elf          f32  3D       20971520            0            0            0            0            0            0            0 no
+16   d            f32  3D       20971520            0            0            0            0            0            0            0 yes
+17   h            f32  3D       20971520            0            0            0            0            0            0            0 no
+18   egf          f32  3D       20971520            0            0            0            0            0            0            0 yes
+19   utf          f32  3D       20971520            0            0            0            0            0            0            0 yes
+20   vtf          f32  3D       20971520            0            0            0            0            0            0            0 yes
+
+result: PASS (0 of 21 arrays fail; old/new 0, old/cuda 0, new/cuda 0)
+time_old_ms: median 370.535 avg 370.315 min 368.035
+time_new_ms: median 371.825 avg 371.605 min 370.266
+time_cuda_ms: median 0.240 avg 0.234 min 0.194
+speedup_new_vs_old (median): 0.997
+speedup_new_vs_cuda (median): 0.001
+SUMMARY kernel=ext_apply_filter_ status=PASS mismatched_arrays=0 arrays=21 mm_old_new=0 mm_old_cuda=0 mm_new_cuda=0 old_median_ms=370.535 new_median_ms=371.825 cuda_median_ms=0.240 speedup=0.997 speedup_new_vs_cuda=0.001

@@ -1,0 +1,38 @@
+[ext_smol_adif_] lowering old and new variants
+[ext_smol_adif_] building /home/mkozma/mlir_onlab/examples/pom2k/pom2k_smol_adif/diff_gpu_a100.out
+[ext_smol_adif_] running /home/mkozma/mlir_onlab/examples/pom2k/pom2k_smol_adif/diff_gpu_a100.out --size 1024x1024x20 --samples 20
+kernel: ext_smol_adif_
+target: gpu_a100
+gpu: NVIDIA A100-PCIE-40GB (sm_80, device 0)
+prefetch: yes
+size: im=1024 jm=1024 kb=20
+samples: 20
+compare: old/new bitwise, */cuda rtol=1e-05 atol=1e-06
+global dti2 = 1.32153535
+global im = 1024
+global imm1 = 1023
+global jm = 1024
+global jmm1 = 1023
+global kb = 20
+global kbm1 = 19
+
+arg  name         type ext      elements   mm_old_new  mm_old_cuda  mm_new_cuda tol_old_cuda tol_new_cuda      max_abs      max_rel written
+0    xmassflux    f32  3D       20971520            0            0            0            0            0            0            0 yes
+1    ymassflux    f32  3D       20971520            0            0            0            0            0            0            0 yes
+2    zwflux       f32  3D       20971520            0            0            0            0            0            0            0 yes
+3    ff           f32  3D       20971520            0            0            0            0            0            0            0 yes
+4    sw           f32  3D       20971520            0            0            0            0            0            0            0 no
+5    fsm          f32  2D        1048576            0            0            0            0            0            0            0 no
+6    aru          f32  3D       20971520            0            0            0            0            0            0            0 no
+7    arv          f32  3D       20971520            0            0            0            0            0            0            0 no
+8    dt           f32  3D       20971520            0            0            0            0            0            0            0 no
+9    dzz          f32  3D       20971520            0            0            0            0            0            0            0 no
+
+result: PASS (0 of 10 arrays fail; old/new 0, old/cuda 0, new/cuda 0)
+time_old_ms: median 775.319 avg 774.482 min 766.125
+time_new_ms: median 796.636 avg 795.425 min 786.714
+time_cuda_ms: median 1.318 avg 1.289 min 0.944
+speedup_new_vs_old (median): 0.973
+speedup_new_vs_cuda (median): 0.002
+SUMMARY kernel=ext_smol_adif_ status=PASS mismatched_arrays=0 arrays=10 mm_old_new=0 mm_old_cuda=0 mm_new_cuda=0 old_median_ms=775.319 new_median_ms=796.636 cuda_median_ms=1.318 speedup=0.973 speedup_new_vs_cuda=0.002
+SUMMARY kernel=ext_smol_adif_ status=PASS mismatched_arrays=0 old_median_ms=775.319 new_median_ms=796.636 cuda_median_ms=1.318 speedup=0.973 speedup_new_vs_cuda=0.002

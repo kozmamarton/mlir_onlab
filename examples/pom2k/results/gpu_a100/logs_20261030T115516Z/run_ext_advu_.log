@@ -1,0 +1,47 @@
+[ext_advu_] lowering old and new variants
+[ext_advu_] building /home/mkozma/mlir_onlab/examples/pom2k/pom2k_advu/diff_gpu_a100.out
+[ext_advu_] running /home/mkozma/mlir_onlab/examples/pom2k/pom2k_advu/diff_gpu_a100.out --size 1024x1024x20 --samples 20
+kernel: ext_advu_
+target: gpu_a100
+gpu: NVIDIA A100-PCIE-40GB (sm_80, device 0)
+prefetch: yes
+size: im=1024 jm=1024 kb=20
+samples: 20
+compare: old/new bitwise, */cuda rtol=1e-05 atol=1e-06
+global dti2 = 1.32153535
+global grav = 0.580879629
+global im = 1024
+global imm1 = 1023
+global jm = 1024
+global jmm1 = 1023
+global kb = 20
+global kbm1 = 19
+
+arg  name         type ext      elements   mm_old_new  mm_old_cuda  mm_new_cuda tol_old_cuda tol_new_cuda      max_abs      max_rel written
+0    u            f32  3D       20971520            0            0            0            0            0            0            0 no
+1    uf           f32  3D       20971520            0            0            0            0            0            0            0 yes
+2    ub           f32  3D       20971520            0            0            0            0            0            0            0 no
+3    v            f32  3D       20971520            0            0            0            0            0            0            0 no
+4    w            f32  3D       20971520            0            0            0            0            0            0            0 no
+5    advx         f32  3D       20971520            0            0            0            0            0            0            0 no
+6    aru          f32  2D        1048576            0            0            0            0            0            0            0 no
+7    dy           f32  3D       20971520            0            0            0            0            0            0            0 no
+8    dz           f32  3D       20971520            0            0            0            0            0            0            0 no
+9    cor          f32  3D       20971520            0            0            0            0            0            0            0 no
+10   dt           f32  3D       20971520            0            0            0            0            0            0            0 no
+11   egf          f32  3D       20971520            0            0            0            0            0            0            0 no
+12   egb          f32  3D       20971520            0            0            0            0            0            0            0 no
+13   e_atmos      f32  3D       20971520            0            0            0            0            0            0            0 no
+14   drhox        f32  3D       20971520            0            0            0            0            0            0            0 no
+15   h            f32  3D       20971520            0            0            0            0            0            0            0 no
+16   etf          f32  3D       20971520            0            0            0            0            0            0            0 no
+17   etb          f32  3D       20971520            0            0            0            0            0            0            0 no
+
+result: PASS (0 of 18 arrays fail; old/new 0, old/cuda 0, new/cuda 0)
+time_old_ms: median 3.078 avg 3.078 min 3.057
+time_new_ms: median 2.531 avg 2.532 min 2.514
+time_cuda_ms: median 1.054 avg 1.054 min 1.048
+speedup_new_vs_old (median): 1.216
+speedup_new_vs_cuda (median): 0.416
+SUMMARY kernel=ext_advu_ status=PASS mismatched_arrays=0 arrays=18 mm_old_new=0 mm_old_cuda=0 mm_new_cuda=0 old_median_ms=3.078 new_median_ms=2.531 cuda_median_ms=1.054 speedup=1.216 speedup_new_vs_cuda=0.416
+SUMMARY kernel=ext_advu_ status=PASS mismatched_arrays=0 old_median_ms=3.078 new_median_ms=2.531 cuda_median_ms=1.054 speedup=1.216 speedup_new_vs_cuda=0.416

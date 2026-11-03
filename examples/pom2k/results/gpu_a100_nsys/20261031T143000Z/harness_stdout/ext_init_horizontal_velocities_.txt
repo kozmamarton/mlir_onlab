@@ -1,0 +1,26 @@
+kernel: ext_init_horizontal_velocities_
+target: gpu_a100
+gpu: NVIDIA A100-PCIE-40GB (sm_80, device 0)
+prefetch: yes
+size: im=1024 jm=1024 kb=20
+samples: 20
+compare: old/new bitwise, */cuda rtol=1e-05 atol=1e-06
+global im = 1024
+global jm = 1024
+global kb = 20
+
+arg  name         type ext      elements   mm_old_new  mm_old_cuda  mm_new_cuda tol_old_cuda tol_new_cuda      max_abs      max_rel written
+0    uf           f32  3D       20971520            0            0            0            0            0            0            0 yes
+1    vf           f32  3D       20971520            0            0            0            0            0            0            0 yes
+
+result: PASS (0 of 2 arrays fail; old/new 0, old/cuda 0, new/cuda 0)
+time_old_ms: median 0.571 avg 0.572 min 0.570
+time_new_ms: median 0.567 avg 0.567 min 0.566
+time_cuda_ms: median 0.120 avg 0.120 min 0.120
+speedup_new_vs_old (median): 1.008
+speedup_new_vs_cuda (median): 0.212
+SUMMARY kernel=ext_init_horizontal_velocities_ status=PASS mismatched_arrays=0 arrays=2 mm_old_new=0 mm_old_cuda=0 mm_new_cuda=0 old_median_ms=0.571 new_median_ms=0.567 cuda_median_ms=0.120 speedup=1.008 speedup_new_vs_cuda=0.212
+Generating '/tmp/nsys-report-4982.qdstrm'
+[1/1] [0%                          ] ext_init_horizontal_velocities_.nsys-rep[1/1] [0%                          ] ext_init_horizontal_velocities_.nsys-rep[1/1] [=========46%                ] ext_init_horizontal_velocities_.nsys-rep[1/1] [10%                         ] ext_init_horizontal_velocities_.nsys-rep[1/1] [=======================93%  ] ext_init_horizontal_velocities_.nsys-rep[1/1] [10%                         ] ext_init_horizontal_velocities_.nsys-rep[1/1] [11%                         ] ext_init_horizontal_velocities_.nsys-rep[1/1] [=============58%            ] ext_init_horizontal_velocities_.nsys-rep[1/1] [=============59%            ] ext_init_horizontal_velocities_.nsys-rep[1/1] [========================100%] ext_init_horizontal_velocities_.nsys-rep[1/1] [========================100%] ext_init_horizontal_velocities_.nsys-rep
+Generated:
+    /tmp/claude-636000065/-home-mkozma-mlir-onlab/0d637864-d76a-420c-b460-a5485f453b99/scratchpad/nsys/run2/rep/ext_init_horizontal_velocities_.nsys-rep

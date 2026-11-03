@@ -1,0 +1,47 @@
+pom2k differential benchmarks (old = without custom fusion pass, new = with it, cuda = native CUDA reference)
+generated_at_utc: 2026-10-30T11:47:55Z
+target: gpu_a100
+size: 1024x1024x20
+samples: 20
+cpu_model: AMD EPYC 7F72 24-Core Processor
+gpu_model: NVIDIA A100-PCIE-40GB
+logs: /home/mkozma/mlir_onlab/examples/pom2k/results/gpu_a100/logs_20261030T114750Z
+
+kernel                             status         mismatched old_median_ms new_median_ms cuda_median_ms  speedup speedup_vs_cuda
+ext_advq_                          APPLY_FAIL     -                     -            -            -        -             -
+ext_aam_                           APPLY_FAIL     -                     -            -            -        -             -
+ext_advv_                          APPLY_FAIL     -                     -            -            -        -             -
+ext_etf_update_                    APPLY_FAIL     -                     -            -            -        -             -
+ext_smol_adif_                     APPLY_FAIL     -                     -            -            -        -             -
+ext_add_ad_2d_                     APPLY_FAIL     -                     -            -            -        -             -
+ext_apply_filter_                  APPLY_FAIL     -                     -            -            -        -             -
+ext_final_internal_update_         APPLY_FAIL     -                     -            -            -        -             -
+ext_time_internal_forward_         APPLY_FAIL     -                     -            -            -        -             -
+ext_adjust_u_v_                    APPLY_FAIL     -                     -            -            -        -             -
+ext_baropg_                        APPLY_FAIL     -                     -            -            -        -             -
+ext_flux_update_                   APPLY_FAIL     -                     -            -            -        -             -
+ext_uaf_                           APPLY_FAIL     -                     -            -            -        -             -
+ext_advave_                        APPLY_FAIL     -                     -            -            -        -             -
+ext_bcond_1_                       APPLY_FAIL     -                     -            -            -        -             -
+ext_init_horizontal_velocities_    APPLY_FAIL     -                     -            -            -        -             -
+ext_update_turbulane_              APPLY_FAIL     -                     -            -            -        -             -
+ext_bcond_2_                       APPLY_FAIL     -                     -            -            -        -             -
+ext_init_internal_                 APPLY_FAIL     -                     -            -            -        -             -
+ext_update_u_v_                    APPLY_FAIL     -                     -            -            -        -             -
+ext_bcond_3_                       APPLY_FAIL     -                     -            -            -        -             -
+ext_profq_                         APPLY_FAIL     -                     -            -            -        -             -
+ext_updeta_t_s_                    APPLY_FAIL     -                     -            -            -        -             -
+ext_advt1_                         APPLY_FAIL     -                     -            -            -        -             -
+ext_bcond_5_                       APPLY_FAIL     -                     -            -            -        -             -
+ext_proft_                         APPLY_FAIL     -                     -            -            -        -             -
+ext_vaf_                           APPLY_FAIL     -                     -            -            -        -             -
+ext_dens_                          APPLY_FAIL     -                     -            -            -        -             -
+ext_profu_                         APPLY_FAIL     -                     -            -            -        -             -
+ext_vert_avgs_                     APPLY_FAIL     -                     -            -            -        -             -
+ext_advu_                          APPLY_FAIL     -                     -            -            -        -             -
+ext_elf_update_                    APPLY_FAIL     -                     -            -            -        -             -
+ext_profv_                         APPLY_FAIL     -                     -            -            -        -             -
+
+PASS: 0
+FAIL: 0
+OTHER: 33

@@ -1,0 +1,53 @@
+ext_bcond_2_ differential benchmark
+timestamp_utc: 2026-10-31T15:01:10Z
+target: gpu_a100
+size: 1024x1024x20
+samples: 20
+cpu_model: AMD EPYC 7F72 24-Core Processor
+gpu_model: NVIDIA A100-PCIE-40GB
+status: PASS
+raw_output_file: /home/mkozma/mlir_onlab/examples/pom2k/pom2k_bcond_2/results/diff_gpu_a100/raw/20261031T150110Z.log
+----------------------------------------------------------------
+kernel: ext_bcond_2_
+target: gpu_a100
+gpu: NVIDIA A100-PCIE-40GB (sm_80, device 0)
+prefetch: yes
+size: im=1024 jm=1024 kb=20
+samples: 20
+compare: old/new bitwise, */cuda rtol=1e-05 atol=1e-06
+global grav = 0.580879629
+global im = 1024
+global imm1 = 1023
+global imm2 = 1022
+global jm = 1024
+global jmm1 = 1023
+global jmm2 = 1022
+
+arg  name         type ext      elements   mm_old_new  mm_old_cuda  mm_new_cuda tol_old_cuda tol_new_cuda      max_abs      max_rel written
+0    uaf          f32  3D       20971520            0          104          104            0            0    4.768e-07    2.871e-06 yes
+1    vaf          f32  3D       20971520            0          101          101            0            0    4.768e-07     9.24e-07 yes
+2    uabe         f32  3D       20971520            0            0            0            0            0            0            0 no
+3    uabw         f32  3D       20971520            0            0            0            0            0            0            0 no
+4    vabn         f32  3D       20971520            0            0            0            0            0            0            0 no
+5    vabs         f32  3D       20971520            0            0            0            0            0            0            0 no
+6    h            f32  3D       20971520            0            0            0            0            0            0            0 no
+7    el           f32  3D       20971520            0            0            0            0            0            0            0 no
+8    ele          f32  3D       20971520            0            0            0            0            0            0            0 no
+9    elw          f32  3D       20971520            0            0            0            0            0            0            0 no
+10   eln          f32  3D       20971520            0            0            0            0            0            0            0 no
+11   els          f32  3D       20971520            0            0            0            0            0            0            0 no
+12   dum          f32  2D        1048576            0            0            0            0            0            0            0 no
+13   dvm          f32  2D        1048576            0            0            0            0            0            0            0 no
+14   ramp         f32  3D       20971520            0            0            0            0            0            0            0 no
+15   rfe          f32  3D       20971520            0            0            0            0            0            0            0 no
+16   rfw          f32  3D       20971520            0            0            0            0            0            0            0 no
+17   rfn          f32  3D       20971520            0            0            0            0            0            0            0 no
+18   rfs          f32  3D       20971520            0            0            0            0            0            0            0 no
+
+result: PASS (0 of 19 arrays fail; old/new 0, old/cuda 0, new/cuda 0)
+time_old_ms: median 8.090 avg 8.274 min 7.654
+time_new_ms: median 8.205 avg 8.325 min 7.814
+time_cuda_ms: median 0.045 avg 0.045 min 0.044
+speedup_new_vs_old (median): 0.986
+speedup_new_vs_cuda (median): 0.005
+SUMMARY kernel=ext_bcond_2_ status=PASS mismatched_arrays=0 arrays=19 mm_old_new=0 mm_old_cuda=0 mm_new_cuda=0 old_median_ms=8.090 new_median_ms=8.205 cuda_median_ms=0.045 speedup=0.986 speedup_new_vs_cuda=0.005

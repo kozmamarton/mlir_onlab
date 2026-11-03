@@ -1,0 +1,35 @@
+kernel: ext_vert_avgs_
+target: gpu_a100
+gpu: NVIDIA A100-PCIE-40GB (sm_80, device 0)
+prefetch: yes
+size: im=1024 jm=1024 kb=20
+samples: 20
+compare: old/new bitwise, */cuda rtol=1e-05 atol=1e-06
+global im = 1024
+global jm = 1024
+global kbm1 = 19
+
+arg  name         type ext      elements   mm_old_new  mm_old_cuda  mm_new_cuda tol_old_cuda tol_new_cuda      max_abs      max_rel written
+0    adx2d        f32  2D        1048576            0            0            0            0            0            0            0 yes
+1    ady2d        f32  2D        1048576            0            0            0            0            0            0            0 yes
+2    drx2d        f32  2D        1048576            0            0            0            0            0            0            0 yes
+3    dry2d        f32  2D        1048576            0            0            0            0            0            0            0 yes
+4    aam2d        f32  2D        1048576            0            0            0            0            0            0            0 yes
+5    advx         f32  3D       20971520            0            0            0            0            0            0            0 no
+6    advy         f32  3D       20971520            0            0            0            0            0            0            0 no
+7    drhox        f32  3D       20971520            0            0            0            0            0            0            0 no
+8    drhoy        f32  3D       20971520            0            0            0            0            0            0            0 no
+9    aam          f32  3D       20971520            0            0            0            0            0            0            0 no
+10   dz           f32  3D       20971520            0            0            0            0            0            0            0 no
+
+result: PASS (0 of 11 arrays fail; old/new 0, old/cuda 0, new/cuda 0)
+time_old_ms: median 2.844 avg 2.854 min 2.487
+time_new_ms: median 2.830 avg 2.824 min 2.631
+time_cuda_ms: median 0.554 avg 0.552 min 0.517
+speedup_new_vs_old (median): 1.005
+speedup_new_vs_cuda (median): 0.196
+SUMMARY kernel=ext_vert_avgs_ status=PASS mismatched_arrays=0 arrays=11 mm_old_new=0 mm_old_cuda=0 mm_new_cuda=0 old_median_ms=2.844 new_median_ms=2.830 cuda_median_ms=0.554 speedup=1.005 speedup_new_vs_cuda=0.196
+Generating '/tmp/nsys-report-58c5.qdstrm'
+[1/1] [0%                          ] ext_vert_avgs_.nsys-rep[1/1] [0%                          ] ext_vert_avgs_.nsys-rep[1/1] [7%                          ] ext_vert_avgs_.nsys-rep[1/1] [6%                          ] ext_vert_avgs_.nsys-rep[1/1] [7%                          ] ext_vert_avgs_.nsys-rep[1/1] [============55%             ] ext_vert_avgs_.nsys-rep[1/1] [==============63%           ] ext_vert_avgs_.nsys-rep[1/1] [==============64%           ] ext_vert_avgs_.nsys-rep[1/1] [========================100%] ext_vert_avgs_.nsys-rep[1/1] [========================100%] ext_vert_avgs_.nsys-rep
+Generated:
+    /tmp/claude-636000065/-home-mkozma-mlir-onlab/0d637864-d76a-420c-b460-a5485f453b99/scratchpad/nsys/run2/rep/ext_vert_avgs_.nsys-rep
