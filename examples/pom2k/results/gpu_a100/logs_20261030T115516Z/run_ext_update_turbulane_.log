@@ -1,0 +1,31 @@
+[ext_update_turbulane_] lowering old and new variants
+[ext_update_turbulane_] building /home/mkozma/mlir_onlab/examples/pom2k/pom2k_update_turbulane/diff_gpu_a100.out
+[ext_update_turbulane_] running /home/mkozma/mlir_onlab/examples/pom2k/pom2k_update_turbulane/diff_gpu_a100.out --size 1024x1024x20 --samples 20
+kernel: ext_update_turbulane_
+target: gpu_a100
+gpu: NVIDIA A100-PCIE-40GB (sm_80, device 0)
+prefetch: yes
+size: im=1024 jm=1024 kb=20
+samples: 20
+compare: old/new bitwise, */cuda rtol=1e-05 atol=1e-06
+global im = 1024
+global jm = 1024
+global kb = 20
+
+arg  name         type ext      elements   mm_old_new  mm_old_cuda  mm_new_cuda tol_old_cuda tol_new_cuda      max_abs      max_rel written
+0    q2           f32  3D       20971520            0            0            0            0            0            0            0 yes
+1    q2b          f32  3D       20971520            0            0            0            0            0            0            0 yes
+2    q2l          f32  3D       20971520            0            0            0            0            0            0            0 yes
+3    q2lb         f32  3D       20971520            0            0            0            0            0            0            0 yes
+4    uf           f32  3D       20971520            0            0            0            0            0            0            0 no
+5    vf           f32  3D       20971520            0            0            0            0            0            0            0 no
+6    smoth        f32  3D       20971520            0            0            0            0            0            0            0 no
+
+result: PASS (0 of 7 arrays fail; old/new 0, old/cuda 0, new/cuda 0)
+time_old_ms: median 3.930 avg 3.930 min 3.924
+time_new_ms: median 3.915 avg 3.915 min 3.910
+time_cuda_ms: median 0.643 avg 0.643 min 0.641
+speedup_new_vs_old (median): 1.004
+speedup_new_vs_cuda (median): 0.164
+SUMMARY kernel=ext_update_turbulane_ status=PASS mismatched_arrays=0 arrays=7 mm_old_new=0 mm_old_cuda=0 mm_new_cuda=0 old_median_ms=3.930 new_median_ms=3.915 cuda_median_ms=0.643 speedup=1.004 speedup_new_vs_cuda=0.164
+SUMMARY kernel=ext_update_turbulane_ status=PASS mismatched_arrays=0 old_median_ms=3.930 new_median_ms=3.915 cuda_median_ms=0.643 speedup=1.004 speedup_new_vs_cuda=0.164

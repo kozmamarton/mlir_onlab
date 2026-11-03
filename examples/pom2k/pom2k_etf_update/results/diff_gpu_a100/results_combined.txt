@@ -1,0 +1,35 @@
+ext_etf_update_ differential benchmark
+timestamp_utc: 2026-10-31T14:58:02Z
+target: gpu_a100
+size: 1024x1024x20
+samples: 20
+cpu_model: AMD EPYC 7F72 24-Core Processor
+gpu_model: NVIDIA A100-PCIE-40GB
+status: PASS
+raw_output_file: /home/mkozma/mlir_onlab/examples/pom2k/pom2k_etf_update/results/diff_gpu_a100/raw/20261031T145802Z.log
+----------------------------------------------------------------
+kernel: ext_etf_update_
+target: gpu_a100
+gpu: NVIDIA A100-PCIE-40GB (sm_80, device 0)
+prefetch: yes
+size: im=1024 jm=1024 kb=20
+samples: 20
+compare: old/new bitwise, */cuda rtol=1e-05 atol=1e-06
+global im = 1024
+global jm = 1024
+
+arg  name         type ext      elements   mm_old_new  mm_old_cuda  mm_new_cuda tol_old_cuda tol_new_cuda      max_abs      max_rel written
+0    iext         i32  sel             1            0            0            0            0            0            0            0 no
+1    isplit       i32  sel             1            0            0            0            0            0            0            0 no
+2    smoth        f32  3D       20971520            0            0            0            0            0            0            0 no
+3    etf          f32  3D       20971520            0            0            0            0            0            0            0 no
+4    elf          f32  3D       20971520            0            0            0            0            0            0            0 no
+5    fsm          f32  3D       20971520            0            0            0            0            0            0            0 no
+
+result: PASS (0 of 6 arrays fail; old/new 0, old/cuda 0, new/cuda 0)
+time_old_ms: median 0.023 avg 0.023 min 0.022
+time_new_ms: median 0.023 avg 0.023 min 0.022
+time_cuda_ms: median 0.023 avg 0.024 min 0.022
+speedup_new_vs_old (median): 0.996
+speedup_new_vs_cuda (median): 1.009
+SUMMARY kernel=ext_etf_update_ status=PASS mismatched_arrays=0 arrays=6 mm_old_new=0 mm_old_cuda=0 mm_new_cuda=0 old_median_ms=0.023 new_median_ms=0.023 cuda_median_ms=0.023 speedup=0.996 speedup_new_vs_cuda=1.009

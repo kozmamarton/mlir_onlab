@@ -1,0 +1,2 @@
+timestamp,kernel,target,size,samples,cpu_model,gpu_model,status,mismatched_arrays,old_median_ms,new_median_ms,cuda_median_ms,speedup,speedup_new_vs_cuda,raw_output_file
+"2026-10-31T14:58:57Z","ext_add_ad_2d_","gpu_a100","1024x1024x20","20","AMD EPYC 7F72 24-Core Processor","NVIDIA A100-PCIE-40GB","PASS","0","0.136","0.137","0.022","0.995","0.160","/home/mkozma/mlir_onlab/examples/pom2k/pom2k_ext_add_ad_2d/results/diff_gpu_a100/raw/20261031T145857Z.log"

@@ -5,10 +5,11 @@
 # the custom fusion pass into src/loop_fusion/pom2k/compare/{old,new}, regenerates
 # the kernel's harness, then calls <kernel dir>/run_diff_benchmark.sh. Kernels
 # run one at a time to bound memory use. A summary is written to
-# examples/pom2k/results/<target>/.
+# examples/pom2k/results/<target>/. gpu_a100 also runs each kernel's native
+# CUDA reference (<kernel dir>/cuda_ref.cu) and must run on an A100 node.
 #
 # Usage:
-#   run_all_benchmarks.sh --target cpu_parallel [--size IMxJMxKB] [--samples N]
+#   run_all_benchmarks.sh --target cpu_parallel|gpu_a100 [--size IMxJMxKB] [--samples N]
 #                         [--kernels k1,k2,...] [--skip-apply]
 #
 #   --kernels     default: the CASES list of apply_loop_fusion_pom2k.sh
@@ -27,7 +28,7 @@ SAMPLES="20"
 KERNELS=""
 SKIP_APPLY=0
 usage() {
-  sed -n '2,15p' "${BASH_SOURCE[0]}" | sed 's/^# \{0,1\}//'
+  sed -n '2,16p' "${BASH_SOURCE[0]}" | sed 's/^# \{0,1\}//'
 }
 while (($# > 0)); do
   case "$1" in
@@ -41,9 +42,9 @@ while (($# > 0)); do
   esac
 done
 case "$TARGET" in
-  cpu_parallel) ;;
-  "") echo "--target is required (implemented: cpu_parallel)" >&2; exit 2 ;;
-  *) echo "target '$TARGET' is not implemented yet (implemented: cpu_parallel)" >&2; exit 2 ;;
+  cpu_parallel|gpu_a100) ;;
+  "") echo "--target is required (implemented: cpu_parallel, gpu_a100)" >&2; exit 2 ;;
+  *) echo "target '$TARGET' is not implemented yet (implemented: cpu_parallel, gpu_a100)" >&2; exit 2 ;;
 esac
 
 if [[ -n "$KERNELS" ]]; then
@@ -60,7 +61,7 @@ SUMMARY_TXT="$RESULTS_DIR/summary_$STAMP.txt"
 SUMMARY_CSV="$RESULTS_DIR/summary_$STAMP.csv"
 mkdir -p "$LOG_DIR" "$COMPARE_DIR/old" "$COMPARE_DIR/new"
 
-declare -A status mismatched old_ms new_ms speedup kdir
+declare -A status mismatched old_ms new_ms speedup cuda_ms speedup_cuda kdir
 
 if (( ! SKIP_APPLY )); then
   echo "[apply] regenerating compare/old and compare/new for ${#kernel_list[@]} kernels"
@@ -88,7 +89,7 @@ for k in "${kernel_list[@]}"; do
   gen_kernels+=("$k")
 done
 for k in "${gen_kernels[@]}"; do
-  if out="$(python3 "$SCRIPT_DIR/generate_benchmarks.py" "$k" 2>&1)"; then
+  if out="$(python3 "$SCRIPT_DIR/generate_benchmarks.py" --target "$TARGET" "$k" 2>&1)"; then
     kdir[$k]="$PROJECT_ROOT/${out#"$k: "}"
   else
     echo "$out" | tee "$LOG_DIR/generate_$k.log" >&2
@@ -107,23 +108,40 @@ for k in "${kernel_list[@]}"; do
   status[$k]="$(get status)"; status[$k]="${status[$k]:-ERROR}"
   mismatched[$k]="$(get mismatched_arrays)"
   old_ms[$k]="$(get old_median_ms)"; new_ms[$k]="$(get new_median_ms)"; speedup[$k]="$(get speedup)"
+  cuda_ms[$k]="$(get cuda_median_ms)"; speedup_cuda[$k]="$(get speedup_new_vs_cuda)"
 done
 
 CPU_MODEL="$(lscpu 2>/dev/null | awk -F: '/Model name:/ {gsub(/^[ \t]+/, "", $2); print $2; exit}')"
+GPU=0; [[ "$TARGET" == "gpu_a100" ]] && GPU=1
 {
-  echo "pom2k differential benchmarks (old = without custom fusion pass, new = with it)"
+  if (( GPU )); then
+    echo "pom2k differential benchmarks (old = without custom fusion pass, new = with it, cuda = native CUDA reference)"
+  else
+    echo "pom2k differential benchmarks (old = without custom fusion pass, new = with it)"
+  fi
   echo "generated_at_utc: $(date -u +"%Y-%m-%dT%H:%M:%SZ")"
   echo "target: $TARGET"
   echo "size: $SIZE"
   echo "samples: $SAMPLES"
   echo "cpu_model: ${CPU_MODEL:-unknown}"
+  (( GPU )) && echo "gpu_model: $(nvidia-smi --query-gpu=name --format=csv,noheader 2>/dev/null | head -n 1)"
   echo "logs: $LOG_DIR"
   echo ""
-  printf '%-34s %-14s %-10s %12s %12s %8s\n' kernel status mismatched old_median_ms new_median_ms speedup
-  for k in "${kernel_list[@]}"; do
-    printf '%-34s %-14s %-10s %12s %12s %8s\n' "$k" "${status[$k]}" "${mismatched[$k]:--}" \
-      "${old_ms[$k]:--}" "${new_ms[$k]:--}" "${speedup[$k]:--}"
-  done
+  if (( GPU )); then
+    printf '%-34s %-14s %-10s %12s %12s %12s %8s %13s\n' kernel status mismatched old_median_ms \
+      new_median_ms cuda_median_ms speedup speedup_vs_cuda
+    for k in "${kernel_list[@]}"; do
+      printf '%-34s %-14s %-10s %12s %12s %12s %8s %13s\n' "$k" "${status[$k]}" "${mismatched[$k]:--}" \
+        "${old_ms[$k]:--}" "${new_ms[$k]:--}" "${cuda_ms[$k]:--}" "${speedup[$k]:--}" \
+        "${speedup_cuda[$k]:--}"
+    done
+  else
+    printf '%-34s %-14s %-10s %12s %12s %8s\n' kernel status mismatched old_median_ms new_median_ms speedup
+    for k in "${kernel_list[@]}"; do
+      printf '%-34s %-14s %-10s %12s %12s %8s\n' "$k" "${status[$k]}" "${mismatched[$k]:--}" \
+        "${old_ms[$k]:--}" "${new_ms[$k]:--}" "${speedup[$k]:--}"
+    done
+  fi
   echo ""
   for s in PASS FAIL; do
     n=0; for k in "${kernel_list[@]}"; do [[ "${status[$k]}" == "$s" ]] && n=$((n + 1)); done
@@ -133,10 +151,17 @@ CPU_MODEL="$(lscpu 2>/dev/null | awk -F: '/Model name:/ {gsub(/^[ \t]+/, "", $2)
   echo "OTHER: $n"
 } > "$SUMMARY_TXT"
 {
-  echo "kernel,target,size,samples,status,mismatched_arrays,old_median_ms,new_median_ms,speedup"
-  for k in "${kernel_list[@]}"; do
-    echo "$k,$TARGET,$SIZE,$SAMPLES,${status[$k]},${mismatched[$k]-},${old_ms[$k]-},${new_ms[$k]-},${speedup[$k]-}"
-  done
+  if (( GPU )); then
+    echo "kernel,target,size,samples,status,mismatched_arrays,old_median_ms,new_median_ms,cuda_median_ms,speedup,speedup_new_vs_cuda"
+    for k in "${kernel_list[@]}"; do
+      echo "$k,$TARGET,$SIZE,$SAMPLES,${status[$k]},${mismatched[$k]-},${old_ms[$k]-},${new_ms[$k]-},${cuda_ms[$k]-},${speedup[$k]-},${speedup_cuda[$k]-}"
+    done
+  else
+    echo "kernel,target,size,samples,status,mismatched_arrays,old_median_ms,new_median_ms,speedup"
+    for k in "${kernel_list[@]}"; do
+      echo "$k,$TARGET,$SIZE,$SAMPLES,${status[$k]},${mismatched[$k]-},${old_ms[$k]-},${new_ms[$k]-},${speedup[$k]-}"
+    done
+  fi
 } > "$SUMMARY_CSV"
 cp "$SUMMARY_TXT" "$RESULTS_DIR/summary_latest.txt"
 cp "$SUMMARY_CSV" "$RESULTS_DIR/summary_latest.csv"

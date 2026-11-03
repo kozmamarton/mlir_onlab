@@ -1,0 +1,38 @@
+kernel: ext_smol_adif_
+target: gpu_a100
+gpu: NVIDIA A100-PCIE-40GB (sm_80, device 0)
+prefetch: yes
+size: im=1024 jm=1024 kb=20
+samples: 20
+compare: old/new bitwise, */cuda rtol=1e-05 atol=1e-06
+global dti2 = 1.32153535
+global im = 1024
+global imm1 = 1023
+global jm = 1024
+global jmm1 = 1023
+global kb = 20
+global kbm1 = 19
+
+arg  name         type ext      elements   mm_old_new  mm_old_cuda  mm_new_cuda tol_old_cuda tol_new_cuda      max_abs      max_rel written
+0    xmassflux    f32  3D       20971520            0            0            0            0            0            0            0 yes
+1    ymassflux    f32  3D       20971520            0            0            0            0            0            0            0 yes
+2    zwflux       f32  3D       20971520            0            0            0            0            0            0            0 yes
+3    ff           f32  3D       20971520            0            0            0            0            0            0            0 yes
+4    sw           f32  3D       20971520            0            0            0            0            0            0            0 no
+5    fsm          f32  2D        1048576            0            0            0            0            0            0            0 no
+6    aru          f32  3D       20971520            0            0            0            0            0            0            0 no
+7    arv          f32  3D       20971520            0            0            0            0            0            0            0 no
+8    dt           f32  3D       20971520            0            0            0            0            0            0            0 no
+9    dzz          f32  3D       20971520            0            0            0            0            0            0            0 no
+
+result: PASS (0 of 10 arrays fail; old/new 0, old/cuda 0, new/cuda 0)
+time_old_ms: median 782.885 avg 784.685 min 781.513
+time_new_ms: median 825.942 avg 829.407 min 824.300
+time_cuda_ms: median 0.973 avg 0.973 min 0.970
+speedup_new_vs_old (median): 0.948
+speedup_new_vs_cuda (median): 0.001
+SUMMARY kernel=ext_smol_adif_ status=PASS mismatched_arrays=0 arrays=10 mm_old_new=0 mm_old_cuda=0 mm_new_cuda=0 old_median_ms=782.885 new_median_ms=825.942 cuda_median_ms=0.973 speedup=0.948 speedup_new_vs_cuda=0.001
+Generating '/tmp/nsys-report-4abd.qdstrm'
+[1/1] [0%                          ] ext_smol_adif_.nsys-rep[1/1] [0%                          ] ext_smol_adif_.nsys-rep[1/1] [===22%                      ] ext_smol_adif_.nsys-rep[1/1] [6%                          ] ext_smol_adif_.nsys-rep[1/1] [5%                          ] ext_smol_adif_.nsys-rep[1/1] [5%                          ] ext_smol_adif_.nsys-rep[1/1] [6%                          ] ext_smol_adif_.nsys-rep[1/1] [7%                          ] ext_smol_adif_.nsys-rep[1/1] [8%                          ] ext_smol_adif_.nsys-rep[1/1] [10%                         ] ext_smol_adif_.nsys-rep[1/1] [11%                         ] ext_smol_adif_.nsys-rep[1/1] [13%                         ] ext_smol_adif_.nsys-rep[1/1] [14%                         ] ext_smol_adif_.nsys-rep[1/1] [=15%                        ] ext_smol_adif_.nsys-rep[1/1] [=17%                        ] ext_smol_adif_.nsys-rep[1/1] [==18%                       ] ext_smol_adif_.nsys-rep[1/1] [==19%                       ] ext_smol_adif_.nsys-rep[1/1] [==21%                       ] ext_smol_adif_.nsys-rep[1/1] [===22%                      ] ext_smol_adif_.nsys-rep[1/1] [===24%                      ] ext_smol_adif_.nsys-rep[1/1] [====25%                     ] ext_smol_adif_.nsys-rep[1/1] [====26%                     ] ext_smol_adif_.nsys-rep[1/1] [====28%                     ] ext_smol_adif_.nsys-rep[1/1] [=====29%                    ] ext_smol_adif_.nsys-rep[1/1] [=====31%                    ] ext_smol_adif_.nsys-rep[1/1] [=====32%                    ] ext_smol_adif_.nsys-rep[1/1] [======33%                   ] ext_smol_adif_.nsys-rep[1/1] [======35%                   ] ext_smol_adif_.nsys-rep[1/1] [=======36%                  ] ext_smol_adif_.nsys-rep[1/1] [=======37%                  ] ext_smol_adif_.nsys-rep[1/1] [=======39%                  ] ext_smol_adif_.nsys-rep[1/1] [========40%                 ] ext_smol_adif_.nsys-rep[1/1] [========42%                 ] ext_smol_adif_.nsys-rep[1/1] [=========43%                ] ext_smol_adif_.nsys-rep[1/1] [=========44%                ] ext_smol_adif_.nsys-rep[1/1] [=========46%                ] ext_smol_adif_.nsys-rep[1/1] [==========47%               ] ext_smol_adif_.nsys-rep[1/1] [==========49%               ] ext_smol_adif_.nsys-rep[1/1] [===========50%              ] ext_smol_adif_.nsys-rep[1/1] [========================100%] ext_smol_adif_.nsys-rep[1/1] [========================100%] ext_smol_adif_.nsys-rep
+Generated:
+    /tmp/claude-636000065/-home-mkozma-mlir-onlab/0d637864-d76a-420c-b460-a5485f453b99/scratchpad/nsys/run2/rep/ext_smol_adif_.nsys-rep
