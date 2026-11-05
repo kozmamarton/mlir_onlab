@@ -1,0 +1,48 @@
+kernel: ext_profv_
+target: gpu_a100
+gpu: NVIDIA A100-PCIE-40GB (sm_80, device 0)
+prefetch: yes
+size: im=1024 jm=1024 kb=20
+samples: 20
+compare: old/new bitwise, */cuda rtol=1e-05 atol=1e-06
+global dti2 = 1.32153535
+global im = 1024
+global imm1 = 1023
+global jm = 1024
+global jmm1 = 1023
+global kb = 20
+global kbm1 = 19
+global kbm2 = 18
+global umol = 1.01578474
+
+arg  name         type ext      elements   mm_old_new  mm_old_cuda  mm_new_cuda tol_old_cuda tol_new_cuda      max_abs      max_rel written
+0    etf          f32  2D        1048576            0            0            0            0            0            0            0 no
+1    h            f32  2D        1048576            0            0            0            0            0            0            0 no
+2    c            f32  3D       20971520            0            0            0            0            0            0            0 yes
+3    km           f32  3D       20971520            0            0            0            0            0            0            0 no
+4    a            f32  3D       20971520            0            0            0            0            0            0            0 yes
+5    dz           f32  3D       20971520            0            0            0            0            0            0            0 no
+6    dzz          f32  3D       20971520            0            0            0            0            0            0            0 no
+7    ee           f32  3D       20971520            0            0            0            0            0            0            0 yes
+8    gg           f32  3D       20971520            0            0            0            0            0            0            0 yes
+9    wvsurf       f32  2D        1048576            0            0            0            0            0            0            0 no
+10   vf           f32  3D       20971520            0            0            0            0            0            0            0 yes
+11   tps          f32  2D        1048576            0            0            0            0            0            0            0 yes
+12   cbc          f32  2D        1048576            0            0            0            0            0            0            0 no
+13   ub           f32  3D       20971520            0            0            0            0            0            0            0 no
+14   vb           f32  3D       20971520            0            0            0            0            0            0            0 no
+15   dvm          f32  3D       20971520            0            0            0            0            0            0            0 no
+16   wvbot        f32  2D        1048576            0            0            0            0            0            0            0 yes
+17   dhloc        f32  2D        1048576            0            0            0            0            0            0            0 yes
+
+result: PASS (0 of 18 arrays fail; old/new 0, old/cuda 0, new/cuda 0)
+time_old_ms: median 1.143 avg 1.146 min 1.136
+time_new_ms: median 1.124 avg 1.127 min 1.118
+time_cuda_ms: median 0.992 avg 0.993 min 0.991
+speedup_new_vs_old (median): 1.017
+speedup_new_vs_cuda (median): 0.883
+SUMMARY kernel=ext_profv_ status=PASS mismatched_arrays=0 arrays=18 mm_old_new=0 mm_old_cuda=0 mm_new_cuda=0 old_median_ms=1.143 new_median_ms=1.124 cuda_median_ms=0.992 speedup=1.017 speedup_new_vs_cuda=0.883
+Generating '/tmp/nsys-report-e689.qdstrm'
+[1/1] [0%                          ] ext_profv_.nsys-rep[1/1] [0%                          ] ext_profv_.nsys-rep[1/1] [13%                         ] ext_profv_.nsys-rep[1/1] [===24%                      ] ext_profv_.nsys-rep[1/1] [======35%                   ] ext_profv_.nsys-rep[1/1] [==========48%               ] ext_profv_.nsys-rep[1/1] [===========53%              ] ext_profv_.nsys-rep[1/1] [========================100%] ext_profv_.nsys-rep[1/1] [========================100%] ext_profv_.nsys-rep
+Generated:
+    /home/mkozma/mlir_onlab/examples/pom2k/results/gpu_a100_nsys/20261105T161300Z_offload/rep/ext_profv_.nsys-rep

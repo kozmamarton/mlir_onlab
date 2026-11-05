@@ -1,33 +1,33 @@
 ext_add_ad_2d_ differential benchmark
-timestamp_utc: 2026-10-31T14:58:57Z
+timestamp_utc: 2026-11-05T17:25:51Z
 target: gpu_a100
-size: 1024x1024x20
+size: 2048x2048x20
 samples: 20
 cpu_model: AMD EPYC 7F72 24-Core Processor
 gpu_model: NVIDIA A100-PCIE-40GB
 status: PASS
-raw_output_file: /home/mkozma/mlir_onlab/examples/pom2k/pom2k_ext_add_ad_2d/results/diff_gpu_a100/raw/20261031T145857Z.log
+raw_output_file: /home/mkozma/mlir_onlab/examples/pom2k/pom2k_ext_add_ad_2d/results/diff_gpu_a100/raw/20261105T172551Z.log
 ----------------------------------------------------------------
 kernel: ext_add_ad_2d_
 target: gpu_a100
 gpu: NVIDIA A100-PCIE-40GB (sm_80, device 0)
 prefetch: yes
-size: im=1024 jm=1024 kb=20
+size: im=2048 jm=2048 kb=20
 samples: 20
 compare: old/new bitwise, */cuda rtol=1e-05 atol=1e-06
-global im = 1024
-global jm = 1024
+global im = 2048
+global jm = 2048
 
 arg  name         type ext      elements   mm_old_new  mm_old_cuda  mm_new_cuda tol_old_cuda tol_new_cuda      max_abs      max_rel written
-0    adx2d        f32  2D        1048576            0            0            0            0            0            0            0 yes
-1    ady2d        f32  2D        1048576            0            0            0            0            0            0            0 yes
-2    advua        f32  2D        1048576            0            0            0            0            0            0            0 no
-3    advva        f32  2D        1048576            0            0            0            0            0            0            0 no
+0    adx2d        f32  2D        4194304            0            0            0            0            0            0            0 yes
+1    ady2d        f32  2D        4194304            0            0            0            0            0            0            0 yes
+2    advua        f32  2D        4194304            0            0            0            0            0            0            0 no
+3    advva        f32  2D        4194304            0            0            0            0            0            0            0 no
 
 result: PASS (0 of 4 arrays fail; old/new 0, old/cuda 0, new/cuda 0)
-time_old_ms: median 0.136 avg 0.136 min 0.134
-time_new_ms: median 0.137 avg 0.137 min 0.134
-time_cuda_ms: median 0.022 avg 0.022 min 0.022
-speedup_new_vs_old (median): 0.995
-speedup_new_vs_cuda (median): 0.160
-SUMMARY kernel=ext_add_ad_2d_ status=PASS mismatched_arrays=0 arrays=4 mm_old_new=0 mm_old_cuda=0 mm_new_cuda=0 old_median_ms=0.136 new_median_ms=0.137 cuda_median_ms=0.022 speedup=0.995 speedup_new_vs_cuda=0.160
+time_old_ms: median 0.089 avg 0.089 min 0.089
+time_new_ms: median 0.089 avg 0.089 min 0.088
+time_cuda_ms: median 0.084 avg 0.084 min 0.084
+speedup_new_vs_old (median): 1.004
+speedup_new_vs_cuda (median): 0.951
+SUMMARY kernel=ext_add_ad_2d_ status=PASS mismatched_arrays=0 arrays=4 mm_old_new=0 mm_old_cuda=0 mm_new_cuda=0 old_median_ms=0.089 new_median_ms=0.089 cuda_median_ms=0.084 speedup=1.004 speedup_new_vs_cuda=0.951

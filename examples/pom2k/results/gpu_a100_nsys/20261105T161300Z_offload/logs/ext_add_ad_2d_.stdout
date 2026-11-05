@@ -1,0 +1,27 @@
+kernel: ext_add_ad_2d_
+target: gpu_a100
+gpu: NVIDIA A100-PCIE-40GB (sm_80, device 0)
+prefetch: yes
+size: im=1024 jm=1024 kb=20
+samples: 20
+compare: old/new bitwise, */cuda rtol=1e-05 atol=1e-06
+global im = 1024
+global jm = 1024
+
+arg  name         type ext      elements   mm_old_new  mm_old_cuda  mm_new_cuda tol_old_cuda tol_new_cuda      max_abs      max_rel written
+0    adx2d        f32  2D        1048576            0            0            0            0            0            0            0 yes
+1    ady2d        f32  2D        1048576            0            0            0            0            0            0            0 yes
+2    advua        f32  2D        1048576            0            0            0            0            0            0            0 no
+3    advva        f32  2D        1048576            0            0            0            0            0            0            0 no
+
+result: PASS (0 of 4 arrays fail; old/new 0, old/cuda 0, new/cuda 0)
+time_old_ms: median 0.041 avg 0.042 min 0.040
+time_new_ms: median 0.041 avg 0.041 min 0.041
+time_cuda_ms: median 0.032 avg 0.032 min 0.032
+speedup_new_vs_old (median): 1.005
+speedup_new_vs_cuda (median): 0.780
+SUMMARY kernel=ext_add_ad_2d_ status=PASS mismatched_arrays=0 arrays=4 mm_old_new=0 mm_old_cuda=0 mm_new_cuda=0 old_median_ms=0.041 new_median_ms=0.041 cuda_median_ms=0.032 speedup=1.005 speedup_new_vs_cuda=0.780
+Generating '/tmp/nsys-report-5085.qdstrm'
+[1/1] [0%                          ] ext_add_ad_2d_.nsys-rep[1/1] [0%                          ] ext_add_ad_2d_.nsys-rep[1/1] [=15%                        ] ext_add_ad_2d_.nsys-rep[1/1] [=====30%                    ] ext_add_ad_2d_.nsys-rep[1/1] [=====31%                    ] ext_add_ad_2d_.nsys-rep[1/1] [==================75%       ] ext_add_ad_2d_.nsys-rep[1/1] [==================76%       ] ext_add_ad_2d_.nsys-rep[1/1] [========================100%] ext_add_ad_2d_.nsys-rep[1/1] [========================100%] ext_add_ad_2d_.nsys-rep
+Generated:
+    /home/mkozma/mlir_onlab/examples/pom2k/results/gpu_a100_nsys/20261105T161300Z_offload/rep/ext_add_ad_2d_.nsys-rep
