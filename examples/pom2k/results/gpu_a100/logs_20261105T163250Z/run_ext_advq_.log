@@ -1,0 +1,3 @@
+[ext_advq_] lowering old and new variants
+[ext_advq_] building /home/mkozma/mlir_onlab/examples/pom2k/pom2k_advq/diff_gpu_a100.out
+[ext_advq_] running /home/mkozma/mlir_onlab/examples/pom2k/pom2k_advq/diff_gpu_a100.out --size 4096x4096x20 --samples 20

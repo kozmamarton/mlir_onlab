@@ -1,0 +1,34 @@
+[ext_update_u_v_] lowering old and new variants
+[ext_update_u_v_] building /home/mkozma/mlir_onlab/examples/pom2k/pom2k_update_u_v/diff_gpu_a100.out
+[ext_update_u_v_] running /home/mkozma/mlir_onlab/examples/pom2k/pom2k_update_u_v/diff_gpu_a100.out --size 2048x2048x20 --samples 20
+kernel: ext_update_u_v_
+target: gpu_a100
+gpu: NVIDIA A100-PCIE-40GB (sm_80, device 0)
+prefetch: yes
+size: im=2048 jm=2048 kb=20
+samples: 20
+compare: old/new bitwise, */cuda rtol=1e-05 atol=1e-06
+global im = 2048
+global jm = 2048
+global kb = 20
+global kbm1 = 19
+
+arg  name         type ext      elements   mm_old_new  mm_old_cuda  mm_new_cuda tol_old_cuda tol_new_cuda      max_abs      max_rel written
+0    tps          f32  2D        4194304            0            0            0            0            0            0            0 yes
+1    u            f32  3D       83886080            0            0            0            0            0            0            0 yes
+2    uf           f32  3D       83886080            0            0            0            0            0            0            0 no
+3    ub           f32  3D       83886080            0            0            0            0            0            0            0 yes
+4    v            f32  3D       83886080            0            0            0            0            0            0            0 yes
+5    vf           f32  3D       83886080            0            0            0            0            0            0            0 no
+6    vb           f32  3D       83886080            0            0            0            0            0            0            0 yes
+7    dz           f32  3D       83886080            0            0            0            0            0            0            0 no
+8    smoth        f32  3D       83886080            0            0            0            0            0            0            0 no
+
+result: PASS (0 of 9 arrays fail; old/new 0, old/cuda 0, new/cuda 0)
+time_old_ms: median 3.202 avg 3.206 min 3.199
+time_new_ms: median 3.210 avg 3.210 min 3.204
+time_cuda_ms: median 3.166 avg 3.166 min 3.161
+speedup_new_vs_old (median): 0.997
+speedup_new_vs_cuda (median): 0.986
+SUMMARY kernel=ext_update_u_v_ status=PASS mismatched_arrays=0 arrays=9 mm_old_new=0 mm_old_cuda=0 mm_new_cuda=0 old_median_ms=3.202 new_median_ms=3.210 cuda_median_ms=3.166 speedup=0.997 speedup_new_vs_cuda=0.986
+SUMMARY kernel=ext_update_u_v_ status=PASS mismatched_arrays=0 old_median_ms=3.202 new_median_ms=3.210 cuda_median_ms=3.166 speedup=0.997 speedup_new_vs_cuda=0.986

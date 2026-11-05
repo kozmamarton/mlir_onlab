@@ -1,0 +1,22 @@
+kernel: ext_init_horizontal_velocities_
+target: gpu_a100
+gpu: NVIDIA A100-PCIE-40GB (sm_80, device 0)
+prefetch: yes
+size: im=2048 jm=2048 kb=20
+samples: 20
+compare: old/new bitwise, */cuda rtol=1e-05 atol=1e-06
+global im = 2048
+global jm = 2048
+global kb = 20
+
+arg  name         type ext      elements   mm_old_new  mm_old_cuda  mm_new_cuda tol_old_cuda tol_new_cuda      max_abs      max_rel written
+0    uf           f32  3D       83886080            0            0            0            0            0            0            0 yes
+1    vf           f32  3D       83886080            0            0            0            0            0            0            0 yes
+
+result: PASS (0 of 2 arrays fail; old/new 0, old/cuda 0, new/cuda 0)
+time_old_ms: median 0.446 avg 0.447 min 0.446
+time_new_ms: median 0.445 avg 0.445 min 0.444
+time_cuda_ms: median 0.441 avg 0.441 min 0.440
+speedup_new_vs_old (median): 1.003
+speedup_new_vs_cuda (median): 0.990
+SUMMARY kernel=ext_init_horizontal_velocities_ status=PASS mismatched_arrays=0 arrays=2 mm_old_new=0 mm_old_cuda=0 mm_new_cuda=0 old_median_ms=0.446 new_median_ms=0.445 cuda_median_ms=0.441 speedup=1.003 speedup_new_vs_cuda=0.990

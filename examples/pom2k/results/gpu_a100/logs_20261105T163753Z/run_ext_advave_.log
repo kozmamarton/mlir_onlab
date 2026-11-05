@@ -1,0 +1,52 @@
+[ext_advave_] lowering old and new variants
+[ext_advave_] building /home/mkozma/mlir_onlab/examples/pom2k/pom2k_advave/diff_gpu_a100.out
+[ext_advave_] running /home/mkozma/mlir_onlab/examples/pom2k/pom2k_advave/diff_gpu_a100.out --size 1024x1024x20 --samples 20
+kernel: ext_advave_
+target: gpu_a100
+gpu: NVIDIA A100-PCIE-40GB (sm_80, device 0)
+prefetch: yes
+size: im=1024 jm=1024 kb=20
+samples: 20
+compare: old/new bitwise, */cuda rtol=1e-05 atol=1e-06
+global im = 1024
+global imm1 = 1023
+global jm = 1024
+global jmm1 = 1023
+global mode = 3
+
+arg  name         type ext      elements   mm_old_new  mm_old_cuda  mm_new_cuda tol_old_cuda tol_new_cuda      max_abs      max_rel written
+0    curv2d       f32  3D       20971520            0            0            0            0            0            0            0 no
+1    advua        f32  3D       20971520      1044484      1044484            0      1044483            0         14.8            2 yes
+2    advva        f32  3D       20971520      1044484      1044484            0      1044476            0         19.4            2 yes
+3    fluxua       f32  3D       20971520            0            0            0            0            0            0            0 yes
+4    fluxva       f32  2D        1048576      1045506      1045506            0      1045500            0        13.53            2 yes
+5    ua           f32  3D       20971520            0            0            0            0            0            0            0 no
+6    va           f32  3D       20971520            0            0            0            0            0            0            0 no
+7    uab          f32  3D       20971520            0            0            0            0            0            0            0 no
+8    vab          f32  3D       20971520            0            0            0            0            0            0            0 no
+9    wubot        f32  3D       20971520            0            0            0            0            0            0            0 no
+10   wvbot        f32  3D       20971520            0            0            0            0            0            0            0 no
+11   d            f32  3D       20971520            0            0            0            0            0            0            0 no
+12   dx           f32  3D       20971520            0            0            0            0            0            0            0 no
+13   dy           f32  3D       20971520            0            0            0            0            0            0            0 no
+14   aru          f32  3D       20971520            0            0            0            0            0            0            0 no
+15   arv          f32  3D       20971520            0            0            0            0            0            0            0 no
+16   aam2d        f32  3D       20971520            0            0            0            0            0            0            0 no
+17   tps          f32  2D        1048576            0            0            0            0            0            0            0 yes
+18   cbc          f32  3D       20971520            0            0            0            0            0            0            0 no
+
+first failure advua old/new: index 1025 (i=1 j=1 k=0) 0.0123311281 vs 0.0456393957
+first failure advua old/cuda: index 1025 (i=1 j=1 k=0) 0.0123311281 vs 0.0456393957
+first failure advva old/new: index 1025 (i=1 j=1 k=0) 0.0165266991 vs -0.24113524
+first failure advva old/cuda: index 1025 (i=1 j=1 k=0) 0.0165266991 vs -0.24113524
+first failure fluxva old/new: index 1025 (i=1 j=1 k=0) 0.557703316 vs 0.300041407
+first failure fluxva old/cuda: index 1025 (i=1 j=1 k=0) 0.557703316 vs 0.300041407
+
+result: FAIL (3 of 19 arrays fail; old/new 3, old/cuda 3, new/cuda 0)
+time_old_ms: median 0.185 avg 0.190 min 0.184
+time_new_ms: median 0.256 avg 0.257 min 0.250
+time_cuda_ms: median 0.186 avg 0.186 min 0.184
+speedup_new_vs_old (median): 0.725
+speedup_new_vs_cuda (median): 0.726
+SUMMARY kernel=ext_advave_ status=FAIL mismatched_arrays=3 arrays=19 mm_old_new=3 mm_old_cuda=3 mm_new_cuda=0 old_median_ms=0.185 new_median_ms=0.256 cuda_median_ms=0.186 speedup=0.725 speedup_new_vs_cuda=0.726
+SUMMARY kernel=ext_advave_ status=FAIL mismatched_arrays=3 old_median_ms=0.185 new_median_ms=0.256 cuda_median_ms=0.186 speedup=0.725 speedup_new_vs_cuda=0.726

@@ -1,0 +1,33 @@
+kernel: ext_adjust_u_v_
+target: gpu_a100
+gpu: NVIDIA A100-PCIE-40GB (sm_80, device 0)
+prefetch: yes
+size: im=1024 jm=1024 kb=20
+samples: 20
+compare: old/new bitwise, */cuda rtol=1e-05 atol=1e-06
+global im = 1024
+global jm = 1024
+global kbm1 = 19
+
+arg  name         type ext      elements   mm_old_new  mm_old_cuda  mm_new_cuda tol_old_cuda tol_new_cuda      max_abs      max_rel written
+0    tps          f32  2D        1048576            0            0            0            0            0            0            0 yes
+1    u            f32  3D       20971520            0            0            0            0            0            0            0 yes
+2    v            f32  3D       20971520            0            0            0            0            0            0            0 yes
+3    dz           f32  3D       20971520            0            0            0            0            0            0            0 no
+4    utb          f32  2D        1048576            0            0            0            0            0            0            0 no
+5    utf          f32  2D        1048576            0            0            0            0            0            0            0 no
+6    vtb          f32  2D        1048576            0            0            0            0            0            0            0 no
+7    vtf          f32  2D        1048576            0            0            0            0            0            0            0 no
+8    dt           f32  2D        1048576            0            0            0            0            0            0            0 no
+
+result: PASS (0 of 9 arrays fail; old/new 0, old/cuda 0, new/cuda 0)
+time_old_ms: median 0.849 avg 0.781 min 0.646
+time_new_ms: median 0.850 avg 0.783 min 0.654
+time_cuda_ms: median 0.706 avg 0.661 min 0.586
+speedup_new_vs_old (median): 1.000
+speedup_new_vs_cuda (median): 0.831
+SUMMARY kernel=ext_adjust_u_v_ status=PASS mismatched_arrays=0 arrays=9 mm_old_new=0 mm_old_cuda=0 mm_new_cuda=0 old_median_ms=0.849 new_median_ms=0.850 cuda_median_ms=0.706 speedup=1.000 speedup_new_vs_cuda=0.831
+Generating '/tmp/nsys-report-3749.qdstrm'
+[1/1] [0%                          ] ext_adjust_u_v_.nsys-rep[1/1] [0%                          ] ext_adjust_u_v_.nsys-rep[1/1] [7%                          ] ext_adjust_u_v_.nsys-rep[1/1] [5%                          ] ext_adjust_u_v_.nsys-rep[1/1] [=======38%                  ] ext_adjust_u_v_.nsys-rep[1/1] [============56%             ] ext_adjust_u_v_.nsys-rep[1/1] [========================100%] ext_adjust_u_v_.nsys-rep[1/1] [========================100%] ext_adjust_u_v_.nsys-rep
+Generated:
+    /home/mkozma/mlir_onlab/examples/pom2k/results/gpu_a100_nsys/20261105T161300Z_offload/rep/ext_adjust_u_v_.nsys-rep

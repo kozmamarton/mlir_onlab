@@ -1,58 +1,58 @@
 ext_advave_ differential benchmark
-timestamp_utc: 2026-10-31T15:00:32Z
+timestamp_utc: 2026-11-05T17:27:32Z
 target: gpu_a100
-size: 1024x1024x20
+size: 2048x2048x20
 samples: 20
 cpu_model: AMD EPYC 7F72 24-Core Processor
 gpu_model: NVIDIA A100-PCIE-40GB
 status: FAIL
-raw_output_file: /home/mkozma/mlir_onlab/examples/pom2k/pom2k_advave/results/diff_gpu_a100/raw/20261031T150032Z.log
+raw_output_file: /home/mkozma/mlir_onlab/examples/pom2k/pom2k_advave/results/diff_gpu_a100/raw/20261105T172732Z.log
 ----------------------------------------------------------------
 kernel: ext_advave_
 target: gpu_a100
 gpu: NVIDIA A100-PCIE-40GB (sm_80, device 0)
 prefetch: yes
-size: im=1024 jm=1024 kb=20
+size: im=2048 jm=2048 kb=20
 samples: 20
 compare: old/new bitwise, */cuda rtol=1e-05 atol=1e-06
-global im = 1024
-global imm1 = 1023
-global jm = 1024
-global jmm1 = 1023
+global im = 2048
+global imm1 = 2047
+global jm = 2048
+global jmm1 = 2047
 global mode = 3
 
 arg  name         type ext      elements   mm_old_new  mm_old_cuda  mm_new_cuda tol_old_cuda tol_new_cuda      max_abs      max_rel written
-0    curv2d       f32  3D       20971520            0            0            0            0            0            0            0 no
-1    advua        f32  3D       20971520      1044484      1044484            0      1044483            0         14.8            2 yes
-2    advva        f32  3D       20971520      1044484      1044484            0      1044476            0         19.4            2 yes
-3    fluxua       f32  3D       20971520            0            0            0            0            0            0            0 yes
-4    fluxva       f32  2D        1048576      1045506      1045506            0      1045500            0        13.53            2 yes
-5    ua           f32  3D       20971520            0            0            0            0            0            0            0 no
-6    va           f32  3D       20971520            0            0            0            0            0            0            0 no
-7    uab          f32  3D       20971520            0            0            0            0            0            0            0 no
-8    vab          f32  3D       20971520            0            0            0            0            0            0            0 no
-9    wubot        f32  3D       20971520            0            0            0            0            0            0            0 no
-10   wvbot        f32  3D       20971520            0            0            0            0            0            0            0 no
-11   d            f32  3D       20971520            0            0            0            0            0            0            0 no
-12   dx           f32  3D       20971520            0            0            0            0            0            0            0 no
-13   dy           f32  3D       20971520            0            0            0            0            0            0            0 no
-14   aru          f32  3D       20971520            0            0            0            0            0            0            0 no
-15   arv          f32  3D       20971520            0            0            0            0            0            0            0 no
-16   aam2d        f32  3D       20971520            0            0            0            0            0            0            0 no
-17   tps          f32  2D        1048576            0            0            0            0            0            0            0 yes
-18   cbc          f32  3D       20971520            0            0            0            0            0            0            0 no
+0    curv2d       f32  3D       83886080            0            0            0            0            0            0            0 no
+1    advua        f32  3D       83886080      4186116      4186116            0      4186102            0        17.32            2 yes
+2    advva        f32  3D       83886080      4186116      4186116            0      4186101            0        21.38            2 yes
+3    fluxua       f32  3D       83886080            0            0            0            0            0            0            0 yes
+4    fluxva       f32  2D        4194304      4188162      4188162            0      4188125            0        13.29            2 yes
+5    ua           f32  3D       83886080            0            0            0            0            0            0            0 no
+6    va           f32  3D       83886080            0            0            0            0            0            0            0 no
+7    uab          f32  3D       83886080            0            0            0            0            0            0            0 no
+8    vab          f32  3D       83886080            0            0            0            0            0            0            0 no
+9    wubot        f32  3D       83886080            0            0            0            0            0            0            0 no
+10   wvbot        f32  3D       83886080            0            0            0            0            0            0            0 no
+11   d            f32  3D       83886080            0            0            0            0            0            0            0 no
+12   dx           f32  3D       83886080            0            0            0            0            0            0            0 no
+13   dy           f32  3D       83886080            0            0            0            0            0            0            0 no
+14   aru          f32  3D       83886080            0            0            0            0            0            0            0 no
+15   arv          f32  3D       83886080            0            0            0            0            0            0            0 no
+16   aam2d        f32  3D       83886080            0            0            0            0            0            0            0 no
+17   tps          f32  2D        4194304            0            0            0            0            0            0            0 yes
+18   cbc          f32  3D       83886080            0            0            0            0            0            0            0 no
 
-first failure advua old/new: index 1025 (i=1 j=1 k=0) 0.0123311281 vs 0.0456393957
-first failure advua old/cuda: index 1025 (i=1 j=1 k=0) 0.0123311281 vs 0.0456393957
-first failure advva old/new: index 1025 (i=1 j=1 k=0) 0.0165266991 vs -0.24113524
-first failure advva old/cuda: index 1025 (i=1 j=1 k=0) 0.0165266991 vs -0.24113524
-first failure fluxva old/new: index 1025 (i=1 j=1 k=0) 0.557703316 vs 0.300041407
-first failure fluxva old/cuda: index 1025 (i=1 j=1 k=0) 0.557703316 vs 0.300041407
+first failure advua old/new: index 2049 (i=1 j=1 k=0) -0.346149802 vs -1.36140895
+first failure advua old/cuda: index 2049 (i=1 j=1 k=0) -0.346149802 vs -1.36140895
+first failure advva old/new: index 2049 (i=1 j=1 k=0) 0.425809026 vs 1.9372164
+first failure advva old/cuda: index 2049 (i=1 j=1 k=0) 0.425809026 vs 1.9372164
+first failure fluxva old/new: index 2049 (i=1 j=1 k=0) 0.693427205 vs 2.2048347
+first failure fluxva old/cuda: index 2049 (i=1 j=1 k=0) 0.693427205 vs 2.2048347
 
 result: FAIL (3 of 19 arrays fail; old/new 3, old/cuda 3, new/cuda 0)
-time_old_ms: median 0.972 avg 0.976 min 0.966
-time_new_ms: median 1.052 avg 1.053 min 1.047
-time_cuda_ms: median 0.187 avg 0.187 min 0.185
-speedup_new_vs_old (median): 0.924
-speedup_new_vs_cuda (median): 0.177
-SUMMARY kernel=ext_advave_ status=FAIL mismatched_arrays=3 arrays=19 mm_old_new=3 mm_old_cuda=3 mm_new_cuda=0 old_median_ms=0.972 new_median_ms=1.052 cuda_median_ms=0.187 speedup=0.924 speedup_new_vs_cuda=0.177
+time_old_ms: median 0.509 avg 0.516 min 0.505
+time_new_ms: median 0.800 avg 0.800 min 0.791
+time_cuda_ms: median 0.758 avg 0.759 min 0.753
+speedup_new_vs_old (median): 0.637
+speedup_new_vs_cuda (median): 0.948
+SUMMARY kernel=ext_advave_ status=FAIL mismatched_arrays=3 arrays=19 mm_old_new=3 mm_old_cuda=3 mm_new_cuda=0 old_median_ms=0.509 new_median_ms=0.800 cuda_median_ms=0.758 speedup=0.637 speedup_new_vs_cuda=0.948

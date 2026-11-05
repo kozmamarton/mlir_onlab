@@ -1,54 +1,54 @@
 ext_profu_ differential benchmark
-timestamp_utc: 2026-10-31T15:02:56Z
+timestamp_utc: 2026-11-05T17:30:46Z
 target: gpu_a100
-size: 1024x1024x20
+size: 2048x2048x20
 samples: 20
 cpu_model: AMD EPYC 7F72 24-Core Processor
 gpu_model: NVIDIA A100-PCIE-40GB
 status: PASS
-raw_output_file: /home/mkozma/mlir_onlab/examples/pom2k/pom2k_profu/results/diff_gpu_a100/raw/20261031T150256Z.log
+raw_output_file: /home/mkozma/mlir_onlab/examples/pom2k/pom2k_profu/results/diff_gpu_a100/raw/20261105T173046Z.log
 ----------------------------------------------------------------
 kernel: ext_profu_
 target: gpu_a100
 gpu: NVIDIA A100-PCIE-40GB (sm_80, device 0)
 prefetch: yes
-size: im=1024 jm=1024 kb=20
+size: im=2048 jm=2048 kb=20
 samples: 20
 compare: old/new bitwise, */cuda rtol=1e-05 atol=1e-06
 global dti2 = 1.32153535
-global im = 1024
-global imm1 = 1023
-global jm = 1024
-global jmm1 = 1023
+global im = 2048
+global imm1 = 2047
+global jm = 2048
+global jmm1 = 2047
 global kb = 20
 global kbm1 = 19
 global kbm2 = 18
 global umol = 1.01578474
 
 arg  name         type ext      elements   mm_old_new  mm_old_cuda  mm_new_cuda tol_old_cuda tol_new_cuda      max_abs      max_rel written
-0    h            f32  3D       20971520            0            0            0            0            0            0            0 no
-1    etf          f32  3D       20971520            0            0            0            0            0            0            0 no
-2    c            f32  3D       20971520            0            0            0            0            0            0            0 yes
-3    km           f32  3D       20971520            0            0            0            0            0            0            0 no
-4    a            f32  3D       20971520            0            0            0            0            0            0            0 yes
-5    dz           f32  3D       20971520            0            0            0            0            0            0            0 no
-6    dzz          f32  3D       20971520            0            0            0            0            0            0            0 no
-7    ee           f32  3D       20971520            0            0            0            0            0            0            0 yes
-8    gg           f32  3D       20971520            0            0            0            0            0            0            0 yes
-9    wusurf       f32  2D        1048576            0            0            0            0            0            0            0 no
-10   uf           f32  3D       20971520            0        71284        71284            0            0    7.153e-07    3.651e-07 yes
-11   tps          f32  2D        1048576            0       162269       162269            0            0    4.768e-07    2.343e-07 yes
-12   cbc          f32  3D       20971520            0            0            0            0            0            0            0 no
-13   ub           f32  3D       20971520            0            0            0            0            0            0            0 no
-14   vb           f32  3D       20971520            0            0            0            0            0            0            0 no
-15   dum          f32  3D       20971520            0            0            0            0            0            0            0 no
-16   wubot        f32  2D        1048576            0       123058       123058            0            0    4.768e-07    3.507e-07 yes
-17   dhloc        f32  2D        1048576            0            0            0            0            0            0            0 yes
+0    h            f32  3D       83886080            0            0            0            0            0            0            0 no
+1    etf          f32  3D       83886080            0            0            0            0            0            0            0 no
+2    c            f32  3D       83886080            0            0            0            0            0            0            0 yes
+3    km           f32  3D       83886080            0            0            0            0            0            0            0 no
+4    a            f32  3D       83886080            0            0            0            0            0            0            0 yes
+5    dz           f32  3D       83886080            0            0            0            0            0            0            0 no
+6    dzz          f32  3D       83886080            0            0            0            0            0            0            0 no
+7    ee           f32  3D       83886080            0            0            0            0            0            0            0 yes
+8    gg           f32  3D       83886080            0            0            0            0            0            0            0 yes
+9    wusurf       f32  2D        4194304            0            0            0            0            0            0            0 no
+10   uf           f32  3D       83886080            0            0            0            0            0            0            0 yes
+11   tps          f32  2D        4194304            0            0            0            0            0            0            0 yes
+12   cbc          f32  3D       83886080            0            0            0            0            0            0            0 no
+13   ub           f32  3D       83886080            0            0            0            0            0            0            0 no
+14   vb           f32  3D       83886080            0            0            0            0            0            0            0 no
+15   dum          f32  3D       83886080            0            0            0            0            0            0            0 no
+16   wubot        f32  2D        4194304            0            0            0            0            0            0            0 yes
+17   dhloc        f32  2D        4194304            0            0            0            0            0            0            0 yes
 
 result: PASS (0 of 18 arrays fail; old/new 0, old/cuda 0, new/cuda 0)
-time_old_ms: median 252.122 avg 250.449 min 242.201
-time_new_ms: median 248.614 avg 247.498 min 238.749
-time_cuda_ms: median 1.177 avg 1.143 min 0.978
-speedup_new_vs_old (median): 1.014
-speedup_new_vs_cuda (median): 0.005
-SUMMARY kernel=ext_profu_ status=PASS mismatched_arrays=0 arrays=18 mm_old_new=0 mm_old_cuda=0 mm_new_cuda=0 old_median_ms=252.122 new_median_ms=248.614 cuda_median_ms=1.177 speedup=1.014 speedup_new_vs_cuda=0.005
+time_old_ms: median 4.027 avg 4.031 min 4.018
+time_new_ms: median 4.003 avg 4.005 min 3.989
+time_cuda_ms: median 3.916 avg 3.917 min 3.911
+speedup_new_vs_old (median): 1.006
+speedup_new_vs_cuda (median): 0.978
+SUMMARY kernel=ext_profu_ status=PASS mismatched_arrays=0 arrays=18 mm_old_new=0 mm_old_cuda=0 mm_new_cuda=0 old_median_ms=4.027 new_median_ms=4.003 cuda_median_ms=3.916 speedup=1.006 speedup_new_vs_cuda=0.978
