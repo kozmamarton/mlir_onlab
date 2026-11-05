@@ -6,6 +6,15 @@ set -euo pipefail
 # embedded as a cubin. Same GPU pipeline as lower_gpu_to_llvm.sh, but with the
 # A100 chip and with output directories that can be overridden (used by the
 # differential benchmarks in examples/pom2k).
+#
+# scf-offload-host-loops (tutorial-opt) first turns the scf.for nests left on
+# the host into scf.parallel (keeping carried k sweeps serial inside them) and
+# moves host loads that only feed a kernel into it, so the lowered function
+# does not touch the argument buffers on the CPU.
+# scf-gpu-coalesced-tiling (tutorial-opt) then tiles and maps each scf.parallel so
+# its stride-1 IV is threadIdx.x with a 32-wide block x: 32x4x2 for 3D nests,
+# 32x8x1 for 2D, like launch() in examples/pom2k/lib/pom2k_cuda.cuh. Any loop
+# it skips is mapped by gpu-map-parallel-loops with an explicit policy.
 
 if [[ $# -lt 1 ]]; then
 	echo "Usage: $(basename "$0") <file1.mlir> [file2.mlir ... fileN.mlir]" >&2
@@ -54,7 +63,7 @@ fi
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/../../.." && pwd)"
 LLVM_ROOT_DIR="$PROJECT_ROOT/externals/llvm-project"
-MLIR_OPT="$LLVM_ROOT_DIR/build/bin/mlir-opt"
+MLIR_OPT="${TUTORIAL_OPT:-$PROJECT_ROOT/build/tools/tutorial-opt}"
 MLIR_TRANSLATE="$LLVM_ROOT_DIR/build/bin/mlir-translate"
 OUTPUT_DIR_LL="${OUTPUT_DIR_LL:-$PROJECT_ROOT/artifacts/llvm/pom2k/gpu_a100}"
 OUTPUT_DIR_MLIR="${OUTPUT_DIR_MLIR:-$PROJECT_ROOT/artifacts/mlir/pom2k/gpu_a100}"
@@ -62,7 +71,7 @@ mkdir -p "$OUTPUT_DIR_LL"
 mkdir -p "$OUTPUT_DIR_MLIR"
 
 PIPELINE_PASSES=(
-  "func.func(scf-parallel-loop-tiling{parallel-loop-tile-sizes=32,4,2}, gpu-map-parallel-loops)"
+  "func.func(scf-offload-host-loops, canonicalize, cse, scf-gpu-coalesced-tiling{block-3d=32,4,2 block-2d=32,8}, gpu-map-parallel-loops{mapping-policy=innermost-first})"
   "canonicalize"
   "cse"
   "convert-parallel-loops-to-gpu"

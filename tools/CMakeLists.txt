@@ -14,6 +14,7 @@ set(LIBS
   MLIRRegisterAllDialects
   MLIRRegisterAllExtensions
   MLIRRegisterAllPasses
+  MLIRToLLVMIRTranslationRegistration
   ortools::ortools
 )
 add_llvm_executable(tutorial-opt tutorial-opt.cpp)

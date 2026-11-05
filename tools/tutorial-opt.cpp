@@ -6,12 +6,16 @@
 #include "mlir/InitAllPasses.h"
 #include "mlir/Pass/PassManager.h"
 #include "mlir/Pass/PassRegistry.h"
+#include "mlir/Target/LLVMIR/Dialect/All.h"
 #include "mlir/Tools/mlir-opt/MlirOptMain.h"
 
 int main(int argc, char **argv) {
   mlir::DialectRegistry registry;
   mlir::registerAllDialects(registry);
   mlir::registerAllExtensions(registry);
+  // gpu-module-to-binary (inside gpu-lower-to-nvvm-pipeline) translates the
+  // device module to LLVM IR, which needs these, as in mlir-opt.
+  mlir::registerAllGPUToLLVMIRTranslations(registry);
 
   // Upstream passes, so whole pipelines can interleave them with ours.
   mlir::registerAllPasses();
