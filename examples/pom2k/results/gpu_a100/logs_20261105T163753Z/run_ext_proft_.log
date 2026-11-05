@@ -1,0 +1,51 @@
+[ext_proft_] lowering old and new variants
+[ext_proft_] building /home/mkozma/mlir_onlab/examples/pom2k/pom2k_proft/diff_gpu_a100.out
+[ext_proft_] running /home/mkozma/mlir_onlab/examples/pom2k/pom2k_proft/diff_gpu_a100.out --size 1024x1024x20 --samples 20
+kernel: ext_proft_
+target: gpu_a100
+gpu: NVIDIA A100-PCIE-40GB (sm_80, device 0)
+prefetch: yes
+size: im=1024 jm=1024 kb=20
+samples: 20
+compare: old/new bitwise, */cuda rtol=1e-05 atol=1e-06
+global dti2 = 1.32153535
+global im = 1024
+global jm = 1024
+global kb = 20
+global kbm1 = 19
+global kbm2 = 18
+global ntp = 2
+global umol = 1.01578474
+
+arg  name         type ext      elements   mm_old_new  mm_old_cuda  mm_new_cuda tol_old_cuda tol_new_cuda      max_abs      max_rel written
+0    f            f32  3D       20971520            0     15286342     15286342     10399345     10399345    2.889e+06            2 yes
+1    wfsurf       f32  3D       20971520            0            0            0            0            0            0            0 no
+2    fsurf        f32  3D       20971520            0            0            0            0            0            0            0 no
+3    nbc          i32  sel             1            0            0            0            0            0            0            0 no
+4    dh           f32  3D       20971520            0            0            0            0            0            0            0 yes
+5    h            f32  2D        1048576            0            0            0            0            0            0            0 no
+6    etf          f32  2D        1048576            0            0            0            0            0            0            0 no
+7    a            f32  3D       20971520            0            0            0            0            0            0            0 yes
+8    kh           f32  3D       20971520            0            0            0            0            0            0            0 no
+9    c            f32  3D       20971520            0      1048576      1048576      1048576      1048576        5.363            2 yes
+10   z            f32  3D       20971520            0            0            0            0            0            0            0 no
+11   swrad        f32  3D       20971520            0            0            0            0            0            0            0 no
+12   ee           f32  3D       20971520            0            0            0            0            0            0            0 yes
+13   gg           f32  3D       20971520            0            0            0            0            0            0            0 yes
+14   dz           f32  3D       20971520            0            0            0            0            0            0            0 no
+15   dzz          f32  3D       20971520            0            0            0            0            0            0            0 no
+16   rad2         f32  3D       20971520            0            0            0            0            0            0            0 yes
+
+first failure f old/cuda: index 212 (i=212 j=0 k=0) 0.648336828 vs 0.648344994
+first failure f new/cuda: index 212 (i=212 j=0 k=0) 0.648336828 vs 0.648344994
+first failure c old/cuda: index 18874368 (i=0 j=0 k=18) 0.665508091 vs -0.861693561
+first failure c new/cuda: index 18874368 (i=0 j=0 k=18) 0.665508091 vs -0.861693561
+
+result: FAIL (2 of 17 arrays fail; old/new 0, old/cuda 2, new/cuda 2)
+time_old_ms: median 1.035 avg 1.040 min 1.032
+time_new_ms: median 1.034 avg 1.036 min 1.031
+time_cuda_ms: median 0.937 avg 0.937 min 0.935
+speedup_new_vs_old (median): 1.001
+speedup_new_vs_cuda (median): 0.906
+SUMMARY kernel=ext_proft_ status=FAIL mismatched_arrays=2 arrays=17 mm_old_new=0 mm_old_cuda=2 mm_new_cuda=2 old_median_ms=1.035 new_median_ms=1.034 cuda_median_ms=0.937 speedup=1.001 speedup_new_vs_cuda=0.906
+SUMMARY kernel=ext_proft_ status=FAIL mismatched_arrays=2 old_median_ms=1.035 new_median_ms=1.034 cuda_median_ms=0.937 speedup=1.001 speedup_new_vs_cuda=0.906

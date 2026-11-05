@@ -1,0 +1,28 @@
+kernel: ext_time_internal_forward_
+target: gpu_a100
+gpu: NVIDIA A100-PCIE-40GB (sm_80, device 0)
+prefetch: yes
+size: im=1024 jm=1024 kb=20
+samples: 20
+compare: old/new bitwise, */cuda rtol=1e-05 atol=1e-06
+global im = 1024
+global jm = 1024
+
+arg  name         type ext      elements   mm_old_new  mm_old_cuda  mm_new_cuda tol_old_cuda tol_new_cuda      max_abs      max_rel written
+0    egf          f32  2D        1048576            0            0            0            0            0            0            0 yes
+1    el           f32  2D        1048576            0            0            0            0            0            0            0 no
+2    ispi         f32  3D       20971520            0            0            0            0            0            0            0 no
+3    utf          f32  2D        1048576            0            0            0            0            0            0            0 yes
+4    ua           f32  2D        1048576            0            0            0            0            0            0            0 no
+5    d            f32  3D       20971520            0            0            0            0            0            0            0 no
+6    isp2i        f32  3D       20971520            0            0            0            0            0            0            0 no
+7    vtf          f32  2D        1048576            0            0            0            0            0            0            0 yes
+8    va           f32  2D        1048576            0            0            0            0            0            0            0 no
+
+result: PASS (0 of 9 arrays fail; old/new 0, old/cuda 0, new/cuda 0)
+time_old_ms: median 0.083 avg 0.086 min 0.081
+time_new_ms: median 0.065 avg 0.065 min 0.063
+time_cuda_ms: median 0.053 avg 0.053 min 0.052
+speedup_new_vs_old (median): 1.271
+speedup_new_vs_cuda (median): 0.808
+SUMMARY kernel=ext_time_internal_forward_ status=PASS mismatched_arrays=0 arrays=9 mm_old_new=0 mm_old_cuda=0 mm_new_cuda=0 old_median_ms=0.083 new_median_ms=0.065 cuda_median_ms=0.053 speedup=1.271 speedup_new_vs_cuda=0.808

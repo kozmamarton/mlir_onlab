@@ -1,53 +1,53 @@
 ext_advv_ differential benchmark
-timestamp_utc: 2026-10-31T14:57:51Z
+timestamp_utc: 2026-11-05T17:25:09Z
 target: gpu_a100
-size: 1024x1024x20
+size: 2048x2048x20
 samples: 20
 cpu_model: AMD EPYC 7F72 24-Core Processor
 gpu_model: NVIDIA A100-PCIE-40GB
 status: PASS
-raw_output_file: /home/mkozma/mlir_onlab/examples/pom2k/pom2k_advv/results/diff_gpu_a100/raw/20261031T145751Z.log
+raw_output_file: /home/mkozma/mlir_onlab/examples/pom2k/pom2k_advv/results/diff_gpu_a100/raw/20261105T172509Z.log
 ----------------------------------------------------------------
 kernel: ext_advv_
 target: gpu_a100
 gpu: NVIDIA A100-PCIE-40GB (sm_80, device 0)
 prefetch: yes
-size: im=1024 jm=1024 kb=20
+size: im=2048 jm=2048 kb=20
 samples: 20
 compare: old/new bitwise, */cuda rtol=1e-05 atol=1e-06
 global dti2 = 1.32153535
 global grav = 0.580879629
-global im = 1024
-global imm1 = 1023
-global jm = 1024
-global jmm1 = 1023
+global im = 2048
+global imm1 = 2047
+global jm = 2048
+global jmm1 = 2047
 global kb = 20
 global kbm1 = 19
 
 arg  name         type ext      elements   mm_old_new  mm_old_cuda  mm_new_cuda tol_old_cuda tol_new_cuda      max_abs      max_rel written
-0    v            f32  3D       20971520            0            0            0            0            0            0            0 no
-1    vf           f32  3D       20971520            0            0            0            0            0            0            0 yes
-2    vb           f32  3D       20971520            0            0            0            0            0            0            0 no
-3    u            f32  3D       20971520            0            0            0            0            0            0            0 no
-4    w            f32  3D       20971520            0            0            0            0            0            0            0 no
-5    advy         f32  3D       20971520            0            0            0            0            0            0            0 no
-6    arv          f32  2D        1048576            0            0            0            0            0            0            0 no
-7    dx           f32  2D        1048576            0            0            0            0            0            0            0 no
-8    dz           f32  3D       20971520            0            0            0            0            0            0            0 no
-9    cor          f32  2D        1048576            0            0            0            0            0            0            0 no
-10   dt           f32  2D        1048576            0            0            0            0            0            0            0 no
-11   egf          f32  2D        1048576            0            0            0            0            0            0            0 no
-12   egb          f32  2D        1048576            0            0            0            0            0            0            0 no
-13   e_atmos      f32  2D        1048576            0            0            0            0            0            0            0 no
-14   drhoy        f32  3D       20971520            0            0            0            0            0            0            0 no
-15   h            f32  2D        1048576            0            0            0            0            0            0            0 no
-16   etf          f32  2D        1048576            0            0            0            0            0            0            0 no
-17   etb          f32  2D        1048576            0            0            0            0            0            0            0 no
+0    v            f32  3D       83886080            0            0            0            0            0            0            0 no
+1    vf           f32  3D       83886080            0            0            0            0            0            0            0 yes
+2    vb           f32  3D       83886080            0            0            0            0            0            0            0 no
+3    u            f32  3D       83886080            0            0            0            0            0            0            0 no
+4    w            f32  3D       83886080            0            0            0            0            0            0            0 no
+5    advy         f32  3D       83886080            0            0            0            0            0            0            0 no
+6    arv          f32  2D        4194304            0            0            0            0            0            0            0 no
+7    dx           f32  2D        4194304            0            0            0            0            0            0            0 no
+8    dz           f32  3D       83886080            0            0            0            0            0            0            0 no
+9    cor          f32  2D        4194304            0            0            0            0            0            0            0 no
+10   dt           f32  2D        4194304            0            0            0            0            0            0            0 no
+11   egf          f32  2D        4194304            0            0            0            0            0            0            0 no
+12   egb          f32  2D        4194304            0            0            0            0            0            0            0 no
+13   e_atmos      f32  2D        4194304            0            0            0            0            0            0            0 no
+14   drhoy        f32  3D       83886080            0            0            0            0            0            0            0 no
+15   h            f32  2D        4194304            0            0            0            0            0            0            0 no
+16   etf          f32  2D        4194304            0            0            0            0            0            0            0 no
+17   etb          f32  2D        4194304            0            0            0            0            0            0            0 no
 
 result: PASS (0 of 18 arrays fail; old/new 0, old/cuda 0, new/cuda 0)
-time_old_ms: median 8.376 avg 8.475 min 8.369
-time_new_ms: median 7.368 avg 7.473 min 7.358
-time_cuda_ms: median 1.044 avg 1.046 min 1.039
-speedup_new_vs_old (median): 1.137
-speedup_new_vs_cuda (median): 0.142
-SUMMARY kernel=ext_advv_ status=PASS mismatched_arrays=0 arrays=18 mm_old_new=0 mm_old_cuda=0 mm_new_cuda=0 old_median_ms=8.376 new_median_ms=7.368 cuda_median_ms=1.044 speedup=1.137 speedup_new_vs_cuda=0.142
+time_old_ms: median 4.487 avg 4.490 min 4.478
+time_new_ms: median 4.091 avg 4.091 min 4.084
+time_cuda_ms: median 4.047 avg 4.048 min 4.039
+speedup_new_vs_old (median): 1.097
+speedup_new_vs_cuda (median): 0.989
+SUMMARY kernel=ext_advv_ status=PASS mismatched_arrays=0 arrays=18 mm_old_new=0 mm_old_cuda=0 mm_new_cuda=0 old_median_ms=4.487 new_median_ms=4.091 cuda_median_ms=4.047 speedup=1.097 speedup_new_vs_cuda=0.989

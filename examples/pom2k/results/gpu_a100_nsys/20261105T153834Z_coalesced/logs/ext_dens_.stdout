@@ -1,0 +1,34 @@
+kernel: ext_dens_
+target: gpu_a100
+gpu: NVIDIA A100-PCIE-40GB (sm_80, device 0)
+prefetch: yes
+size: im=1024 jm=1024 kb=20
+samples: 20
+compare: old/new bitwise, */cuda rtol=1e-05 atol=1e-06
+global grav = 0.580879629
+global im = 1024
+global jm = 1024
+global kbm1 = 19
+global rhoref = 1.44663072
+
+arg  name         type ext      elements   mm_old_new  mm_old_cuda  mm_new_cuda tol_old_cuda tol_new_cuda      max_abs      max_rel written
+0    si           f32  3D       20971520            0            0            0            0            0            0            0 no
+1    ti           f32  3D       20971520            0            0            0            0            0            0            0 no
+2    rhoo         f32  3D       20971520            0            0            0            0            0            0            0 yes
+3    h            f32  2D        1048576            0            0            0            0            0            0            0 no
+4    fsm          f32  2D        1048576            0            0            0            0            0            0            0 no
+5    zz           f32  3D       20971520            0            0            0            0            0            0            0 no
+6    tbias        f32  3D       20971520            0            0            0            0            0            0            0 no
+7    sbias        f32  3D       20971520            0            0            0            0            0            0            0 no
+
+result: PASS (0 of 8 arrays fail; old/new 0, old/cuda 0, new/cuda 0)
+time_old_ms: median 0.538 avg 0.597 min 0.533
+time_new_ms: median 0.537 avg 0.538 min 0.533
+time_cuda_ms: median 0.341 avg 0.341 min 0.340
+speedup_new_vs_old (median): 1.002
+speedup_new_vs_cuda (median): 0.635
+SUMMARY kernel=ext_dens_ status=PASS mismatched_arrays=0 arrays=8 mm_old_new=0 mm_old_cuda=0 mm_new_cuda=0 old_median_ms=0.538 new_median_ms=0.537 cuda_median_ms=0.341 speedup=1.002 speedup_new_vs_cuda=0.635
+Generating '/tmp/nsys-report-ac14.qdstrm'
+[1/1] [0%                          ] ext_dens_.nsys-rep[1/1] [0%                          ] ext_dens_.nsys-rep[1/1] [7%                          ] ext_dens_.nsys-rep[1/1] [6%                          ] ext_dens_.nsys-rep[1/1] [=========46%                ] ext_dens_.nsys-rep[1/1] [============56%             ] ext_dens_.nsys-rep[1/1] [========================100%] ext_dens_.nsys-rep[1/1] [========================100%] ext_dens_.nsys-rep
+Generated:
+    /home/mkozma/mlir_onlab/examples/pom2k/results/gpu_a100_nsys/20261105T153834Z_coalesced/rep/ext_dens_.nsys-rep

@@ -1,2 +1,2 @@
 timestamp,kernel,target,size,samples,cpu_model,gpu_model,status,mismatched_arrays,old_median_ms,new_median_ms,cuda_median_ms,speedup,speedup_new_vs_cuda,raw_output_file
-"2026-10-31T15:03:21Z","ext_vert_avgs_","gpu_a100","1024x1024x20","20","AMD EPYC 7F72 24-Core Processor","NVIDIA A100-PCIE-40GB","PASS","0","6.143","5.797","0.513","1.060","0.089","/home/mkozma/mlir_onlab/examples/pom2k/pom2k_vert_avgs/results/diff_gpu_a100/raw/20261031T150321Z.log"
+"2026-11-05T17:31:06Z","ext_vert_avgs_","gpu_a100","2048x2048x20","20","AMD EPYC 7F72 24-Core Processor","NVIDIA A100-PCIE-40GB","PASS","0","1.826","1.809","1.982","1.010","1.096","/home/mkozma/mlir_onlab/examples/pom2k/pom2k_vert_avgs/results/diff_gpu_a100/raw/20261105T173106Z.log"

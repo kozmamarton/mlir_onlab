@@ -1,39 +1,39 @@
 ext_adjust_u_v_ differential benchmark
-timestamp_utc: 2026-10-31T14:59:53Z
+timestamp_utc: 2026-11-05T17:26:42Z
 target: gpu_a100
-size: 1024x1024x20
+size: 2048x2048x20
 samples: 20
 cpu_model: AMD EPYC 7F72 24-Core Processor
 gpu_model: NVIDIA A100-PCIE-40GB
 status: PASS
-raw_output_file: /home/mkozma/mlir_onlab/examples/pom2k/pom2k_adjust_u_v/results/diff_gpu_a100/raw/20261031T145953Z.log
+raw_output_file: /home/mkozma/mlir_onlab/examples/pom2k/pom2k_adjust_u_v/results/diff_gpu_a100/raw/20261105T172642Z.log
 ----------------------------------------------------------------
 kernel: ext_adjust_u_v_
 target: gpu_a100
 gpu: NVIDIA A100-PCIE-40GB (sm_80, device 0)
 prefetch: yes
-size: im=1024 jm=1024 kb=20
+size: im=2048 jm=2048 kb=20
 samples: 20
 compare: old/new bitwise, */cuda rtol=1e-05 atol=1e-06
-global im = 1024
-global jm = 1024
+global im = 2048
+global jm = 2048
 global kbm1 = 19
 
 arg  name         type ext      elements   mm_old_new  mm_old_cuda  mm_new_cuda tol_old_cuda tol_new_cuda      max_abs      max_rel written
-0    tps          f32  2D        1048576            0            0            0            0            0            0            0 yes
-1    u            f32  3D       20971520            0            0            0            0            0            0            0 yes
-2    v            f32  3D       20971520            0            0            0            0            0            0            0 yes
-3    dz           f32  3D       20971520            0            0            0            0            0            0            0 no
-4    utb          f32  2D        1048576            0            0            0            0            0            0            0 no
-5    utf          f32  2D        1048576            0            0            0            0            0            0            0 no
-6    vtb          f32  2D        1048576            0            0            0            0            0            0            0 no
-7    vtf          f32  2D        1048576            0            0            0            0            0            0            0 no
-8    dt           f32  2D        1048576            0            0            0            0            0            0            0 no
+0    tps          f32  2D        4194304            0            0            0            0            0            0            0 yes
+1    u            f32  3D       83886080            0            0            0            0            0            0            0 yes
+2    v            f32  3D       83886080            0            0            0            0            0            0            0 yes
+3    dz           f32  3D       83886080            0            0            0            0            0            0            0 no
+4    utb          f32  2D        4194304            0            0            0            0            0            0            0 no
+5    utf          f32  2D        4194304            0            0            0            0            0            0            0 no
+6    vtb          f32  2D        4194304            0            0            0            0            0            0            0 no
+7    vtf          f32  2D        4194304            0            0            0            0            0            0            0 no
+8    dt           f32  2D        4194304            0            0            0            0            0            0            0 no
 
 result: PASS (0 of 9 arrays fail; old/new 0, old/cuda 0, new/cuda 0)
-time_old_ms: median 4.796 avg 4.797 min 4.785
-time_new_ms: median 4.796 avg 4.798 min 4.783
-time_cuda_ms: median 0.581 avg 0.581 min 0.578
-speedup_new_vs_old (median): 1.000
-speedup_new_vs_cuda (median): 0.121
-SUMMARY kernel=ext_adjust_u_v_ status=PASS mismatched_arrays=0 arrays=9 mm_old_new=0 mm_old_cuda=0 mm_new_cuda=0 old_median_ms=4.796 new_median_ms=4.796 cuda_median_ms=0.581 speedup=1.000 speedup_new_vs_cuda=0.121
+time_old_ms: median 2.751 avg 2.755 min 2.741
+time_new_ms: median 2.744 avg 2.748 min 2.736
+time_cuda_ms: median 2.716 avg 2.717 min 2.711
+speedup_new_vs_old (median): 1.003
+speedup_new_vs_cuda (median): 0.990
+SUMMARY kernel=ext_adjust_u_v_ status=PASS mismatched_arrays=0 arrays=9 mm_old_new=0 mm_old_cuda=0 mm_new_cuda=0 old_median_ms=2.751 new_median_ms=2.744 cuda_median_ms=2.716 speedup=1.003 speedup_new_vs_cuda=0.990

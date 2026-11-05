@@ -1,38 +1,38 @@
 ext_aam_ differential benchmark
-timestamp_utc: 2026-10-31T14:57:43Z
+timestamp_utc: 2026-11-05T17:24:59Z
 target: gpu_a100
-size: 1024x1024x20
+size: 2048x2048x20
 samples: 20
 cpu_model: AMD EPYC 7F72 24-Core Processor
 gpu_model: NVIDIA A100-PCIE-40GB
 status: PASS
-raw_output_file: /home/mkozma/mlir_onlab/examples/pom2k/pom2k_aam/results/diff_gpu_a100/raw/20261031T145743Z.log
+raw_output_file: /home/mkozma/mlir_onlab/examples/pom2k/pom2k_aam/results/diff_gpu_a100/raw/20261105T172459Z.log
 ----------------------------------------------------------------
 kernel: ext_aam_
 target: gpu_a100
 gpu: NVIDIA A100-PCIE-40GB (sm_80, device 0)
 prefetch: yes
-size: im=1024 jm=1024 kb=20
+size: im=2048 jm=2048 kb=20
 samples: 20
 compare: old/new bitwise, */cuda rtol=1e-05 atol=1e-06
 global horcon = 0.587375224
-global im = 1024
-global imm1 = 1023
-global jm = 1024
-global jmm1 = 1023
+global im = 2048
+global imm1 = 2047
+global jm = 2048
+global jmm1 = 2047
 global kbm1 = 19
 
 arg  name         type ext      elements   mm_old_new  mm_old_cuda  mm_new_cuda tol_old_cuda tol_new_cuda      max_abs      max_rel written
-0    aam          f32  3D       20971520            0            0            0            0            0            0            0 yes
-1    dx           f32  2D        1048576            0            0            0            0            0            0            0 no
-2    dy           f32  2D        1048576            0            0            0            0            0            0            0 no
-3    u            f32  3D       20971520            0            0            0            0            0            0            0 no
-4    v            f32  3D       20971520            0            0            0            0            0            0            0 no
+0    aam          f32  3D       83886080            0            0            0            0            0            0            0 yes
+1    dx           f32  2D        4194304            0            0            0            0            0            0            0 no
+2    dy           f32  2D        4194304            0            0            0            0            0            0            0 no
+3    u            f32  3D       83886080            0            0            0            0            0            0            0 no
+4    v            f32  3D       83886080            0            0            0            0            0            0            0 no
 
 result: PASS (0 of 5 arrays fail; old/new 0, old/cuda 0, new/cuda 0)
-time_old_ms: median 2.813 avg 2.955 min 2.811
-time_new_ms: median 2.831 avg 2.945 min 2.829
-time_cuda_ms: median 0.318 avg 0.323 min 0.316
-speedup_new_vs_old (median): 0.994
-speedup_new_vs_cuda (median): 0.112
-SUMMARY kernel=ext_aam_ status=PASS mismatched_arrays=0 arrays=5 mm_old_new=0 mm_old_cuda=0 mm_new_cuda=0 old_median_ms=2.813 new_median_ms=2.831 cuda_median_ms=0.318 speedup=0.994 speedup_new_vs_cuda=0.112
+time_old_ms: median 1.692 avg 1.693 min 1.690
+time_new_ms: median 1.698 avg 1.698 min 1.696
+time_cuda_ms: median 1.205 avg 1.205 min 1.203
+speedup_new_vs_old (median): 0.996
+speedup_new_vs_cuda (median): 0.710
+SUMMARY kernel=ext_aam_ status=PASS mismatched_arrays=0 arrays=5 mm_old_new=0 mm_old_cuda=0 mm_new_cuda=0 old_median_ms=1.692 new_median_ms=1.698 cuda_median_ms=1.205 speedup=0.996 speedup_new_vs_cuda=0.710

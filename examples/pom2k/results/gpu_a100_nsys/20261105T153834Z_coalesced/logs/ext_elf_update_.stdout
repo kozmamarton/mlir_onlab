@@ -1,0 +1,31 @@
+kernel: ext_elf_update_
+target: gpu_a100
+gpu: NVIDIA A100-PCIE-40GB (sm_80, device 0)
+prefetch: yes
+size: im=1024 jm=1024 kb=20
+samples: 20
+compare: old/new bitwise, */cuda rtol=1e-05 atol=1e-06
+global dte2 = 1.13939095
+global im = 1024
+global imm1 = 1023
+global jmm1 = 1023
+
+arg  name         type ext      elements   mm_old_new  mm_old_cuda  mm_new_cuda tol_old_cuda tol_new_cuda      max_abs      max_rel written
+0    elf          f32  2D        1048576            0            0            0            0            0            0            0 yes
+1    elb          f32  2D        1048576            0            0            0            0            0            0            0 no
+2    fluxua       f32  3D       20971520            0            0            0            0            0            0            0 no
+3    fluxva       f32  2D        1048576            0            0            0            0            0            0            0 no
+4    art          f32  2D        1048576            0            0            0            0            0            0            0 no
+5    vfluxf       f32  2D        1048576            0            0            0            0            0            0            0 no
+
+result: PASS (0 of 6 arrays fail; old/new 0, old/cuda 0, new/cuda 0)
+time_old_ms: median 0.051 avg 0.051 min 0.049
+time_new_ms: median 0.051 avg 0.051 min 0.049
+time_cuda_ms: median 0.039 avg 0.039 min 0.038
+speedup_new_vs_old (median): 0.995
+speedup_new_vs_cuda (median): 0.764
+SUMMARY kernel=ext_elf_update_ status=PASS mismatched_arrays=0 arrays=6 mm_old_new=0 mm_old_cuda=0 mm_new_cuda=0 old_median_ms=0.051 new_median_ms=0.051 cuda_median_ms=0.039 speedup=0.995 speedup_new_vs_cuda=0.764
+Generating '/tmp/nsys-report-e1d2.qdstrm'
+[1/1] [0%                          ] ext_elf_update_.nsys-rep[1/1] [0%                          ] ext_elf_update_.nsys-rep[1/1] [12%                         ] ext_elf_update_.nsys-rep[1/1] [====25%                     ] ext_elf_update_.nsys-rep[1/1] [====26%                     ] ext_elf_update_.nsys-rep[1/1] [====27%                     ] ext_elf_update_.nsys-rep[1/1] [=================73%        ] ext_elf_update_.nsys-rep[1/1] [========================100%] ext_elf_update_.nsys-rep[1/1] [========================100%] ext_elf_update_.nsys-rep
+Generated:
+    /home/mkozma/mlir_onlab/examples/pom2k/results/gpu_a100_nsys/20261105T153834Z_coalesced/rep/ext_elf_update_.nsys-rep
