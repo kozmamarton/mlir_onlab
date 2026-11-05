@@ -1,6 +1,8 @@
 #ifndef LIB_TRANSFORM_SCF_PASSES_H_
 #define LIB_TRANSFORM_SCF_PASSES_H_
 
+#include "Transform/SCF/GpuCoalescedTiling.h"
+#include "Transform/SCF/OffloadHostLoops.h"
 #include "Transform/SCF/SinkIntoNestedParallel.h"
 
 namespace mlir {
