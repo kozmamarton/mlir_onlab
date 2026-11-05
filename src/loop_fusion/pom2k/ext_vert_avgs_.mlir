@@ -1,8 +1,12 @@
+#map = affine_map<(d0)[s0] -> (-d0 + s0, 8)>
+#map1 = affine_map<(d0)[s0] -> (-d0 + s0, 32)>
 module attributes {dlti.dl_spec = #dlti.dl_spec<"dlti.endianness" = "little", i64 = dense<64> : vector<2xi64>, i128 = dense<128> : vector<2xi64>, i1 = dense<8> : vector<2xi64>, i8 = dense<8> : vector<2xi64>, i16 = dense<16> : vector<2xi64>, i32 = dense<32> : vector<2xi64>, f16 = dense<16> : vector<2xi64>, f64 = dense<64> : vector<2xi64>, f128 = dense<128> : vector<2xi64>>, llvm.data_layout = "e-m:o-i64:64-i128:128-n32:64-S128", llvm.target_triple = "arm64-apple-macosx15.0.0", "polygeist.target-cpu" = "apple-m1", "polygeist.target-features" = "+aes,+crc,+crypto,+dotprod,+fp-armv8,+fp16fml,+fullfp16,+lse,+neon,+ras,+rcpc,+rdm,+sha2,+sha3,+sm4,+v8.1a,+v8.2a,+v8.3a,+v8.4a,+v8.5a,+v8a,+zcm,+zcz"} {
   memref.global @kbm1 : memref<1xi32>
   memref.global @im : memref<1xi32>
   memref.global @jm : memref<1xi32>
   func.func @ext_vert_avgs_(%arg0: memref<?xf32> {polygeist.name = "adx2d", polygeist.type = "float *"}, %arg1: memref<?xf32> {polygeist.name = "ady2d", polygeist.type = "float *"}, %arg2: memref<?xf32> {polygeist.name = "drx2d", polygeist.type = "float *"}, %arg3: memref<?xf32> {polygeist.name = "dry2d", polygeist.type = "float *"}, %arg4: memref<?xf32> {polygeist.name = "aam2d", polygeist.type = "float *"}, %arg5: memref<?xf32> {polygeist.name = "advx", polygeist.type = "float *"}, %arg6: memref<?xf32> {polygeist.name = "advy", polygeist.type = "float *"}, %arg7: memref<?xf32> {polygeist.name = "drhox", polygeist.type = "float *"}, %arg8: memref<?xf32> {polygeist.name = "drhoy", polygeist.type = "float *"}, %arg9: memref<?xf32> {polygeist.name = "aam", polygeist.type = "float *"}, %arg10: memref<?xf32> {polygeist.name = "dz", polygeist.type = "float *"}) attributes {llvm.linkage = #llvm.linkage<external>} {
+    %c32 = arith.constant 32 : index
+    %c8 = arith.constant 8 : index
     %c1 = arith.constant 1 : index
     %c0 = arith.constant 0 : index
     %cst = arith.constant 0.000000e+00 : f32
@@ -20,51 +24,65 @@ module attributes {dlti.dl_spec = #dlti.dl_spec<"dlti.endianness" = "little", i6
     %reinterpret_cast_1 = memref.reinterpret_cast %arg2 to offset: [0], sizes: [%2, %5], strides: [%5, 1] : memref<?xf32> to memref<?x?xf32, strided<[?, 1]>>
     %reinterpret_cast_2 = memref.reinterpret_cast %arg3 to offset: [0], sizes: [%2, %5], strides: [%5, 1] : memref<?xf32> to memref<?x?xf32, strided<[?, 1]>>
     %reinterpret_cast_3 = memref.reinterpret_cast %arg4 to offset: [0], sizes: [%2, %5], strides: [%5, 1] : memref<?xf32> to memref<?x?xf32, strided<[?, 1]>>
-    scf.parallel (%arg11, %arg12) = (%c0, %c0) to (%2, %5) step (%c1, %c1) {
-      memref.store %cst, %reinterpret_cast[%arg11, %arg12] : memref<?x?xf32, strided<[?, 1]>>
-      memref.store %cst, %reinterpret_cast_0[%arg11, %arg12] : memref<?x?xf32, strided<[?, 1]>>
-      memref.store %cst, %reinterpret_cast_1[%arg11, %arg12] : memref<?x?xf32, strided<[?, 1]>>
-      memref.store %cst, %reinterpret_cast_2[%arg11, %arg12] : memref<?x?xf32, strided<[?, 1]>>
-      memref.store %cst, %reinterpret_cast_3[%arg11, %arg12] : memref<?x?xf32, strided<[?, 1]>>
+    scf.parallel (%arg11, %arg12) = (%c0, %c0) to (%2, %5) step (%c8, %c32) {
+      %10 = affine.min #map(%arg11)[%2]
+      %11 = affine.min #map1(%arg12)[%5]
+      scf.parallel (%arg13, %arg14) = (%c0, %c0) to (%10, %11) step (%c1, %c1) {
+        %12 = arith.addi %arg13, %arg11 : index
+        %13 = arith.addi %arg14, %arg12 : index
+        memref.store %cst, %reinterpret_cast[%12, %13] : memref<?x?xf32, strided<[?, 1]>>
+        memref.store %cst, %reinterpret_cast_0[%12, %13] : memref<?x?xf32, strided<[?, 1]>>
+        memref.store %cst, %reinterpret_cast_1[%12, %13] : memref<?x?xf32, strided<[?, 1]>>
+        memref.store %cst, %reinterpret_cast_2[%12, %13] : memref<?x?xf32, strided<[?, 1]>>
+        memref.store %cst, %reinterpret_cast_3[%12, %13] : memref<?x?xf32, strided<[?, 1]>>
+        scf.reduce 
+      } {mapping = [#gpu.loop_dim_map<processor = thread_y, map = (d0) -> (d0), bound = (d0) -> (d0)>, #gpu.loop_dim_map<processor = thread_x, map = (d0) -> (d0), bound = (d0) -> (d0)>]}
       scf.reduce 
-    }
+    } {mapping = [#gpu.loop_dim_map<processor = block_y, map = (d0) -> (d0), bound = (d0) -> (d0)>, #gpu.loop_dim_map<processor = block_x, map = (d0) -> (d0), bound = (d0) -> (d0)>]}
     %9 = arith.muli %5, %2 : index
     %reinterpret_cast_4 = memref.reinterpret_cast %arg5 to offset: [0], sizes: [%8, %2, %5], strides: [%9, %5, 1] : memref<?xf32> to memref<?x?x?xf32, strided<[?, ?, 1]>>
     %reinterpret_cast_5 = memref.reinterpret_cast %arg6 to offset: [0], sizes: [%8, %2, %5], strides: [%9, %5, 1] : memref<?xf32> to memref<?x?x?xf32, strided<[?, ?, 1]>>
     %reinterpret_cast_6 = memref.reinterpret_cast %arg7 to offset: [0], sizes: [%8, %2, %5], strides: [%9, %5, 1] : memref<?xf32> to memref<?x?x?xf32, strided<[?, ?, 1]>>
     %reinterpret_cast_7 = memref.reinterpret_cast %arg8 to offset: [0], sizes: [%8, %2, %5], strides: [%9, %5, 1] : memref<?xf32> to memref<?x?x?xf32, strided<[?, ?, 1]>>
     %reinterpret_cast_8 = memref.reinterpret_cast %arg9 to offset: [0], sizes: [%8, %2, %5], strides: [%9, %5, 1] : memref<?xf32> to memref<?x?x?xf32, strided<[?, ?, 1]>>
-    scf.for %arg11 = %c0 to %8 step %c1 {
-      %10 = memref.load %arg10[%arg11] : memref<?xf32>
-      scf.parallel (%arg12, %arg13) = (%c0, %c0) to (%2, %5) step (%c1, %c1) {
-        %11 = memref.load %reinterpret_cast_4[%arg11, %arg12, %arg13] : memref<?x?x?xf32, strided<[?, ?, 1]>>
-        %12 = arith.mulf %11, %10 : f32
-        %13 = memref.load %reinterpret_cast[%arg12, %arg13] : memref<?x?xf32, strided<[?, 1]>>
-        %14 = arith.addf %13, %12 : f32
-        memref.store %14, %reinterpret_cast[%arg12, %arg13] : memref<?x?xf32, strided<[?, 1]>>
-        %15 = memref.load %reinterpret_cast_5[%arg11, %arg12, %arg13] : memref<?x?x?xf32, strided<[?, ?, 1]>>
-        %16 = arith.mulf %15, %10 : f32
-        %17 = memref.load %reinterpret_cast_0[%arg12, %arg13] : memref<?x?xf32, strided<[?, 1]>>
-        %18 = arith.addf %17, %16 : f32
-        memref.store %18, %reinterpret_cast_0[%arg12, %arg13] : memref<?x?xf32, strided<[?, 1]>>
-        %19 = memref.load %reinterpret_cast_6[%arg11, %arg12, %arg13] : memref<?x?x?xf32, strided<[?, ?, 1]>>
-        %20 = arith.mulf %19, %10 : f32
-        %21 = memref.load %reinterpret_cast_1[%arg12, %arg13] : memref<?x?xf32, strided<[?, 1]>>
-        %22 = arith.addf %21, %20 : f32
-        memref.store %22, %reinterpret_cast_1[%arg12, %arg13] : memref<?x?xf32, strided<[?, 1]>>
-        %23 = memref.load %reinterpret_cast_7[%arg11, %arg12, %arg13] : memref<?x?x?xf32, strided<[?, ?, 1]>>
-        %24 = arith.mulf %23, %10 : f32
-        %25 = memref.load %reinterpret_cast_2[%arg12, %arg13] : memref<?x?xf32, strided<[?, 1]>>
-        %26 = arith.addf %25, %24 : f32
-        memref.store %26, %reinterpret_cast_2[%arg12, %arg13] : memref<?x?xf32, strided<[?, 1]>>
-        %27 = memref.load %reinterpret_cast_8[%arg11, %arg12, %arg13] : memref<?x?x?xf32, strided<[?, ?, 1]>>
-        %28 = arith.mulf %27, %10 : f32
-        %29 = memref.load %reinterpret_cast_3[%arg12, %arg13] : memref<?x?xf32, strided<[?, 1]>>
-        %30 = arith.addf %29, %28 : f32
-        memref.store %30, %reinterpret_cast_3[%arg12, %arg13] : memref<?x?xf32, strided<[?, 1]>>
+    scf.parallel (%arg11, %arg12) = (%c0, %c0) to (%2, %5) step (%c8, %c32) {
+      %10 = affine.min #map(%arg11)[%2]
+      %11 = affine.min #map1(%arg12)[%5]
+      scf.parallel (%arg13, %arg14) = (%c0, %c0) to (%10, %11) step (%c1, %c1) {
+        %12 = arith.addi %arg13, %arg11 : index
+        %13 = arith.addi %arg14, %arg12 : index
+        scf.for %arg15 = %c0 to %8 step %c1 {
+          %14 = memref.load %arg10[%arg15] : memref<?xf32>
+          %15 = memref.load %reinterpret_cast_4[%arg15, %12, %13] : memref<?x?x?xf32, strided<[?, ?, 1]>>
+          %16 = arith.mulf %15, %14 : f32
+          %17 = memref.load %reinterpret_cast[%12, %13] : memref<?x?xf32, strided<[?, 1]>>
+          %18 = arith.addf %17, %16 : f32
+          memref.store %18, %reinterpret_cast[%12, %13] : memref<?x?xf32, strided<[?, 1]>>
+          %19 = memref.load %reinterpret_cast_5[%arg15, %12, %13] : memref<?x?x?xf32, strided<[?, ?, 1]>>
+          %20 = arith.mulf %19, %14 : f32
+          %21 = memref.load %reinterpret_cast_0[%12, %13] : memref<?x?xf32, strided<[?, 1]>>
+          %22 = arith.addf %21, %20 : f32
+          memref.store %22, %reinterpret_cast_0[%12, %13] : memref<?x?xf32, strided<[?, 1]>>
+          %23 = memref.load %reinterpret_cast_6[%arg15, %12, %13] : memref<?x?x?xf32, strided<[?, ?, 1]>>
+          %24 = arith.mulf %23, %14 : f32
+          %25 = memref.load %reinterpret_cast_1[%12, %13] : memref<?x?xf32, strided<[?, 1]>>
+          %26 = arith.addf %25, %24 : f32
+          memref.store %26, %reinterpret_cast_1[%12, %13] : memref<?x?xf32, strided<[?, 1]>>
+          %27 = memref.load %reinterpret_cast_7[%arg15, %12, %13] : memref<?x?x?xf32, strided<[?, ?, 1]>>
+          %28 = arith.mulf %27, %14 : f32
+          %29 = memref.load %reinterpret_cast_2[%12, %13] : memref<?x?xf32, strided<[?, 1]>>
+          %30 = arith.addf %29, %28 : f32
+          memref.store %30, %reinterpret_cast_2[%12, %13] : memref<?x?xf32, strided<[?, 1]>>
+          %31 = memref.load %reinterpret_cast_8[%arg15, %12, %13] : memref<?x?x?xf32, strided<[?, ?, 1]>>
+          %32 = arith.mulf %31, %14 : f32
+          %33 = memref.load %reinterpret_cast_3[%12, %13] : memref<?x?xf32, strided<[?, 1]>>
+          %34 = arith.addf %33, %32 : f32
+          memref.store %34, %reinterpret_cast_3[%12, %13] : memref<?x?xf32, strided<[?, 1]>>
+        }
         scf.reduce 
-      }
-    }
+      } {mapping = [#gpu.loop_dim_map<processor = thread_y, map = (d0) -> (d0), bound = (d0) -> (d0)>, #gpu.loop_dim_map<processor = thread_x, map = (d0) -> (d0), bound = (d0) -> (d0)>]}
+      scf.reduce 
+    } {mapping = [#gpu.loop_dim_map<processor = block_y, map = (d0) -> (d0), bound = (d0) -> (d0)>, #gpu.loop_dim_map<processor = block_x, map = (d0) -> (d0), bound = (d0) -> (d0)>]}
     return
   }
 }

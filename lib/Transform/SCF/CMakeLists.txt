@@ -4,6 +4,8 @@ add_public_tablegen_target(MLIRTutorialSCFPasses)
 add_mlir_doc(Passes TutorialSCFPasses ./ -gen-pass-doc)
 
 add_mlir_library(TutorialSCFTransforms
+    GpuCoalescedTiling.cpp
+    OffloadHostLoops.cpp
     SinkIntoNestedParallel.cpp
 
     ADDITIONAL_HEADER_DIRS
@@ -17,6 +19,12 @@ add_mlir_library(TutorialSCFTransforms
     MLIRPass
     MLIRSupport
     MLIRSCFDialect
+    MLIRFuncDialect
+    MLIRSCFTransforms
+    MLIRArithDialect
+    MLIRAffineDialect
+    MLIRGPUDialect
+    MLIRGPUTransforms
     MLIRMemRefDialect
     MLIRSideEffectInterfaces
     MLIRViewLikeInterface

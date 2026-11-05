@@ -49,6 +49,7 @@ FUNC_PASSES=(
   "scf-sink-into-nested-parallel" # custom: makes nests perfect so canonicalize merges them
 	#"scf-parallel-loop-tiling"
   "scf-parallel-loop-fusion"
+  #"gpu-map-parallel-loops{mapping-policy=innermost-first}"
   # Note: scf-parallel-loop-fusion is intentionally not run here. The pass
   # operates on scf.parallel and is more effective in the lowering pipeline,
   # right before convert-scf-to-openmp.
