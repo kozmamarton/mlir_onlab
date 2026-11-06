@@ -96,4 +96,21 @@ def AffineLoopFusionNonConservative : Pass<"affine-loop-fusion-non-conservative"
   ];
 }
 
+
+def AffineScalrepDistinctRoots : Pass<"affine-scalrep-distinct-roots", "func::FuncOp"> {
+  let summary = "affine-scalrep under the fusion pass's no-alias model";
+  let description = [{
+    Runs upstream affine scalar replacement (store-to-load forwarding,
+    overwritten-store elimination, load CSE, removal of local allocs that are
+    only written) with an alias analysis that treats memrefs with distinct
+    roots (function arguments, globals, allocations, seen through view ops)
+    as non-aliasing. Upstream LocalAliasAnalysis returns MayAlias for two
+    function arguments, so after loop fusion a write to any other argument
+    array between `store A[i]` and `load A[i]` blocks forwarding. This pass
+    uses the same assumption as affine-loop-fusion-non-conservative with
+    alias-conservative=false.
+  }];
+  let dependentDialects = ["mlir::affine::AffineDialect"];
+}
+
 #endif  // LIB_TRANSFORM_AFFINE_PASSES_TD_

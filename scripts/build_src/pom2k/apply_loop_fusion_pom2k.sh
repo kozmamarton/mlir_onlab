@@ -40,7 +40,7 @@ FUNC_PASSES=(
   #"affine-raise-from-memref"
   "loop-invariant-code-motion"
   "affine-loop-invariant-code-motion"
-  "affine-loop-fusion{maximal=true}"
+  "affine-loop-fusion"
   "mem2reg"
   "affine-scalrep" # cleans up useless write/read pairs after loop fusion
   "affine-parallelize" #option: parallel-reductions?

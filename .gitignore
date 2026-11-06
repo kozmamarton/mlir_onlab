@@ -32,3 +32,8 @@ log_
 
 .sqlite
 *.sqlite
+
+.inc
+.inc.d
+*.inc
+*.inc.d
