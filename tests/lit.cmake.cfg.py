@@ -12,7 +12,14 @@ from lit.llvm import llvm_config
 # name: The name of this test suite.
 config.name = "MLIR_TUTORIAL"
 
-config.test_format = lit.formats.ShTest(not llvm_config.use_lit_shell)
+# Same as upstream mlir/test/lit.cfg.py: lit's internal shell is the default
+# (external execution is rejected since LLVM 23); LIT_USE_INTERNAL_SHELL=0
+# overrides it.
+use_lit_shell = True
+lit_shell_env = os.environ.get("LIT_USE_INTERNAL_SHELL")
+if lit_shell_env:
+    use_lit_shell = lit.util.pythonize_bool(lit_shell_env)
+config.test_format = lit.formats.ShTest(execute_external=not use_lit_shell)
 
 # suffixes: A list of file extensions to treat as test files.
 config.suffixes = [".mlir"]
