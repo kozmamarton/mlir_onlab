@@ -1,0 +1,45 @@
+ext_smol_adif_ differential benchmark
+timestamp_utc: 2026-11-06T18:33:16Z
+target: gpu_amd
+size: 1024x1024x20
+samples: 20
+cpu_model: AMD Ryzen 7 9700X 8-Core Processor
+gpu_model: AMD Radeon RX 7800 XT
+memory: device
+status: PASS
+raw_output_file: /home/marton/uni/onlab/mlir-tutorial/examples/pom2k/pom2k_smol_adif/results/diff_gpu_amd/raw/20261106T183316Z.log
+----------------------------------------------------------------
+kernel: ext_smol_adif_
+target: gpu_amd
+gpu: AMD Radeon RX 7800 XT (gfx1101, wave32, device 0)
+memory: device
+size: im=1024 jm=1024 kb=20
+samples: 20
+compare: old/new bitwise, */hip rtol=1e-05 atol=1e-06
+global dti2 = 1.32153535
+global im = 1024
+global imm1 = 1023
+global jm = 1024
+global jmm1 = 1023
+global kb = 20
+global kbm1 = 19
+
+arg  name         type ext      elements   mm_old_new   mm_old_hip   mm_new_hip  tol_old_hip  tol_new_hip      max_abs      max_rel written
+0    xmassflux    f32  3D       20971520            0            0            0            0            0            0            0 yes
+1    ymassflux    f32  3D       20971520            0            0            0            0            0            0            0 yes
+2    zwflux       f32  3D       20971520            0            0            0            0            0            0            0 yes
+3    ff           f32  3D       20971520            0            0            0            0            0            0            0 yes
+4    sw           f32  3D       20971520            0            0            0            0            0            0            0 no
+5    fsm          f32  2D        1048576            0            0            0            0            0            0            0 no
+6    aru          f32  3D       20971520            0            0            0            0            0            0            0 no
+7    arv          f32  3D       20971520            0            0            0            0            0            0            0 no
+8    dt           f32  3D       20971520            0            0            0            0            0            0            0 no
+9    dzz          f32  3D       20971520            0            0            0            0            0            0            0 no
+
+result: PASS (0 of 10 arrays fail; old/new 0, old/hip 0, new/hip 0)
+time_old_ms: median 23.666 avg 23.992 min 21.808
+time_new_ms: median 17.789 avg 18.015 min 17.080
+time_hip_ms: median 2.093 avg 2.041 min 1.866
+speedup_new_vs_old (median): 1.330
+speedup_new_vs_hip (median): 0.118
+SUMMARY kernel=ext_smol_adif_ status=PASS mismatched_arrays=0 arrays=10 mm_old_new=0 mm_old_hip=0 mm_new_hip=0 old_median_ms=23.666 new_median_ms=17.789 hip_median_ms=2.093 speedup=1.330 speedup_new_vs_hip=0.118 memory=device

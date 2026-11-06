@@ -1,0 +1,53 @@
+ext_advq_ differential benchmark
+timestamp_utc: 2026-11-06T18:32:43Z
+target: gpu_amd
+size: 1024x1024x20
+samples: 20
+cpu_model: AMD Ryzen 7 9700X 8-Core Processor
+gpu_model: AMD Radeon RX 7800 XT
+memory: device
+status: PASS
+raw_output_file: /home/marton/uni/onlab/mlir-tutorial/examples/pom2k/pom2k_advq/results/diff_gpu_amd/raw/20261106T183243Z.log
+----------------------------------------------------------------
+kernel: ext_advq_
+target: gpu_amd
+gpu: AMD Radeon RX 7800 XT (gfx1101, wave32, device 0)
+memory: device
+size: im=1024 jm=1024 kb=20
+samples: 20
+compare: old/new bitwise, */hip rtol=1e-05 atol=1e-06
+global dti2 = 1.32153535
+global im = 1024
+global imm1 = 1023
+global jm = 1024
+global jmm1 = 1023
+global kbm1 = 19
+
+arg  name         type ext      elements   mm_old_new   mm_old_hip   mm_new_hip  tol_old_hip  tol_new_hip      max_abs      max_rel written
+0    qb           f32  3D       20971520            0            0            0            0            0            0            0 no
+1    q            f32  3D       20971520            0            0            0            0            0            0            0 no
+2    qf           f32  3D       20971520            0            0            0            0            0            0            0 yes
+3    xflux        f32  3D       20971520            0            0            0            0            0            0            0 yes
+4    yflux        f32  3D       20971520            0            0            0            0            0            0            0 yes
+5    dt           f32  3D       20971520            0            0            0            0            0            0            0 no
+6    u            f32  3D       20971520            0            0            0            0            0            0            0 no
+7    v            f32  3D       20971520            0            0            0            0            0            0            0 no
+8    aam          f32  3D       20971520            0            0            0            0            0            0            0 no
+9    h            f32  3D       20971520            0            0            0            0            0            0            0 no
+10   dum          f32  2D        1048576            0            0            0            0            0            0            0 no
+11   dx           f32  3D       20971520            0            0            0            0            0            0            0 no
+12   dvm          f32  2D        1048576            0            0            0            0            0            0            0 no
+13   dy           f32  3D       20971520            0            0            0            0            0            0            0 no
+14   w            f32  3D       20971520            0            0            0            0            0            0            0 no
+15   dz           f32  3D       20971520            0            0            0            0            0            0            0 no
+16   art          f32  2D        1048576            0            0            0            0            0            0            0 no
+17   etb          f32  2D        1048576            0            0            0            0            0            0            0 no
+18   etf          f32  2D        1048576            0            0            0            0            0            0            0 no
+
+result: PASS (0 of 19 arrays fail; old/new 0, old/hip 0, new/hip 0)
+time_old_ms: median 19.721 avg 20.589 min 18.502
+time_new_ms: median 14.561 avg 16.124 min 13.227
+time_hip_ms: median 3.736 avg 3.738 min 3.575
+speedup_new_vs_old (median): 1.354
+speedup_new_vs_hip (median): 0.257
+SUMMARY kernel=ext_advq_ status=PASS mismatched_arrays=0 arrays=19 mm_old_new=0 mm_old_hip=0 mm_new_hip=0 old_median_ms=19.721 new_median_ms=14.561 hip_median_ms=3.736 speedup=1.354 speedup_new_vs_hip=0.257 memory=device
