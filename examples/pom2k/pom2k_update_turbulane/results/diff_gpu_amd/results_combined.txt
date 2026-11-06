@@ -1,0 +1,38 @@
+ext_update_turbulane_ differential benchmark
+timestamp_utc: 2026-11-06T18:34:34Z
+target: gpu_amd
+size: 1024x1024x20
+samples: 20
+cpu_model: AMD Ryzen 7 9700X 8-Core Processor
+gpu_model: AMD Radeon RX 7800 XT
+memory: device
+status: PASS
+raw_output_file: /home/marton/uni/onlab/mlir-tutorial/examples/pom2k/pom2k_update_turbulane/results/diff_gpu_amd/raw/20261106T183434Z.log
+----------------------------------------------------------------
+kernel: ext_update_turbulane_
+target: gpu_amd
+gpu: AMD Radeon RX 7800 XT (gfx1101, wave32, device 0)
+memory: device
+size: im=1024 jm=1024 kb=20
+samples: 20
+compare: old/new bitwise, */hip rtol=1e-05 atol=1e-06
+global im = 1024
+global jm = 1024
+global kb = 20
+
+arg  name         type ext      elements   mm_old_new   mm_old_hip   mm_new_hip  tol_old_hip  tol_new_hip      max_abs      max_rel written
+0    q2           f32  3D       20971520            0            0            0            0            0            0            0 yes
+1    q2b          f32  3D       20971520            0            0            0            0            0            0            0 yes
+2    q2l          f32  3D       20971520            0            0            0            0            0            0            0 yes
+3    q2lb         f32  3D       20971520            0            0            0            0            0            0            0 yes
+4    uf           f32  3D       20971520            0            0            0            0            0            0            0 no
+5    vf           f32  3D       20971520            0            0            0            0            0            0            0 no
+6    smoth        f32  3D       20971520            0            0            0            0            0            0            0 no
+
+result: PASS (0 of 7 arrays fail; old/new 0, old/hip 0, new/hip 0)
+time_old_ms: median 7.454 avg 7.887 min 7.077
+time_new_ms: median 7.382 avg 7.422 min 7.073
+time_hip_ms: median 2.631 avg 2.589 min 2.435
+speedup_new_vs_old (median): 1.010
+speedup_new_vs_hip (median): 0.356
+SUMMARY kernel=ext_update_turbulane_ status=PASS mismatched_arrays=0 arrays=7 mm_old_new=0 mm_old_hip=0 mm_new_hip=0 old_median_ms=7.454 new_median_ms=7.382 hip_median_ms=2.631 speedup=1.010 speedup_new_vs_hip=0.356 memory=device

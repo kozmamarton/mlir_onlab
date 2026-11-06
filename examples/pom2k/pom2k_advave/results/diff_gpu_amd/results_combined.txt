@@ -1,0 +1,52 @@
+ext_advave_ differential benchmark
+timestamp_utc: 2026-11-06T18:34:08Z
+target: gpu_amd
+size: 1024x1024x20
+samples: 20
+cpu_model: AMD Ryzen 7 9700X 8-Core Processor
+gpu_model: AMD Radeon RX 7800 XT
+memory: device
+status: PASS
+raw_output_file: /home/marton/uni/onlab/mlir-tutorial/examples/pom2k/pom2k_advave/results/diff_gpu_amd/raw/20261106T183408Z.log
+----------------------------------------------------------------
+kernel: ext_advave_
+target: gpu_amd
+gpu: AMD Radeon RX 7800 XT (gfx1101, wave32, device 0)
+memory: device
+size: im=1024 jm=1024 kb=20
+samples: 20
+compare: old/new bitwise, */hip rtol=1e-05 atol=1e-06
+global im = 1024
+global imm1 = 1023
+global jm = 1024
+global jmm1 = 1023
+global mode = 3
+
+arg  name         type ext      elements   mm_old_new   mm_old_hip   mm_new_hip  tol_old_hip  tol_new_hip      max_abs      max_rel written
+0    curv2d       f32  3D       20971520            0            0            0            0            0            0            0 no
+1    advua        f32  3D       20971520            0            0            0            0            0            0            0 yes
+2    advva        f32  3D       20971520            0            0            0            0            0            0            0 yes
+3    fluxua       f32  3D       20971520            0            0            0            0            0            0            0 yes
+4    fluxva       f32  2D        1048576            0            0            0            0            0            0            0 yes
+5    ua           f32  3D       20971520            0            0            0            0            0            0            0 no
+6    va           f32  3D       20971520            0            0            0            0            0            0            0 no
+7    uab          f32  3D       20971520            0            0            0            0            0            0            0 no
+8    vab          f32  3D       20971520            0            0            0            0            0            0            0 no
+9    wubot        f32  3D       20971520            0            0            0            0            0            0            0 no
+10   wvbot        f32  3D       20971520            0            0            0            0            0            0            0 no
+11   d            f32  3D       20971520            0            0            0            0            0            0            0 no
+12   dx           f32  3D       20971520            0            0            0            0            0            0            0 no
+13   dy           f32  3D       20971520            0            0            0            0            0            0            0 no
+14   aru          f32  3D       20971520            0            0            0            0            0            0            0 no
+15   arv          f32  3D       20971520            0            0            0            0            0            0            0 no
+16   aam2d        f32  3D       20971520            0            0            0            0            0            0            0 no
+17   tps          f32  2D        1048576            0            0            0            0            0            0            0 yes
+18   cbc          f32  3D       20971520            0            0            0            0            0            0            0 no
+
+result: PASS (0 of 19 arrays fail; old/new 0, old/hip 0, new/hip 0)
+time_old_ms: median 61.068 avg 61.294 min 57.368
+time_new_ms: median 41.071 avg 41.787 min 38.532
+time_hip_ms: median 0.349 avg 0.350 min 0.326
+speedup_new_vs_old (median): 1.487
+speedup_new_vs_hip (median): 0.008
+SUMMARY kernel=ext_advave_ status=PASS mismatched_arrays=0 arrays=19 mm_old_new=0 mm_old_hip=0 mm_new_hip=0 old_median_ms=61.068 new_median_ms=41.071 hip_median_ms=0.349 speedup=1.487 speedup_new_vs_hip=0.008 memory=device

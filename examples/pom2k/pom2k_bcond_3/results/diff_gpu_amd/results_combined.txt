@@ -1,0 +1,43 @@
+ext_bcond_3_ differential benchmark
+timestamp_utc: 2026-11-06T18:35:03Z
+target: gpu_amd
+size: 1024x1024x20
+samples: 20
+cpu_model: AMD Ryzen 7 9700X 8-Core Processor
+gpu_model: AMD Radeon RX 7800 XT
+memory: device
+status: PASS
+raw_output_file: /home/marton/uni/onlab/mlir-tutorial/examples/pom2k/pom2k_bcond_3/results/diff_gpu_amd/raw/20261106T183503Z.log
+----------------------------------------------------------------
+kernel: ext_bcond_3_
+target: gpu_amd
+gpu: AMD Radeon RX 7800 XT (gfx1101, wave32, device 0)
+memory: device
+size: im=1024 jm=1024 kb=20
+samples: 20
+compare: old/new bitwise, */hip rtol=1e-05 atol=1e-06
+global hmax = 0.510460198
+global im = 1024
+global imm1 = 1023
+global imm2 = 1022
+global jm = 1024
+global jmm1 = 1023
+global jmm2 = 1022
+global kbm1 = 19
+
+arg  name         type ext      elements   mm_old_new   mm_old_hip   mm_new_hip  tol_old_hip  tol_new_hip      max_abs      max_rel written
+0    h            f32  3D       20971520            0            0            0            0            0            0            0 no
+1    uf           f32  3D       20971520            0            0            0            0            0            0            0 yes
+2    u            f32  3D       20971520            0            0            0            0            0            0            0 no
+3    vf           f32  3D       20971520            0            0            0            0            0            0            0 yes
+4    v            f32  3D       20971520            0            0            0            0            0            0            0 no
+5    dum          f32  2D        1048576            0            0            0            0            0            0            0 no
+6    dvm          f32  2D        1048576            0            0            0            0            0            0            0 no
+
+result: PASS (0 of 7 arrays fail; old/new 0, old/hip 0, new/hip 0)
+time_old_ms: median 16.186 avg 16.452 min 15.615
+time_new_ms: median 16.011 avg 16.405 min 15.499
+time_hip_ms: median 1.326 avg 1.377 min 1.261
+speedup_new_vs_old (median): 1.011
+speedup_new_vs_hip (median): 0.083
+SUMMARY kernel=ext_bcond_3_ status=PASS mismatched_arrays=0 arrays=7 mm_old_new=0 mm_old_hip=0 mm_new_hip=0 old_median_ms=16.186 new_median_ms=16.011 hip_median_ms=1.326 speedup=1.011 speedup_new_vs_hip=0.083 memory=device
