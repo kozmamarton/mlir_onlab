@@ -11,6 +11,7 @@ namespace tutorial {
 
 #define GEN_PASS_REGISTRATION
 #define GEN_PASS_DECL_AFFINEFULLUNROLL
+#define GEN_PASS_DECL_AFFINESCALREPDISTINCTROOTS
 #include "Transform/Affine/Passes.h.inc"
 
 }  // namespace tutorial
