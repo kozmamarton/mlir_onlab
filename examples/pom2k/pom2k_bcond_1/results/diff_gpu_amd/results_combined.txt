@@ -1,0 +1,36 @@
+ext_bcond_1_ differential benchmark
+timestamp_utc: 2026-11-06T18:34:23Z
+target: gpu_amd
+size: 1024x1024x20
+samples: 20
+cpu_model: AMD Ryzen 7 9700X 8-Core Processor
+gpu_model: AMD Radeon RX 7800 XT
+memory: device
+status: PASS
+raw_output_file: /home/marton/uni/onlab/mlir-tutorial/examples/pom2k/pom2k_bcond_1/results/diff_gpu_amd/raw/20261106T183423Z.log
+----------------------------------------------------------------
+kernel: ext_bcond_1_
+target: gpu_amd
+gpu: AMD Radeon RX 7800 XT (gfx1101, wave32, device 0)
+memory: device
+size: im=1024 jm=1024 kb=20
+samples: 20
+compare: old/new bitwise, */hip rtol=1e-05 atol=1e-06
+global im = 1024
+global imm1 = 1023
+global imm2 = 1022
+global jm = 1024
+global jmm1 = 1023
+global jmm2 = 1022
+
+arg  name         type ext      elements   mm_old_new   mm_old_hip   mm_new_hip  tol_old_hip  tol_new_hip      max_abs      max_rel written
+0    elf          f32  3D       20971520            0            0            0            0            0            0            0 yes
+1    fsm          f32  2D        1048576            0            0            0            0            0            0            0 no
+
+result: PASS (0 of 2 arrays fail; old/new 0, old/hip 0, new/hip 0)
+time_old_ms: median 15.255 avg 15.501 min 14.145
+time_new_ms: median 15.346 avg 15.707 min 14.397
+time_hip_ms: median 0.364 avg 0.340 min 0.167
+speedup_new_vs_old (median): 0.994
+speedup_new_vs_hip (median): 0.024
+SUMMARY kernel=ext_bcond_1_ status=PASS mismatched_arrays=0 arrays=2 mm_old_new=0 mm_old_hip=0 mm_new_hip=0 old_median_ms=15.255 new_median_ms=15.346 hip_median_ms=0.364 speedup=0.994 speedup_new_vs_hip=0.024 memory=device

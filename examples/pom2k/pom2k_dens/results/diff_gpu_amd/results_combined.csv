@@ -1,0 +1,2 @@
+timestamp,kernel,target,size,samples,cpu_model,gpu_model,memory,status,mismatched_arrays,old_median_ms,new_median_ms,hip_median_ms,speedup,speedup_new_vs_hip,raw_output_file
+"2026-11-06T18:35:58Z","ext_dens_","gpu_amd","1024x1024x20","20","AMD Ryzen 7 9700X 8-Core Processor","AMD Radeon RX 7800 XT","device","PASS","0","6.035","5.987","0.826","1.008","0.138","/home/marton/uni/onlab/mlir-tutorial/examples/pom2k/pom2k_dens/results/diff_gpu_amd/raw/20261106T183558Z.log"

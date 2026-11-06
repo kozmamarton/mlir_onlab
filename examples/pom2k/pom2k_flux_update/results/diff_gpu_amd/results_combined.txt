@@ -1,0 +1,37 @@
+ext_flux_update_ differential benchmark
+timestamp_utc: 2026-11-06T18:33:58Z
+target: gpu_amd
+size: 1024x1024x20
+samples: 20
+cpu_model: AMD Ryzen 7 9700X 8-Core Processor
+gpu_model: AMD Radeon RX 7800 XT
+memory: device
+status: PASS
+raw_output_file: /home/marton/uni/onlab/mlir-tutorial/examples/pom2k/pom2k_flux_update/results/diff_gpu_amd/raw/20261106T183358Z.log
+----------------------------------------------------------------
+kernel: ext_flux_update_
+target: gpu_amd
+gpu: AMD Radeon RX 7800 XT (gfx1101, wave32, device 0)
+memory: device
+size: im=1024 jm=1024 kb=20
+samples: 20
+compare: old/new bitwise, */hip rtol=1e-05 atol=1e-06
+global im = 1024
+global jm = 1024
+
+arg  name         type ext      elements   mm_old_new   mm_old_hip   mm_new_hip  tol_old_hip  tol_new_hip      max_abs      max_rel written
+0    fluxua       f32  2D        1048576            0            0            0            0            0            0            0 yes
+1    fluxva       f32  2D        1048576            0            0            0            0            0            0            0 yes
+2    d            f32  3D       20971520            0            0            0            0            0            0            0 no
+3    dy           f32  3D       20971520            0            0            0            0            0            0            0 no
+4    dx           f32  2D        1048576            0            0            0            0            0            0            0 no
+5    ua           f32  2D        1048576            0            0            0            0            0            0            0 no
+6    va           f32  2D        1048576            0            0            0            0            0            0            0 no
+
+result: PASS (0 of 7 arrays fail; old/new 0, old/hip 0, new/hip 0)
+time_old_ms: median 5.054 avg 5.612 min 4.723
+time_new_ms: median 5.027 avg 5.268 min 4.745
+time_hip_ms: median 0.161 avg 0.442 min 0.132
+speedup_new_vs_old (median): 1.005
+speedup_new_vs_hip (median): 0.032
+SUMMARY kernel=ext_flux_update_ status=PASS mismatched_arrays=0 arrays=7 mm_old_new=0 mm_old_hip=0 mm_new_hip=0 old_median_ms=5.054 new_median_ms=5.027 hip_median_ms=0.161 speedup=1.005 speedup_new_vs_hip=0.032 memory=device

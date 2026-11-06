@@ -1,0 +1,53 @@
+ext_proft_ differential benchmark
+timestamp_utc: 2026-11-06T18:35:39Z
+target: gpu_amd
+size: 1024x1024x20
+samples: 20
+cpu_model: AMD Ryzen 7 9700X 8-Core Processor
+gpu_model: AMD Radeon RX 7800 XT
+memory: device
+status: PASS
+raw_output_file: /home/marton/uni/onlab/mlir-tutorial/examples/pom2k/pom2k_proft/results/diff_gpu_amd/raw/20261106T183539Z.log
+----------------------------------------------------------------
+kernel: ext_proft_
+target: gpu_amd
+gpu: AMD Radeon RX 7800 XT (gfx1101, wave32, device 0)
+memory: device
+size: im=1024 jm=1024 kb=20
+samples: 20
+compare: old/new bitwise, */hip rtol=1e-05 atol=1e-06
+global dti2 = 1.32153535
+global im = 1024
+global jm = 1024
+global kb = 20
+global kbm1 = 19
+global kbm2 = 18
+global ntp = 2
+global umol = 1.01578474
+
+arg  name         type ext      elements   mm_old_new   mm_old_hip   mm_new_hip  tol_old_hip  tol_new_hip      max_abs      max_rel written
+0    f            f32  3D       20971520            0            0            0            0            0            0            0 yes
+1    wfsurf       f32  3D       20971520            0            0            0            0            0            0            0 no
+2    fsurf        f32  3D       20971520            0            0            0            0            0            0            0 no
+3    nbc          i32  sel             1            0            0            0            0            0            0            0 no
+4    dh           f32  3D       20971520            0            0            0            0            0            0            0 yes
+5    h            f32  2D        1048576            0            0            0            0            0            0            0 no
+6    etf          f32  2D        1048576            0            0            0            0            0            0            0 no
+7    a            f32  3D       20971520            0            0            0            0            0            0            0 yes
+8    kh           f32  3D       20971520            0            0            0            0            0            0            0 no
+9    c            f32  3D       20971520            0            0            0            0            0            0            0 yes
+10   z            f32  3D       20971520            0            0            0            0            0            0            0 no
+11   swrad        f32  3D       20971520            0            0            0            0            0            0            0 no
+12   ee           f32  3D       20971520            0            0            0            0            0            0            0 yes
+13   gg           f32  3D       20971520            0            0            0            0            0            0            0 yes
+14   dz           f32  3D       20971520            0            0            0            0            0            0            0 no
+15   dzz          f32  3D       20971520            0            0            0            0            0            0            0 no
+16   rad2         f32  3D       20971520            0            0            0            0            0            0            0 yes
+
+result: PASS (0 of 17 arrays fail; old/new 0, old/hip 0, new/hip 0)
+time_old_ms: median 42.622 avg 42.722 min 40.290
+time_new_ms: median 42.498 avg 43.300 min 40.050
+time_hip_ms: median 2.779 avg 2.739 min 2.544
+speedup_new_vs_old (median): 1.003
+speedup_new_vs_hip (median): 0.065
+SUMMARY kernel=ext_proft_ status=PASS mismatched_arrays=0 arrays=17 mm_old_new=0 mm_old_hip=0 mm_new_hip=0 old_median_ms=42.622 new_median_ms=42.498 hip_median_ms=2.779 speedup=1.003 speedup_new_vs_hip=0.065 memory=device

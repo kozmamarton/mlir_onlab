@@ -1,0 +1,58 @@
+ext_advt1_ differential benchmark
+timestamp_utc: 2026-11-06T18:35:17Z
+target: gpu_amd
+size: 1024x1024x20
+samples: 20
+cpu_model: AMD Ryzen 7 9700X 8-Core Processor
+gpu_model: AMD Radeon RX 7800 XT
+memory: device
+status: PASS
+raw_output_file: /home/marton/uni/onlab/mlir-tutorial/examples/pom2k/pom2k_advt1/results/diff_gpu_amd/raw/20261106T183517Z.log
+----------------------------------------------------------------
+kernel: ext_advt1_
+target: gpu_amd
+gpu: AMD Radeon RX 7800 XT (gfx1101, wave32, device 0)
+memory: device
+size: im=1024 jm=1024 kb=20
+samples: 20
+compare: old/new bitwise, */hip rtol=1e-05 atol=1e-06
+global dti2 = 1.32153535
+global im = 1024
+global imm1 = 1023
+global jm = 1024
+global jmm1 = 1023
+global kb = 20
+global kbm1 = 19
+global kbm2 = 18
+global tprni = 1.18565023
+
+arg  name         type ext      elements   mm_old_new   mm_old_hip   mm_new_hip  tol_old_hip  tol_new_hip      max_abs      max_rel written
+0    fb           f32  3D       20971520            0            0            0            0            0            0            0 yes
+1    f            f32  3D       20971520            0            0            0            0            0            0            0 yes
+2    fclim        f32  3D       20971520            0            0            0            0            0            0            0 no
+3    ff           f32  3D       20971520            0            0            0            0            0            0            0 yes
+4    xflux        f32  3D       20971520            0            0            0            0            0            0            0 yes
+5    yflux        f32  3D       20971520            0            0            0            0            0            0            0 yes
+6    zflux        f32  3D       20971520            0            0            0            0            0            0            0 yes
+7    u            f32  3D       20971520            0            0            0            0            0            0            0 no
+8    v            f32  3D       20971520            0            0            0            0            0            0            0 no
+9    dt           f32  3D       20971520            0            0            0            0            0            0            0 no
+10   aam          f32  3D       20971520            0            0            0            0            0            0            0 no
+11   dum          f32  2D        1048576            0            0            0            0            0            0            0 no
+12   dvm          f32  2D        1048576            0            0            0            0            0            0            0 no
+13   dx           f32  3D       20971520            0            0            0            0            0            0            0 no
+14   dy           f32  3D       20971520            0            0            0            0            0            0            0 no
+15   dz           f32  3D       20971520            0            0            0            0            0            0            0 no
+16   h            f32  3D       20971520            0            0            0            0            0            0            0 no
+17   w            f32  3D       20971520            0            0            0            0            0            0            0 no
+18   art          f32  2D        1048576            0            0            0            0            0            0            0 no
+19   etb          f32  2D        1048576            0            0            0            0            0            0            0 no
+20   etf          f32  2D        1048576            0            0            0            0            0            0            0 no
+
+result: PASS (0 of 21 arrays fail; old/new 0, old/hip 0, new/hip 0)
+time_old_ms: median 43.195 avg 43.512 min 41.583
+time_new_ms: median 42.989 avg 43.468 min 41.494
+time_hip_ms: median 4.563 avg 4.598 min 4.520
+speedup_new_vs_old (median): 1.005
+speedup_new_vs_hip (median): 0.106
+SUMMARY kernel=ext_advt1_ status=PASS mismatched_arrays=0 arrays=21 mm_old_new=0 mm_old_hip=0 mm_new_hip=0 old_median_ms=43.195 new_median_ms=42.989 hip_median_ms=4.563 speedup=1.005 speedup_new_vs_hip=0.106 memory=device

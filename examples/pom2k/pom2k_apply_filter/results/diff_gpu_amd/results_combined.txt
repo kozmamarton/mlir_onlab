@@ -1,0 +1,11 @@
+ext_apply_filter_ differential benchmark
+timestamp_utc: 2026-11-06T18:33:30Z
+target: gpu_amd
+size: 1024x1024x20
+samples: 20
+cpu_model: AMD Ryzen 7 9700X 8-Core Processor
+gpu_model: AMD Radeon RX 7800 XT
+memory: device
+status: HOST_ACCESS
+raw_output_file: /home/marton/uni/onlab/mlir-tutorial/examples/pom2k/pom2k_apply_filter/results/diff_gpu_amd/raw/20261106T183330Z.log
+----------------------------------------------------------------
