@@ -1,0 +1,12 @@
+kernel,target,size,samples,status,mismatched_arrays,old_median_ms,new_median_ms,cuda_median_ms,speedup,speedup_new_vs_cuda
+ext_aam_,gpu_a100,1024x1024x20,20,PASS,0,0.645,0.646,0.418,0.998,0.648
+ext_advq_,gpu_a100,1024x1024x20,20,PASS,0,1.588,1.577,1.732,1.007,1.098
+ext_update_u_v_,gpu_a100,1024x1024x20,20,PASS,0,0.825,0.819,0.799,1.008,0.975
+ext_advt1_,gpu_a100,1024x1024x20,20,PASS,0,2.340,2.345,2.158,0.998,0.920
+ext_baropg_,gpu_a100,1024x1024x20,20,PASS,0,1.518,1.425,1.372,1.065,0.963
+ext_advave_,gpu_a100,1024x1024x20,20,FAIL,3,0.184,0.257,0.185,0.714,0.720
+ext_apply_filter_,gpu_a100,1024x1024x20,20,PASS,0,0.249,0.248,0.187,1.005,0.756
+ext_bcond_3_,gpu_a100,1024x1024x20,20,PASS,0,0.331,0.332,0.305,0.996,0.918
+ext_smol_adif_,gpu_a100,1024x1024x20,20,PASS,0,1.126,1.142,0.931,0.985,0.815
+ext_proft_,gpu_a100,1024x1024x20,20,FAIL,2,1.040,1.038,0.935,1.002,0.901
+ext_profu_,gpu_a100,1024x1024x20,20,PASS,0,1.085,1.067,0.971,1.016,0.910
