@@ -1,12 +1,12 @@
 ext_profu_ differential benchmark
-timestamp_utc: 2026-11-05T17:30:46Z
+timestamp_utc: 2026-11-05T20:16:33Z
 target: gpu_a100
 size: 2048x2048x20
 samples: 20
 cpu_model: AMD EPYC 7F72 24-Core Processor
 gpu_model: NVIDIA A100-PCIE-40GB
 status: PASS
-raw_output_file: /home/mkozma/mlir_onlab/examples/pom2k/pom2k_profu/results/diff_gpu_a100/raw/20261105T173046Z.log
+raw_output_file: /home/mkozma/mlir_onlab/examples/pom2k/pom2k_profu/results/diff_gpu_a100/raw/20261105T201633Z.log
 ----------------------------------------------------------------
 kernel: ext_profu_
 target: gpu_a100
@@ -46,9 +46,9 @@ arg  name         type ext      elements   mm_old_new  mm_old_cuda  mm_new_cuda 
 17   dhloc        f32  2D        4194304            0            0            0            0            0            0            0 yes
 
 result: PASS (0 of 18 arrays fail; old/new 0, old/cuda 0, new/cuda 0)
-time_old_ms: median 4.027 avg 4.031 min 4.018
-time_new_ms: median 4.003 avg 4.005 min 3.989
-time_cuda_ms: median 3.916 avg 3.917 min 3.911
+time_old_ms: median 4.018 avg 4.018 min 4.010
+time_new_ms: median 3.993 avg 4.000 min 3.988
+time_cuda_ms: median 3.901 avg 3.902 min 3.898
 speedup_new_vs_old (median): 1.006
-speedup_new_vs_cuda (median): 0.978
-SUMMARY kernel=ext_profu_ status=PASS mismatched_arrays=0 arrays=18 mm_old_new=0 mm_old_cuda=0 mm_new_cuda=0 old_median_ms=4.027 new_median_ms=4.003 cuda_median_ms=3.916 speedup=1.006 speedup_new_vs_cuda=0.978
+speedup_new_vs_cuda (median): 0.977
+SUMMARY kernel=ext_profu_ status=PASS mismatched_arrays=0 arrays=18 mm_old_new=0 mm_old_cuda=0 mm_new_cuda=0 old_median_ms=4.018 new_median_ms=3.993 cuda_median_ms=3.901 speedup=1.006 speedup_new_vs_cuda=0.977

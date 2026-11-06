@@ -1,12 +1,12 @@
 ext_advt1_ differential benchmark
-timestamp_utc: 2026-11-05T17:29:29Z
+timestamp_utc: 2026-11-05T20:14:19Z
 target: gpu_a100
 size: 2048x2048x20
 samples: 20
 cpu_model: AMD EPYC 7F72 24-Core Processor
 gpu_model: NVIDIA A100-PCIE-40GB
 status: PASS
-raw_output_file: /home/mkozma/mlir_onlab/examples/pom2k/pom2k_advt1/results/diff_gpu_a100/raw/20261105T172929Z.log
+raw_output_file: /home/mkozma/mlir_onlab/examples/pom2k/pom2k_advt1/results/diff_gpu_a100/raw/20261105T201419Z.log
 ----------------------------------------------------------------
 kernel: ext_advt1_
 target: gpu_a100
@@ -49,9 +49,9 @@ arg  name         type ext      elements   mm_old_new  mm_old_cuda  mm_new_cuda 
 20   etf          f32  2D        4194304            0            0            0            0            0            0            0 no
 
 result: PASS (0 of 21 arrays fail; old/new 0, old/cuda 0, new/cuda 0)
-time_old_ms: median 9.089 avg 9.096 min 9.079
-time_new_ms: median 9.056 avg 9.063 min 9.046
-time_cuda_ms: median 8.559 avg 8.558 min 8.545
-speedup_new_vs_old (median): 1.004
-speedup_new_vs_cuda (median): 0.945
-SUMMARY kernel=ext_advt1_ status=PASS mismatched_arrays=0 arrays=21 mm_old_new=0 mm_old_cuda=0 mm_new_cuda=0 old_median_ms=9.089 new_median_ms=9.056 cuda_median_ms=8.559 speedup=1.004 speedup_new_vs_cuda=0.945
+time_old_ms: median 9.094 avg 9.098 min 9.077
+time_new_ms: median 9.097 avg 9.101 min 9.088
+time_cuda_ms: median 8.551 avg 8.551 min 8.537
+speedup_new_vs_old (median): 1.000
+speedup_new_vs_cuda (median): 0.940
+SUMMARY kernel=ext_advt1_ status=PASS mismatched_arrays=0 arrays=21 mm_old_new=0 mm_old_cuda=0 mm_new_cuda=0 old_median_ms=9.094 new_median_ms=9.097 cuda_median_ms=8.551 speedup=1.000 speedup_new_vs_cuda=0.940

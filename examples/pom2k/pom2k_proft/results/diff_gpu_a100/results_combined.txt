@@ -1,12 +1,12 @@
 ext_proft_ differential benchmark
-timestamp_utc: 2026-11-05T17:30:02Z
+timestamp_utc: 2026-11-05T20:16:12Z
 target: gpu_a100
 size: 2048x2048x20
 samples: 20
 cpu_model: AMD EPYC 7F72 24-Core Processor
 gpu_model: NVIDIA A100-PCIE-40GB
 status: FAIL
-raw_output_file: /home/mkozma/mlir_onlab/examples/pom2k/pom2k_proft/results/diff_gpu_a100/raw/20261105T173002Z.log
+raw_output_file: /home/mkozma/mlir_onlab/examples/pom2k/pom2k_proft/results/diff_gpu_a100/raw/20261105T201612Z.log
 ----------------------------------------------------------------
 kernel: ext_proft_
 target: gpu_a100
@@ -49,9 +49,9 @@ first failure c old/cuda: index 75497472 (i=0 j=0 k=18) 1.14962971 vs -0.8414867
 first failure c new/cuda: index 75497472 (i=0 j=0 k=18) 1.14962971 vs -0.841486752
 
 result: FAIL (2 of 17 arrays fail; old/new 0, old/cuda 2, new/cuda 2)
-time_old_ms: median 3.763 avg 3.768 min 3.758
-time_new_ms: median 3.737 avg 3.739 min 3.734
-time_cuda_ms: median 3.768 avg 3.767 min 3.763
-speedup_new_vs_old (median): 1.007
-speedup_new_vs_cuda (median): 1.008
-SUMMARY kernel=ext_proft_ status=FAIL mismatched_arrays=2 arrays=17 mm_old_new=0 mm_old_cuda=2 mm_new_cuda=2 old_median_ms=3.763 new_median_ms=3.737 cuda_median_ms=3.768 speedup=1.007 speedup_new_vs_cuda=1.008
+time_old_ms: median 3.759 avg 3.764 min 3.756
+time_new_ms: median 3.747 avg 3.748 min 3.743
+time_cuda_ms: median 3.745 avg 3.745 min 3.741
+speedup_new_vs_old (median): 1.003
+speedup_new_vs_cuda (median): 1.000
+SUMMARY kernel=ext_proft_ status=FAIL mismatched_arrays=2 arrays=17 mm_old_new=0 mm_old_cuda=2 mm_new_cuda=2 old_median_ms=3.759 new_median_ms=3.747 cuda_median_ms=3.745 speedup=1.003 speedup_new_vs_cuda=1.000
