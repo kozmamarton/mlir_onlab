@@ -1,12 +1,12 @@
 ext_advave_ differential benchmark
-timestamp_utc: 2026-11-05T17:27:32Z
+timestamp_utc: 2026-11-05T20:14:58Z
 target: gpu_a100
 size: 2048x2048x20
 samples: 20
 cpu_model: AMD EPYC 7F72 24-Core Processor
 gpu_model: NVIDIA A100-PCIE-40GB
 status: FAIL
-raw_output_file: /home/mkozma/mlir_onlab/examples/pom2k/pom2k_advave/results/diff_gpu_a100/raw/20261105T172732Z.log
+raw_output_file: /home/mkozma/mlir_onlab/examples/pom2k/pom2k_advave/results/diff_gpu_a100/raw/20261105T201458Z.log
 ----------------------------------------------------------------
 kernel: ext_advave_
 target: gpu_a100
@@ -50,9 +50,9 @@ first failure fluxva old/new: index 2049 (i=1 j=1 k=0) 0.693427205 vs 2.2048347
 first failure fluxva old/cuda: index 2049 (i=1 j=1 k=0) 0.693427205 vs 2.2048347
 
 result: FAIL (3 of 19 arrays fail; old/new 3, old/cuda 3, new/cuda 0)
-time_old_ms: median 0.509 avg 0.516 min 0.505
-time_new_ms: median 0.800 avg 0.800 min 0.791
-time_cuda_ms: median 0.758 avg 0.759 min 0.753
+time_old_ms: median 0.510 avg 0.514 min 0.505
+time_new_ms: median 0.800 avg 0.801 min 0.794
+time_cuda_ms: median 0.760 avg 0.760 min 0.757
 speedup_new_vs_old (median): 0.637
-speedup_new_vs_cuda (median): 0.948
-SUMMARY kernel=ext_advave_ status=FAIL mismatched_arrays=3 arrays=19 mm_old_new=3 mm_old_cuda=3 mm_new_cuda=0 old_median_ms=0.509 new_median_ms=0.800 cuda_median_ms=0.758 speedup=0.637 speedup_new_vs_cuda=0.948
+speedup_new_vs_cuda (median): 0.950
+SUMMARY kernel=ext_advave_ status=FAIL mismatched_arrays=3 arrays=19 mm_old_new=3 mm_old_cuda=3 mm_new_cuda=0 old_median_ms=0.510 new_median_ms=0.800 cuda_median_ms=0.760 speedup=0.637 speedup_new_vs_cuda=0.950
