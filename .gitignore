@@ -29,3 +29,6 @@ fort
 *log
 .log
 log_
+
+.sqlite
+*.sqlite
