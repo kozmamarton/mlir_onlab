@@ -34,7 +34,6 @@ module attributes {dlti.dl_spec = #dlti.dl_spec<"dlti.endianness" = "little", i6
       %17 = arith.subf %14, %16 : f32
       %18 = arith.mulf %10, %17 : f32
       %19 = arith.addf %15, %18 : f32
-      memref.store %19, %reinterpret_cast_2[%arg7, %arg8, %arg9] : memref<?x?x?xf32, strided<[?, ?, 1]>>
       %20 = memref.load %reinterpret_cast_3[%arg7, %arg8, %arg9] : memref<?x?x?xf32, strided<[?, ?, 1]>>
       %21 = memref.load %reinterpret_cast_4[%arg7, %arg8, %arg9] : memref<?x?x?xf32, strided<[?, ?, 1]>>
       %22 = arith.addf %20, %21 : f32
@@ -43,15 +42,10 @@ module attributes {dlti.dl_spec = #dlti.dl_spec<"dlti.endianness" = "little", i6
       %25 = arith.subf %22, %24 : f32
       %26 = arith.mulf %10, %25 : f32
       %27 = arith.addf %23, %26 : f32
-      memref.store %27, %reinterpret_cast_5[%arg7, %arg8, %arg9] : memref<?x?x?xf32, strided<[?, ?, 1]>>
-      %28 = memref.load %reinterpret_cast_2[%arg7, %arg8, %arg9] : memref<?x?x?xf32, strided<[?, ?, 1]>>
-      memref.store %28, %reinterpret_cast_1[%arg7, %arg8, %arg9] : memref<?x?x?xf32, strided<[?, ?, 1]>>
-      %29 = memref.load %reinterpret_cast[%arg7, %arg8, %arg9] : memref<?x?x?xf32, strided<[?, ?, 1]>>
-      memref.store %29, %reinterpret_cast_2[%arg7, %arg8, %arg9] : memref<?x?x?xf32, strided<[?, ?, 1]>>
-      %30 = memref.load %reinterpret_cast_5[%arg7, %arg8, %arg9] : memref<?x?x?xf32, strided<[?, ?, 1]>>
-      memref.store %30, %reinterpret_cast_4[%arg7, %arg8, %arg9] : memref<?x?x?xf32, strided<[?, ?, 1]>>
-      %31 = memref.load %reinterpret_cast_3[%arg7, %arg8, %arg9] : memref<?x?x?xf32, strided<[?, ?, 1]>>
-      memref.store %31, %reinterpret_cast_5[%arg7, %arg8, %arg9] : memref<?x?x?xf32, strided<[?, ?, 1]>>
+      memref.store %19, %reinterpret_cast_1[%arg7, %arg8, %arg9] : memref<?x?x?xf32, strided<[?, ?, 1]>>
+      memref.store %12, %reinterpret_cast_2[%arg7, %arg8, %arg9] : memref<?x?x?xf32, strided<[?, ?, 1]>>
+      memref.store %27, %reinterpret_cast_4[%arg7, %arg8, %arg9] : memref<?x?x?xf32, strided<[?, ?, 1]>>
+      memref.store %20, %reinterpret_cast_5[%arg7, %arg8, %arg9] : memref<?x?x?xf32, strided<[?, ?, 1]>>
       scf.reduce 
     }
     return

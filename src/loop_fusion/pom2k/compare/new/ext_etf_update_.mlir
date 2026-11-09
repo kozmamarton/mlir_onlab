@@ -32,54 +32,50 @@ module attributes {dlti.dl_spec = #dlti.dl_spec<"dlti.endianness" = "little", i6
         } {constants = [], locals = [], mlirclang.direction = "forward", mlirclang.indvar = "i", mlirclang.lb_src = "0", mlirclang.loop_kind = "scf.for", mlirclang.ub_src = "im"}
       } {constants = [], locals = [], mlirclang.direction = "forward", mlirclang.indvar = "j", mlirclang.lb_src = "0", mlirclang.loop_kind = "scf.for", mlirclang.ub_src = "jm"}
     } else {
-      %4 = memref.load %arg0[%c0] : memref<?xi32>
-      %5 = memref.load %arg1[%c0] : memref<?xi32>
-      %6 = arith.addi %5, %c-1_i32 : i32
-      %7 = arith.cmpi eq, %4, %6 : i32
-      scf.if %7 {
-        %8 = memref.get_global @jm : memref<1xi32>
-        %9 = memref.load %8[%c0] : memref<1xi32>
-        %10 = arith.index_cast %9 : i32 to index
-        %11 = memref.get_global @im : memref<1xi32>
-        %12 = memref.load %11[%c0] : memref<1xi32>
-        %13 = memref.load %arg2[%c0] : memref<?xf32>
-        %14 = arith.index_cast %12 : i32 to index
-        %15 = arith.mulf %13, %cst_0 : f32
-        %16 = arith.subf %cst, %15 : f32
-        %17 = arith.mulf %16, %cst_0 : f32
-        scf.for %arg6 = %c0 to %10 step %c1 {
-          %18 = arith.muli %arg6, %14 : index
-          scf.for %arg7 = %c0 to %14 step %c1 {
-            %19 = arith.addi %arg7, %18 : index
-            %20 = memref.load %arg3[%19] : memref<?xf32>
-            %21 = memref.load %arg4[%19] : memref<?xf32>
-            %22 = arith.mulf %17, %21 : f32
-            %23 = arith.addf %20, %22 : f32
-            memref.store %23, %arg3[%19] : memref<?xf32>
+      %4 = arith.addi %1, %c-1_i32 : i32
+      %5 = arith.cmpi eq, %0, %4 : i32
+      scf.if %5 {
+        %6 = memref.get_global @jm : memref<1xi32>
+        %7 = memref.load %6[%c0] : memref<1xi32>
+        %8 = arith.index_cast %7 : i32 to index
+        %9 = memref.get_global @im : memref<1xi32>
+        %10 = memref.load %9[%c0] : memref<1xi32>
+        %11 = memref.load %arg2[%c0] : memref<?xf32>
+        %12 = arith.index_cast %10 : i32 to index
+        %13 = arith.mulf %11, %cst_0 : f32
+        %14 = arith.subf %cst, %13 : f32
+        %15 = arith.mulf %14, %cst_0 : f32
+        scf.for %arg6 = %c0 to %8 step %c1 {
+          %16 = arith.muli %arg6, %12 : index
+          scf.for %arg7 = %c0 to %12 step %c1 {
+            %17 = arith.addi %arg7, %16 : index
+            %18 = memref.load %arg3[%17] : memref<?xf32>
+            %19 = memref.load %arg4[%17] : memref<?xf32>
+            %20 = arith.mulf %15, %19 : f32
+            %21 = arith.addf %18, %20 : f32
+            memref.store %21, %arg3[%17] : memref<?xf32>
           } {constants = [], locals = [], mlirclang.direction = "forward", mlirclang.indvar = "i", mlirclang.lb_src = "0", mlirclang.loop_kind = "scf.for", mlirclang.ub_src = "im"}
         } {constants = [], locals = [], mlirclang.direction = "forward", mlirclang.indvar = "j", mlirclang.lb_src = "0", mlirclang.loop_kind = "scf.for", mlirclang.ub_src = "jm"}
       } else {
-        %8 = memref.load %arg0[%c0] : memref<?xi32>
-        %9 = memref.load %arg1[%c0] : memref<?xi32>
-        %10 = arith.cmpi eq, %8, %9 : i32
-        scf.if %10 {
-          %11 = memref.get_global @jm : memref<1xi32>
-          %12 = memref.load %11[%c0] : memref<1xi32>
-          %13 = arith.index_cast %12 : i32 to index
-          %14 = memref.get_global @im : memref<1xi32>
-          %15 = memref.load %14[%c0] : memref<1xi32>
-          %16 = arith.index_cast %15 : i32 to index
-          scf.for %arg6 = %c0 to %13 step %c1 {
-            %17 = arith.muli %arg6, %16 : index
-            scf.for %arg7 = %c0 to %16 step %c1 {
-              %18 = arith.addi %arg7, %17 : index
-              %19 = memref.load %arg3[%18] : memref<?xf32>
-              %20 = memref.load %arg4[%18] : memref<?xf32>
-              %21 = arith.mulf %20, %cst_0 : f32
-              %22 = arith.addf %19, %21 : f32
-              %23 = memref.load %arg5[%18] : memref<?xf32>
-              %24 = arith.mulf %22, %23 : f32
-              memref.store %24, %arg3[%18] : memref<?xf32>
+        %6 = arith.cmpi eq, %0, %1 : i32
+        scf.if %6 {
+          %7 = memref.get_global @jm : memref<1xi32>
+          %8 = memref.load %7[%c0] : memref<1xi32>
+          %9 = arith.index_cast %8 : i32 to index
+          %10 = memref.get_global @im : memref<1xi32>
+          %11 = memref.load %10[%c0] : memref<1xi32>
+          %12 = arith.index_cast %11 : i32 to index
+          scf.for %arg6 = %c0 to %9 step %c1 {
+            %13 = arith.muli %arg6, %12 : index
+            scf.for %arg7 = %c0 to %12 step %c1 {
+              %14 = arith.addi %arg7, %13 : index
+              %15 = memref.load %arg3[%14] : memref<?xf32>
+              %16 = memref.load %arg4[%14] : memref<?xf32>
+              %17 = arith.mulf %16, %cst_0 : f32
+              %18 = arith.addf %15, %17 : f32
+              %19 = memref.load %arg5[%14] : memref<?xf32>
+              %20 = arith.mulf %18, %19 : f32
+              memref.store %20, %arg3[%14] : memref<?xf32>
             } {constants = [], locals = [], mlirclang.direction = "forward", mlirclang.indvar = "i", mlirclang.lb_src = "0", mlirclang.loop_kind = "scf.for", mlirclang.ub_src = "im"}
           } {constants = [], locals = [], mlirclang.direction = "forward", mlirclang.indvar = "j", mlirclang.lb_src = "0", mlirclang.loop_kind = "scf.for", mlirclang.ub_src = "jm"}
         }
