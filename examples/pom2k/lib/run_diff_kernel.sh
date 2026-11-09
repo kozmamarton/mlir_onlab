@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
 # Differential benchmark of one pom2k kernel: lowers the pipeline output without
 # (old) and with (new) the custom fusion pass, links both into the kernel's
-# generated harness, runs it and records the results. On gpu_a100 the harness
+# generated harness, runs it and records the results. On gpu_a100/gpu_v100 the harness
 # also runs the kernel's native CUDA reference (<kernel dir>/cuda_ref.cu), on
 # gpu_amd its native HIP reference (<kernel dir>/hip_ref.hip).
 #
 # Called through <kernel dir>/run_diff_benchmark.sh, which sets KERNEL and
 # KERNEL_DIR. Usage:
-#   run_diff_benchmark.sh --target cpu_parallel|gpu_a100|gpu_amd [--size IMxJMxKB]
+#   run_diff_benchmark.sh --target cpu_parallel|gpu_a100|gpu_v100|gpu_amd [--size IMxJMxKB]
 #                         [--samples N] [--memory device|managed]
 #
 # --memory (gpu_amd only, default device) selects the harness's array memory,
@@ -16,7 +16,7 @@
 #
 # Exit codes: 0 PASS, 1 FAIL (outputs differ), 2 usage error, 3 lowering failed,
 # 4 build failed, 5 harness crashed or errored, 6 no native reference (gpu_a100,
-# gpu_amd), 7 host access to the arrays in device mode (gpu_amd).
+# gpu_v100, gpu_amd), 7 host access to the arrays in device mode (gpu_amd).
 set -uo pipefail
 
 LIB_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -27,6 +27,7 @@ OMP_LIB_DIR="$PROJECT_ROOT/externals/llvm-project/build/runtimes/runtimes-bins/o
 COMPARE_DIR="$PROJECT_ROOT/src/loop_fusion/pom2k/compare"
 CPU_LOWER_SCRIPT="$PROJECT_ROOT/scripts/build_src/pom2k/lower_cpu_to_llvm.sh"
 GPU_LOWER_SCRIPT="$PROJECT_ROOT/scripts/build_src/pom2k/lower_gpu_a100_to_llvm.sh"
+V100_LOWER_SCRIPT="$PROJECT_ROOT/scripts/build_src/pom2k/lower_gpu_v100_to_llvm.sh"
 AMD_LOWER_SCRIPT="$PROJECT_ROOT/scripts/build_src/pom2k/lower_gpu_amd_to_llvm.sh"
 # The CUDA toolkit libmlir_cuda_runtime was built against (see the LLVM build's
 # CMakeCache.txt, CUDAToolkit_BIN_DIR).
@@ -46,7 +47,7 @@ SIZE="1024x1024x20"
 SAMPLES="20"
 MEMORY=""
 usage() {
-  echo "usage: $(basename "$0") --target cpu_parallel|gpu_a100|gpu_amd [--size IMxJMxKB]" \
+  echo "usage: $(basename "$0") --target cpu_parallel|gpu_a100|gpu_v100|gpu_amd [--size IMxJMxKB]" \
     "[--samples N] [--memory device|managed]" >&2
 }
 while (($# > 0)); do
@@ -61,14 +62,15 @@ while (($# > 0)); do
 done
 case "$TARGET" in
   cpu_parallel) LOWER_SCRIPT="$CPU_LOWER_SCRIPT"; ARCH_DIR="cpu"; LL_SUFFIX="cpu"; HARNESS="diff_cpu_parallel.cpp" ;;
-  gpu_a100) LOWER_SCRIPT="$GPU_LOWER_SCRIPT"; ARCH_DIR="gpu_a100"; LL_SUFFIX="gpu_a100"; HARNESS="diff_gpu_a100.cu" ;;
+  gpu_a100) LOWER_SCRIPT="$GPU_LOWER_SCRIPT"; ARCH_DIR="gpu_a100"; LL_SUFFIX="gpu_a100"; HARNESS="diff_gpu_a100.cu"; CUDA_ARCH="sm_80" ;;
+  gpu_v100) LOWER_SCRIPT="$V100_LOWER_SCRIPT"; ARCH_DIR="gpu_v100"; LL_SUFFIX="gpu_v100"; HARNESS="diff_gpu_v100.cu"; CUDA_ARCH="sm_70" ;;
   gpu_amd) LOWER_SCRIPT="$AMD_LOWER_SCRIPT"; ARCH_DIR="gpu_amd"; LL_SUFFIX="gpu_amd"; HARNESS="diff_gpu_amd.hip" ;;
-  *) echo "unsupported target '${TARGET}' (implemented: cpu_parallel, gpu_a100, gpu_amd)" >&2; exit 2 ;;
+  *) echo "unsupported target '${TARGET}' (implemented: cpu_parallel, gpu_a100, gpu_v100, gpu_amd)" >&2; exit 2 ;;
 esac
 # Native reference of the GPU targets: name used in the harness output and file.
 REF=""
 case "$TARGET" in
-  gpu_a100) REF="cuda"; REF_SRC="cuda_ref.cu" ;;
+  gpu_a100|gpu_v100) REF="cuda"; REF_SRC="cuda_ref.cu" ;;
   gpu_amd) REF="hip"; REF_SRC="hip_ref.hip" ;;
 esac
 if [[ "$TARGET" == "gpu_amd" ]]; then
@@ -93,7 +95,7 @@ BIN="$KERNEL_DIR/diff_${TARGET}.out"
 CPU_MODEL="$(lscpu 2>/dev/null | awk -F: '/Model name:/ {gsub(/^[ \t]+/, "", $2); print $2; exit}')"
 CPU_MODEL="${CPU_MODEL:-unknown}"
 GPU_MODEL=""
-if [[ "$TARGET" == "gpu_a100" ]]; then
+if [[ "$TARGET" == "gpu_a100" || "$TARGET" == "gpu_v100" ]]; then
   GPU_MODEL="$(nvidia-smi --query-gpu=name --format=csv,noheader 2>/dev/null | head -n 1)"
   GPU_MODEL="${GPU_MODEL:-unknown}"
 elif [[ "$TARGET" == "gpu_amd" ]]; then
@@ -129,7 +131,7 @@ record() {
     echo "SUMMARY kernel=$KERNEL status=$status mismatched_arrays=${mismatched:-NA} old_median_ms=${old_ms:-NA} new_median_ms=${new_ms:-NA} hip_median_ms=${ref_ms:-NA} speedup=${speedup:-NA} speedup_new_vs_hip=${speedup_ref:-NA} memory=$MEMORY"
     return
   fi
-  if [[ "$TARGET" == "gpu_a100" ]]; then
+  if [[ "$TARGET" == "gpu_a100" || "$TARGET" == "gpu_v100" ]]; then
     printf '%s\n' 'timestamp,kernel,target,size,samples,cpu_model,gpu_model,status,mismatched_arrays,old_median_ms,new_median_ms,cuda_median_ms,speedup,speedup_new_vs_cuda,raw_output_file' > "$CSV_OUT"
     printf '"%s","%s","%s","%s","%s","%s","%s","%s","%s","%s","%s","%s","%s","%s","%s"\n' \
       "$TS" "$KERNEL" "$TARGET" "$SIZE" "$SAMPLES" "$CPU_MODEL" "$GPU_MODEL" "$status" \
@@ -212,7 +214,7 @@ build_gpu() {
   local llc=("$LLVM_BIN/llc" -O3 -filetype=obj -relocation-model=pic -mtriple=x86_64-unknown-linux-gnu)
   "${llc[@]}" "$OLD_LL" -o "$old_obj" &&
   "${llc[@]}" "$NEW_LL" -o "$new_obj" &&
-  "$NVCC" -std=c++17 -O3 -arch=sm_80 --fmad=false -prec-sqrt=false -prec-div=true \
+  "$NVCC" -std=c++17 -O3 -arch="$CUDA_ARCH" --fmad=false -prec-sqrt=false -prec-div=true \
     -ftz=false -Xcompiler -fopenmp -I"$LIB_DIR" \
     "$KERNEL_DIR/$HARNESS" "$KERNEL_DIR/cuda_ref.cu" "$old_obj" "$new_obj" \
     -L"$LLVM_LIB" -Xlinker -rpath -Xlinker "$LLVM_LIB" -lmlir_cuda_runtime -lcuda \
@@ -233,7 +235,7 @@ build_amd() {
     -o "$BIN"
 }
 case "$TARGET" in
-  gpu_a100) build_fn=build_gpu ;;
+  gpu_a100|gpu_v100) build_fn=build_gpu ;;
   gpu_amd) build_fn=build_amd ;;
   *) build_fn=build_cpu ;;
 esac

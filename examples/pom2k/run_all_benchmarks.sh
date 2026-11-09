@@ -6,12 +6,13 @@
 # the kernel's harness, then calls <kernel dir>/run_diff_benchmark.sh. Kernels
 # run one at a time to bound memory use. A summary is written to
 # examples/pom2k/results/<target>/. gpu_a100 also runs each kernel's native
-# CUDA reference (<kernel dir>/cuda_ref.cu) and must run on an A100 node;
+# CUDA reference (<kernel dir>/cuda_ref.cu) and must run on an A100 node
+# (gpu_v100: the same, built for sm_70, on a V100 node);
 # gpu_amd runs each kernel's native HIP reference (<kernel dir>/hip_ref.hip) on
 # an AMD GPU (ROCm; chip AMDGPU_CHIP, default gfx1101).
 #
 # Usage:
-#   run_all_benchmarks.sh --target cpu_parallel|gpu_a100|gpu_amd [--size IMxJMxKB]
+#   run_all_benchmarks.sh --target cpu_parallel|gpu_a100|gpu_v100|gpu_amd [--size IMxJMxKB]
 #                         [--samples N] [--kernels k1,k2,...] [--skip-apply]
 #                         [--memory device|managed]
 #
@@ -34,7 +35,7 @@ KERNELS=""
 SKIP_APPLY=0
 MEMORY=""
 usage() {
-  sed -n '2,21p' "${BASH_SOURCE[0]}" | sed 's/^# \{0,1\}//'
+  sed -n '2,22p' "${BASH_SOURCE[0]}" | sed 's/^# \{0,1\}//'
 }
 while (($# > 0)); do
   case "$1" in
@@ -49,14 +50,14 @@ while (($# > 0)); do
   esac
 done
 case "$TARGET" in
-  cpu_parallel|gpu_a100|gpu_amd) ;;
-  "") echo "--target is required (implemented: cpu_parallel, gpu_a100, gpu_amd)" >&2; exit 2 ;;
-  *) echo "target '$TARGET' is not implemented yet (implemented: cpu_parallel, gpu_a100, gpu_amd)" >&2; exit 2 ;;
+  cpu_parallel|gpu_a100|gpu_v100|gpu_amd) ;;
+  "") echo "--target is required (implemented: cpu_parallel, gpu_a100, gpu_v100, gpu_amd)" >&2; exit 2 ;;
+  *) echo "target '$TARGET' is not implemented yet (implemented: cpu_parallel, gpu_a100, gpu_v100, gpu_amd)" >&2; exit 2 ;;
 esac
 # Native reference of the GPU targets (column and SUMMARY field names).
 REF=""
 case "$TARGET" in
-  gpu_a100) REF="cuda" ;;
+  gpu_a100|gpu_v100) REF="cuda" ;;
   gpu_amd) REF="hip"; MEMORY="${MEMORY:-device}" ;;
 esac
 if [[ -n "$MEMORY" && "$TARGET" != "gpu_amd" ]]; then
@@ -133,7 +134,7 @@ done
 CPU_MODEL="$(lscpu 2>/dev/null | awk -F: '/Model name:/ {gsub(/^[ \t]+/, "", $2); print $2; exit}')"
 GPU=0; [[ -n "$REF" ]] && GPU=1
 GPU_MODEL=""
-if [[ "$TARGET" == "gpu_a100" ]]; then
+if [[ "$TARGET" == "gpu_a100" || "$TARGET" == "gpu_v100" ]]; then
   GPU_MODEL="$(nvidia-smi --query-gpu=name --format=csv,noheader 2>/dev/null | head -n 1)"
 elif [[ "$TARGET" == "gpu_amd" ]]; then
   # Marketing name of the first GPU agent (rocminfo lists the CPU agents too).

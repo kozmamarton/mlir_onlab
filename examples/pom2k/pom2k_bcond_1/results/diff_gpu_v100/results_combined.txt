@@ -1,0 +1,35 @@
+ext_bcond_1_ differential benchmark
+timestamp_utc: 2026-11-09T12:02:24Z
+target: gpu_v100
+size: 2048x2048x20
+samples: 20
+cpu_model: Intel(R) Xeon(R) Gold 6226R CPU @ 2.90GHz
+gpu_model: Tesla V100S-PCIE-32GB
+status: PASS
+raw_output_file: /home/mkozma/mlir_onlab/examples/pom2k/pom2k_bcond_1/results/diff_gpu_v100/raw/20261109T120224Z.log
+----------------------------------------------------------------
+kernel: ext_bcond_1_
+target: gpu_v100
+gpu: Tesla V100S-PCIE-32GB (sm_70, device 0)
+prefetch: yes
+size: im=2048 jm=2048 kb=20
+samples: 20
+compare: old/new bitwise, */cuda rtol=1e-05 atol=1e-06
+global im = 2048
+global imm1 = 2047
+global imm2 = 2046
+global jm = 2048
+global jmm1 = 2047
+global jmm2 = 2046
+
+arg  name         type ext      elements   mm_old_new  mm_old_cuda  mm_new_cuda tol_old_cuda tol_new_cuda      max_abs      max_rel written
+0    elf          f32  3D       83886080            0            0            0            0            0            0            0 yes
+1    fsm          f32  2D        4194304            0            0            0            0            0            0            0 no
+
+result: PASS (0 of 2 arrays fail; old/new 0, old/cuda 0, new/cuda 0)
+time_old_ms: median 0.095 avg 0.098 min 0.092
+time_new_ms: median 0.092 avg 0.093 min 0.090
+time_cuda_ms: median 0.066 avg 0.066 min 0.065
+speedup_new_vs_old (median): 1.024
+speedup_new_vs_cuda (median): 0.714
+SUMMARY kernel=ext_bcond_1_ status=PASS mismatched_arrays=0 arrays=2 mm_old_new=0 mm_old_cuda=0 mm_new_cuda=0 old_median_ms=0.095 new_median_ms=0.092 cuda_median_ms=0.066 speedup=1.024 speedup_new_vs_cuda=0.714

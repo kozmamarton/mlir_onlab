@@ -22,7 +22,7 @@ COMMON_FLAGS=(
 
 CUSTOM_PASSES=(
   "reinterpret-flat-array-access" # custom pass to reinterpret 1D arrays as multi-dimensional for better affine analysis
-  "func.func(affine-loop-fusion-non-conservative{fuse-producer-consumer=true fuse-war-waw=true fuse-across-intervening-ops=true equate-reloads=true fuse-symbolic-bounds=true require-perfect-nests=true})" # custom pass fusing independent sibling affine loops (func.func-anchored)
+  #"func.func(affine-loop-fusion-non-conservative{fuse-producer-consumer=true fuse-war-waw=true fuse-across-intervening-ops=true equate-reloads=true fuse-symbolic-bounds=true require-perfect-nests=true})" # custom pass fusing independent sibling affine loops (func.func-anchored)
 )
 
 # DISABLE_CUSTOM_FUSION=1 drops the custom fusion pass (baseline for the
@@ -43,8 +43,8 @@ FUNC_PASSES=(
   "affine-loop-fusion"
   "mem2reg"
   "affine-scalrep" # cleans up useless write/read pairs after loop fusion
-  "affine-parallelize" #option: parallel-reductions?
-  "scf-parallel-loop-fusion"
+  "affine-scalrep-distinct-roots"
+  "affine-parallelize" #option: parallel-reductions?"
   "lower-affine"
   "scf-sink-into-nested-parallel" # custom: makes nests perfect so canonicalize merges them
 	#"scf-parallel-loop-tiling"
@@ -55,6 +55,16 @@ FUNC_PASSES=(
   # right before convert-scf-to-openmp.
  #try?
 )
+
+# DISABLE_SCALREP_DISTINCT_ROOTS=1 drops affine-scalrep-distinct-roots (to
+# measure that pass alone; every other pass is unchanged).
+if [[ "${DISABLE_SCALREP_DISTINCT_ROOTS:-0}" == "1" ]]; then
+  kept_func_passes=()
+  for pass in "${FUNC_PASSES[@]}"; do
+    [[ "$pass" == affine-scalrep-distinct-roots* ]] || kept_func_passes+=("$pass")
+  done
+  FUNC_PASSES=("${kept_func_passes[@]}")
+fi
 
 # Passes to insert between each function-level pass (after each func.func pass).
 INBETWEEN_FUNC_PASSES=(

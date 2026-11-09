@@ -1,0 +1,47 @@
+pom2k differential benchmarks (old = without custom fusion pass, new = with it, cuda = native CUDA reference)
+generated_at_utc: 2026-11-09T11:43:14Z
+target: gpu_v100
+size: 1024x1024x20
+samples: 20
+cpu_model: Intel(R) Xeon(R) Gold 6226R CPU @ 2.90GHz
+gpu_model: Tesla V100S-PCIE-32GB
+logs: /home/mkozma/mlir_onlab/examples/pom2k/results/gpu_v100/logs_20261109T114022Z
+
+kernel                             status         mismatched old_median_ms new_median_ms cuda_median_ms  speedup speedup_vs_cuda
+ext_advq_                          PASS           0                 2.569        2.414        2.629    1.064         1.089
+ext_aam_                           PASS           0                 0.693        0.690        0.523    1.004         0.757
+ext_advv_                          PASS           0                 2.113        1.795        1.778    1.177         0.991
+ext_etf_update_                    PASS           0                 0.016        0.016        0.017    1.005         1.071
+ext_smol_adif_                     PASS           0                 1.824        1.794        1.646    1.016         0.917
+ext_add_ad_2d_                     PASS           0                 0.040        0.041        0.037    0.975         0.895
+ext_apply_filter_                  PASS           0                 0.284        0.283        0.222    1.005         0.784
+ext_final_internal_update_         PASS           0                 0.085        0.085        0.078    0.997         0.923
+ext_time_internal_forward_         PASS           0                 0.080        0.067        0.050    1.196         0.758
+ext_adjust_u_v_                    PASS           0                 1.080        1.083        1.004    0.998         0.927
+ext_baropg_                        PASS           0                 2.617        2.501        2.424    1.046         0.969
+ext_flux_update_                   PASS           0                 0.052        0.050        0.043    1.031         0.855
+ext_uaf_                           PASS           0                 0.144        0.105        0.124    1.376         1.187
+ext_advave_                        PASS           0                 0.435        0.363        0.310    1.199         0.855
+ext_bcond_1_                       PASS           0                 0.053        0.052        0.027    1.026         0.523
+ext_init_horizontal_velocities_    PASS           0                 0.322        0.318        0.312    1.012         0.979
+ext_update_turbulane_              PASS           0                 1.037        1.015        1.052    1.022         1.036
+ext_bcond_2_                       PASS           0                 0.080        0.080        0.045    1.000         0.569
+ext_init_internal_                 NO_FUNCTION    -                     -            -            -        -             -
+ext_update_u_v_                    PASS           0                 1.296        1.327        1.243    0.977         0.936
+ext_bcond_3_                       PASS           0                 0.539        0.544        0.505    0.991         0.929
+ext_profq_                         NO_FUNCTION    -                     -            -            -        -             -
+ext_updeta_t_s_                    PASS           0                 1.033        1.013        1.049    1.019         1.035
+ext_advt1_                         PASS           0                 3.592        3.426        3.387    1.048         0.989
+ext_bcond_5_                       PASS           0                 0.257        0.239        0.236    1.072         0.984
+ext_proft_                         PASS           0                 1.824        1.803        1.665    1.012         0.924
+ext_vaf_                           PASS           0                 0.138        0.101        0.119    1.360         1.178
+ext_dens_                          PASS           0                 0.605        0.599        0.528    1.009         0.881
+ext_profu_                         PASS           0                 1.920        1.914        1.768    1.003         0.924
+ext_vert_avgs_                     PASS           0                 0.824        0.798        0.854    1.033         1.070
+ext_advu_                          PASS           0                 2.028        1.892        1.852    1.072         0.979
+ext_elf_update_                    PASS           0                 0.050        0.049        0.041    1.000         0.827
+ext_profv_                         PASS           0                 1.914        1.889        1.744    1.013         0.923
+
+PASS: 31
+FAIL: 0
+OTHER: 2

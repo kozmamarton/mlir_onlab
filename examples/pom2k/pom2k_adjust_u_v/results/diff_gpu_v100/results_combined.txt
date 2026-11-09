@@ -1,0 +1,39 @@
+ext_adjust_u_v_ differential benchmark
+timestamp_utc: 2026-11-09T12:01:31Z
+target: gpu_v100
+size: 2048x2048x20
+samples: 20
+cpu_model: Intel(R) Xeon(R) Gold 6226R CPU @ 2.90GHz
+gpu_model: Tesla V100S-PCIE-32GB
+status: PASS
+raw_output_file: /home/mkozma/mlir_onlab/examples/pom2k/pom2k_adjust_u_v/results/diff_gpu_v100/raw/20261109T120131Z.log
+----------------------------------------------------------------
+kernel: ext_adjust_u_v_
+target: gpu_v100
+gpu: Tesla V100S-PCIE-32GB (sm_70, device 0)
+prefetch: yes
+size: im=2048 jm=2048 kb=20
+samples: 20
+compare: old/new bitwise, */cuda rtol=1e-05 atol=1e-06
+global im = 2048
+global jm = 2048
+global kbm1 = 19
+
+arg  name         type ext      elements   mm_old_new  mm_old_cuda  mm_new_cuda tol_old_cuda tol_new_cuda      max_abs      max_rel written
+0    tps          f32  2D        4194304            0            0            0            0            0            0            0 yes
+1    u            f32  3D       83886080            0            0            0            0            0            0            0 yes
+2    v            f32  3D       83886080            0            0            0            0            0            0            0 yes
+3    dz           f32  3D       83886080            0            0            0            0            0            0            0 no
+4    utb          f32  2D        4194304            0            0            0            0            0            0            0 no
+5    utf          f32  2D        4194304            0            0            0            0            0            0            0 no
+6    vtb          f32  2D        4194304            0            0            0            0            0            0            0 no
+7    vtf          f32  2D        4194304            0            0            0            0            0            0            0 no
+8    dt           f32  2D        4194304            0            0            0            0            0            0            0 no
+
+result: PASS (0 of 9 arrays fail; old/new 0, old/cuda 0, new/cuda 0)
+time_old_ms: median 4.141 avg 4.138 min 4.111
+time_new_ms: median 4.144 avg 4.149 min 4.121
+time_cuda_ms: median 4.030 avg 4.029 min 4.017
+speedup_new_vs_old (median): 0.999
+speedup_new_vs_cuda (median): 0.972
+SUMMARY kernel=ext_adjust_u_v_ status=PASS mismatched_arrays=0 arrays=9 mm_old_new=0 mm_old_cuda=0 mm_new_cuda=0 old_median_ms=4.141 new_median_ms=4.144 cuda_median_ms=4.030 speedup=0.999 speedup_new_vs_cuda=0.972
