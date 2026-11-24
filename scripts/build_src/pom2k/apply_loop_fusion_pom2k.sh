@@ -44,7 +44,6 @@ FUNC_PASSES=(
   "mem2reg"
   "affine-scalrep" # cleans up useless write/read pairs after loop fusion
   "affine-parallelize" #option: parallel-reductions?
-  "scf-parallel-loop-fusion"
   "lower-affine"
   "scf-sink-into-nested-parallel" # custom: makes nests perfect so canonicalize merges them
 	#"scf-parallel-loop-tiling"

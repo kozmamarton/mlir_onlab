@@ -61,15 +61,6 @@ mkdir -p "$OUTPUT_DIR_MLIR"
 
 
 PIPELINE_PASSES=(
-	"lower-affine"
-	"canonicalize"
-	"cse"
-	#"scf-parallel-loop-tiling"
-	"canonicalize"
-	"cse"
-	"scf-parallel-loop-fusion"
-	"canonicalize"
-	"cse"
 	"convert-scf-to-openmp"
 	"canonicalize"
 	"cse"
