@@ -1,11 +1,11 @@
 ext_profv_ differential benchmark
-timestamp_utc: 2026-10-24T14:04:10Z
+timestamp_utc: 2026-11-20T18:17:57Z
 target: cpu_parallel
 size: 1024x1024x20
 samples: 20
 cpu_model: AMD Ryzen 7 9700X 8-Core Processor
 status: PASS
-raw_output_file: /home/marton/uni/onlab/mlir-tutorial/examples/pom2k/pom2k_profv/results/diff_cpu_parallel/raw/20261024T140410Z.log
+raw_output_file: /home/marton/uni/onlab/mlir-tutorial/examples/pom2k/pom2k_profv/results/diff_cpu_parallel/raw/20261120T181757Z.log
 ----------------------------------------------------------------
 kernel: ext_profv_
 target: cpu_parallel
@@ -43,7 +43,7 @@ arg  name         type ext      elements   mismatches      max_abs      max_rel 
 17   dhloc        f32  2D        1048576            0            0            0 yes
 
 result: PASS (0 of 18 arrays differ)
-time_old_ms: median 97.540 avg 101.081 min 88.435
-time_new_ms: median 89.546 avg 88.620 min 68.065
-speedup_new_vs_old (median): 1.089
-SUMMARY kernel=ext_profv_ status=PASS mismatched_arrays=0 arrays=18 old_median_ms=97.540 new_median_ms=89.546 speedup=1.089
+time_old_ms: median 95.921 avg 99.651 min 84.559
+time_new_ms: median 95.767 avg 101.438 min 83.163
+speedup_new_vs_old (median): 1.002
+SUMMARY kernel=ext_profv_ status=PASS mismatched_arrays=0 arrays=18 old_median_ms=95.921 new_median_ms=95.767 speedup=1.002

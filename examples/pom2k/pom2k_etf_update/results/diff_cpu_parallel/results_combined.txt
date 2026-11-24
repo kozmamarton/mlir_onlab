@@ -1,11 +1,11 @@
 ext_etf_update_ differential benchmark
-timestamp_utc: 2026-10-24T14:02:26Z
+timestamp_utc: 2026-11-20T18:16:13Z
 target: cpu_parallel
 size: 1024x1024x20
 samples: 20
 cpu_model: AMD Ryzen 7 9700X 8-Core Processor
 status: PASS
-raw_output_file: /home/marton/uni/onlab/mlir-tutorial/examples/pom2k/pom2k_etf_update/results/diff_cpu_parallel/raw/20261024T140226Z.log
+raw_output_file: /home/marton/uni/onlab/mlir-tutorial/examples/pom2k/pom2k_etf_update/results/diff_cpu_parallel/raw/20261120T181613Z.log
 ----------------------------------------------------------------
 kernel: ext_etf_update_
 target: cpu_parallel

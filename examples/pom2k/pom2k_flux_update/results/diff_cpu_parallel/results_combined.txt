@@ -1,11 +1,11 @@
 ext_flux_update_ differential benchmark
-timestamp_utc: 2026-10-24T14:03:06Z
+timestamp_utc: 2026-11-20T18:16:52Z
 target: cpu_parallel
 size: 1024x1024x20
 samples: 20
 cpu_model: AMD Ryzen 7 9700X 8-Core Processor
 status: PASS
-raw_output_file: /home/marton/uni/onlab/mlir-tutorial/examples/pom2k/pom2k_flux_update/results/diff_cpu_parallel/raw/20261024T140306Z.log
+raw_output_file: /home/marton/uni/onlab/mlir-tutorial/examples/pom2k/pom2k_flux_update/results/diff_cpu_parallel/raw/20261120T181652Z.log
 ----------------------------------------------------------------
 kernel: ext_flux_update_
 target: cpu_parallel
@@ -25,7 +25,7 @@ arg  name         type ext      elements   mismatches      max_abs      max_rel 
 6    va           f32  2D        1048576            0            0            0 no
 
 result: PASS (0 of 7 arrays differ)
-time_old_ms: median 0.690 avg 0.742 min 0.396
-time_new_ms: median 0.632 avg 0.657 min 0.394
-speedup_new_vs_old (median): 1.092
-SUMMARY kernel=ext_flux_update_ status=PASS mismatched_arrays=0 arrays=7 old_median_ms=0.690 new_median_ms=0.632 speedup=1.092
+time_old_ms: median 0.723 avg 0.717 min 0.370
+time_new_ms: median 0.648 avg 0.693 min 0.365
+speedup_new_vs_old (median): 1.117
+SUMMARY kernel=ext_flux_update_ status=PASS mismatched_arrays=0 arrays=7 old_median_ms=0.723 new_median_ms=0.648 speedup=1.117

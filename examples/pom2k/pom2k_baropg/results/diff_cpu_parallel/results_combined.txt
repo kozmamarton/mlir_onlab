@@ -1,11 +1,11 @@
 ext_baropg_ differential benchmark
-timestamp_utc: 2026-10-24T14:03:00Z
+timestamp_utc: 2026-11-20T18:16:45Z
 target: cpu_parallel
 size: 1024x1024x20
 samples: 20
 cpu_model: AMD Ryzen 7 9700X 8-Core Processor
 status: PASS
-raw_output_file: /home/marton/uni/onlab/mlir-tutorial/examples/pom2k/pom2k_baropg/results/diff_cpu_parallel/raw/20261024T140300Z.log
+raw_output_file: /home/marton/uni/onlab/mlir-tutorial/examples/pom2k/pom2k_baropg/results/diff_cpu_parallel/raw/20261120T181645Z.log
 ----------------------------------------------------------------
 kernel: ext_baropg_
 target: cpu_parallel
@@ -34,7 +34,7 @@ arg  name         type ext      elements   mismatches      max_abs      max_rel 
 10   ramp         f32  3D       20971520            0            0            0 no
 
 result: PASS (0 of 11 arrays differ)
-time_old_ms: median 78.424 avg 94.750 min 60.370
-time_new_ms: median 78.691 avg 98.578 min 58.333
-speedup_new_vs_old (median): 0.997
-SUMMARY kernel=ext_baropg_ status=PASS mismatched_arrays=0 arrays=11 old_median_ms=78.424 new_median_ms=78.691 speedup=0.997
+time_old_ms: median 125.022 avg 133.178 min 69.479
+time_new_ms: median 84.687 avg 117.619 min 58.820
+speedup_new_vs_old (median): 1.476
+SUMMARY kernel=ext_baropg_ status=PASS mismatched_arrays=0 arrays=11 old_median_ms=125.022 new_median_ms=84.687 speedup=1.476

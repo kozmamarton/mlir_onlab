@@ -1,11 +1,11 @@
 ext_bcond_2_ differential benchmark
-timestamp_utc: 2026-10-24T14:03:19Z
+timestamp_utc: 2026-11-20T18:17:06Z
 target: cpu_parallel
 size: 1024x1024x20
 samples: 20
 cpu_model: AMD Ryzen 7 9700X 8-Core Processor
 status: PASS
-raw_output_file: /home/marton/uni/onlab/mlir-tutorial/examples/pom2k/pom2k_bcond_2/results/diff_cpu_parallel/raw/20261024T140319Z.log
+raw_output_file: /home/marton/uni/onlab/mlir-tutorial/examples/pom2k/pom2k_bcond_2/results/diff_cpu_parallel/raw/20261120T181706Z.log
 ----------------------------------------------------------------
 kernel: ext_bcond_2_
 target: cpu_parallel
@@ -42,7 +42,7 @@ arg  name         type ext      elements   mismatches      max_abs      max_rel 
 18   rfs          f32  3D       20971520            0            0            0 no
 
 result: PASS (0 of 19 arrays differ)
-time_old_ms: median 0.814 avg 2.295 min 0.617
-time_new_ms: median 1.128 avg 1.977 min 0.562
-speedup_new_vs_old (median): 0.722
-SUMMARY kernel=ext_bcond_2_ status=PASS mismatched_arrays=0 arrays=19 old_median_ms=0.814 new_median_ms=1.128 speedup=0.722
+time_old_ms: median 0.849 avg 2.075 min 0.544
+time_new_ms: median 0.657 avg 2.288 min 0.549
+speedup_new_vs_old (median): 1.292
+SUMMARY kernel=ext_bcond_2_ status=PASS mismatched_arrays=0 arrays=19 old_median_ms=0.849 new_median_ms=0.657 speedup=1.292

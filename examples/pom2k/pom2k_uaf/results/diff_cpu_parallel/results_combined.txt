@@ -1,11 +1,11 @@
 ext_uaf_ differential benchmark
-timestamp_utc: 2026-10-24T14:03:07Z
+timestamp_utc: 2026-11-20T18:16:53Z
 target: cpu_parallel
 size: 1024x1024x20
 samples: 20
 cpu_model: AMD Ryzen 7 9700X 8-Core Processor
 status: PASS
-raw_output_file: /home/marton/uni/onlab/mlir-tutorial/examples/pom2k/pom2k_uaf/results/diff_cpu_parallel/raw/20261024T140307Z.log
+raw_output_file: /home/marton/uni/onlab/mlir-tutorial/examples/pom2k/pom2k_uaf/results/diff_cpu_parallel/raw/20261120T181653Z.log
 ----------------------------------------------------------------
 kernel: ext_uaf_
 target: cpu_parallel
@@ -38,7 +38,7 @@ arg  name         type ext      elements   mismatches      max_abs      max_rel 
 16   uab          f32  2D        1048576            0            0            0 no
 
 result: PASS (0 of 17 arrays differ)
-time_old_ms: median 7.632 avg 7.879 min 1.769
-time_new_ms: median 7.184 avg 6.674 min 1.635
-speedup_new_vs_old (median): 1.062
-SUMMARY kernel=ext_uaf_ status=PASS mismatched_arrays=0 arrays=17 old_median_ms=7.632 new_median_ms=7.184 speedup=1.062
+time_old_ms: median 2.367 avg 3.442 min 1.388
+time_new_ms: median 2.146 avg 2.971 min 1.854
+speedup_new_vs_old (median): 1.103
+SUMMARY kernel=ext_uaf_ status=PASS mismatched_arrays=0 arrays=17 old_median_ms=2.367 new_median_ms=2.146 speedup=1.103

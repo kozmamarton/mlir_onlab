@@ -1,11 +1,11 @@
 ext_update_turbulane_ differential benchmark
-timestamp_utc: 2026-10-24T14:03:16Z
+timestamp_utc: 2026-11-20T18:17:03Z
 target: cpu_parallel
 size: 1024x1024x20
 samples: 20
 cpu_model: AMD Ryzen 7 9700X 8-Core Processor
 status: PASS
-raw_output_file: /home/marton/uni/onlab/mlir-tutorial/examples/pom2k/pom2k_update_turbulane/results/diff_cpu_parallel/raw/20261024T140316Z.log
+raw_output_file: /home/marton/uni/onlab/mlir-tutorial/examples/pom2k/pom2k_update_turbulane/results/diff_cpu_parallel/raw/20261120T181703Z.log
 ----------------------------------------------------------------
 kernel: ext_update_turbulane_
 target: cpu_parallel
@@ -26,7 +26,7 @@ arg  name         type ext      elements   mismatches      max_abs      max_rel 
 6    smoth        f32  3D       20971520            0            0            0 no
 
 result: PASS (0 of 7 arrays differ)
-time_old_ms: median 20.763 avg 21.485 min 17.144
-time_new_ms: median 20.684 avg 21.837 min 17.995
-speedup_new_vs_old (median): 1.004
-SUMMARY kernel=ext_update_turbulane_ status=PASS mismatched_arrays=0 arrays=7 old_median_ms=20.763 new_median_ms=20.684 speedup=1.004
+time_old_ms: median 21.231 avg 22.143 min 17.032
+time_new_ms: median 21.901 avg 22.314 min 18.381
+speedup_new_vs_old (median): 0.969
+SUMMARY kernel=ext_update_turbulane_ status=PASS mismatched_arrays=0 arrays=7 old_median_ms=21.231 new_median_ms=21.901 speedup=0.969

@@ -1,0 +1,46 @@
+pom2k differential benchmarks (old = without custom fusion pass, new = with it)
+generated_at_utc: 2026-11-20T18:18:05Z
+target: cpu_parallel
+size: 1024x1024x20
+samples: 20
+cpu_model: AMD Ryzen 7 9700X 8-Core Processor
+logs: /home/marton/uni/onlab/mlir-tutorial/examples/pom2k/results/cpu_parallel/logs_20261120T181551Z
+
+kernel                             status         mismatched old_median_ms new_median_ms  speedup
+ext_advq_                          PASS           0                84.422       99.742    0.846
+ext_aam_                           PASS           0                17.367       17.602    0.987
+ext_advv_                          PASS           0                82.725       98.312    0.841
+ext_etf_update_                    PASS           0                 0.000        0.000    1.000
+ext_smol_adif_                     PASS           0               349.636      370.947    0.943
+ext_add_ad_2d_                     PASS           0                 0.633        0.941    0.673
+ext_apply_filter_                  PASS           0                 3.178        3.329    0.955
+ext_final_internal_update_         PASS           0                 1.751        1.766    0.992
+ext_time_internal_forward_         PASS           0                 6.510        3.998    1.628
+ext_adjust_u_v_                    PASS           0                41.050       38.823    1.057
+ext_baropg_                        PASS           0               125.022       84.687    1.476
+ext_flux_update_                   PASS           0                 0.723        0.648    1.117
+ext_uaf_                           PASS           0                 2.367        2.146    1.103
+ext_advave_                        PASS           0                37.285       22.160    1.683
+ext_bcond_1_                       PASS           0                 0.352        0.371    0.947
+ext_init_horizontal_velocities_    PASS           0                11.007       12.264    0.897
+ext_update_turbulane_              PASS           0                21.231       21.901    0.969
+ext_bcond_2_                       PASS           0                 0.849        0.657    1.292
+ext_init_internal_                 NO_FUNCTION    -                     -            -        -
+ext_update_u_v_                    PASS           0                31.752       32.427    0.979
+ext_bcond_3_                       PASS           0                12.179       11.762    1.035
+ext_profq_                         NO_FUNCTION    -                     -            -        -
+ext_updeta_t_s_                    PASS           0                20.123       19.983    1.007
+ext_advt1_                         PASS           0               100.097       98.690    1.014
+ext_bcond_5_                       PASS           0                 9.009        8.952    1.006
+ext_proft_                         PASS           0                60.259       62.312    0.967
+ext_vaf_                           PASS           0                 2.818        3.112    0.905
+ext_dens_                          PASS           0                33.557       34.056    0.985
+ext_profu_                         PASS           0                99.415       90.796    1.095
+ext_vert_avgs_                     PASS           0                14.509       15.464    0.938
+ext_advu_                          PASS           0                69.701      102.540    0.680
+ext_elf_update_                    PASS           0                 0.440        0.431    1.021
+ext_profv_                         PASS           0                95.921       95.767    1.002
+
+PASS: 31
+FAIL: 0
+OTHER: 2

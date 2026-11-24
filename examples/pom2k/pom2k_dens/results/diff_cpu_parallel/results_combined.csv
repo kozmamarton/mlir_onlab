@@ -1,2 +1,2 @@
 timestamp,kernel,target,size,samples,cpu_model,status,mismatched_arrays,old_median_ms,new_median_ms,speedup,raw_output_file
-"2026-10-24T14:03:50Z","ext_dens_","cpu_parallel","1024x1024x20","20","AMD Ryzen 7 9700X 8-Core Processor","PASS","0","34.348","34.615","0.992","/home/marton/uni/onlab/mlir-tutorial/examples/pom2k/pom2k_dens/results/diff_cpu_parallel/raw/20261024T140350Z.log"
+"2026-11-20T18:17:37Z","ext_dens_","cpu_parallel","1024x1024x20","20","AMD Ryzen 7 9700X 8-Core Processor","PASS","0","33.557","34.056","0.985","/home/marton/uni/onlab/mlir-tutorial/examples/pom2k/pom2k_dens/results/diff_cpu_parallel/raw/20261120T181737Z.log"
