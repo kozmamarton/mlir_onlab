@@ -37,3 +37,5 @@ log_
 .inc.d
 *.inc
 *.inc.d
+*.h.inc
+*.h.inc.d
