@@ -72,65 +72,52 @@ module attributes {dlti.dl_spec = #dlti.dl_spec<"dlti.endianness" = "little", i6
       %12 = memref.load %arg4[%c0] : memref<?xi32>
       %13 = arith.cmpi ne, %11, %12 : i32
       scf.if %13 {
-        %14 = memref.load %3[%c0] : memref<1xi32>
-        %15 = arith.index_cast %14 : i32 to index
-        %16 = memref.load %6[%c0] : memref<1xi32>
-        %17 = memref.load %arg5[%c0] : memref<?xf32>
-        %18 = arith.index_cast %16 : i32 to index
-        scf.for %arg21 = %c0 to %15 step %c1 {
-          %29 = arith.muli %arg21, %18 : index
-          scf.for %arg22 = %c0 to %18 step %c1 {
-            %30 = arith.addi %arg22, %29 : index
-            %31 = memref.load %arg18[%30] : memref<?xf32>
-            %32 = memref.load %arg13[%30] : memref<?xf32>
-            %33 = arith.mulf %32, %17 : f32
-            %34 = arith.addf %31, %33 : f32
-            memref.store %34, %arg18[%30] : memref<?xf32>
+        %14 = memref.load %arg5[%c0] : memref<?xf32>
+        scf.for %arg21 = %c0 to %5 step %c1 {
+          %16 = arith.muli %arg21, %9 : index
+          scf.for %arg22 = %c0 to %9 step %c1 {
+            %17 = arith.addi %arg22, %16 : index
+            %18 = memref.load %arg18[%17] : memref<?xf32>
+            %19 = memref.load %arg13[%17] : memref<?xf32>
+            %20 = arith.mulf %19, %14 : f32
+            %21 = arith.addf %18, %20 : f32
+            memref.store %21, %arg18[%17] : memref<?xf32>
           } {constants = [], locals = [], mlirclang.direction = "forward", mlirclang.indvar = "i", mlirclang.lb_src = "0", mlirclang.loop_kind = "scf.for", mlirclang.ub_src = "im"}
         } {constants = [], locals = [], mlirclang.direction = "forward", mlirclang.indvar = "j", mlirclang.lb_src = "0", mlirclang.loop_kind = "scf.for", mlirclang.ub_src = "jm"}
-        %19 = memref.load %3[%c0] : memref<1xi32>
-        %20 = arith.index_cast %19 : i32 to index
-        %21 = memref.load %6[%c0] : memref<1xi32>
-        %22 = memref.load %arg6[%c0] : memref<?xf32>
-        %23 = arith.index_cast %21 : i32 to index
-        scf.for %arg21 = %c0 to %20 step %c1 {
-          %29 = arith.muli %arg21, %23 : index
-          scf.for %arg22 = %c1 to %23 step %c1 {
-            %30 = arith.addi %arg22, %29 : index
-            %31 = memref.load %arg19[%30] : memref<?xf32>
-            %32 = memref.load %arg7[%30] : memref<?xf32>
-            %33 = memref.load %arg16[%30] : memref<?xf32>
-            %34 = arith.addi %arg22, %c-1 : index
-            %35 = arith.addi %34, %29 : index
-            %36 = memref.load %arg16[%35] : memref<?xf32>
-            %37 = arith.addf %33, %36 : f32
-            %38 = arith.mulf %32, %37 : f32
-            %39 = arith.mulf %38, %22 : f32
-            %40 = arith.addf %31, %39 : f32
-            memref.store %40, %arg19[%30] : memref<?xf32>
+        %15 = memref.load %arg6[%c0] : memref<?xf32>
+        scf.for %arg21 = %c0 to %5 step %c1 {
+          %16 = arith.muli %arg21, %9 : index
+          scf.for %arg22 = %c1 to %9 step %c1 {
+            %17 = arith.addi %arg22, %16 : index
+            %18 = memref.load %arg19[%17] : memref<?xf32>
+            %19 = memref.load %arg7[%17] : memref<?xf32>
+            %20 = memref.load %arg16[%17] : memref<?xf32>
+            %21 = arith.addi %arg22, %c-1 : index
+            %22 = arith.addi %21, %16 : index
+            %23 = memref.load %arg16[%22] : memref<?xf32>
+            %24 = arith.addf %20, %23 : f32
+            %25 = arith.mulf %19, %24 : f32
+            %26 = arith.mulf %25, %15 : f32
+            %27 = arith.addf %18, %26 : f32
+            memref.store %27, %arg19[%17] : memref<?xf32>
           } {constants = [], locals = [], mlirclang.direction = "forward", mlirclang.indvar = "i", mlirclang.lb_src = "1", mlirclang.loop_kind = "scf.for", mlirclang.ub_src = "im"}
         } {constants = [], locals = [], mlirclang.direction = "forward", mlirclang.indvar = "j", mlirclang.lb_src = "0", mlirclang.loop_kind = "scf.for", mlirclang.ub_src = "jm"}
-        %24 = memref.load %3[%c0] : memref<1xi32>
-        %25 = arith.index_cast %24 : i32 to index
-        %26 = memref.load %6[%c0] : memref<1xi32>
-        %27 = memref.load %arg6[%c0] : memref<?xf32>
-        %28 = arith.index_cast %26 : i32 to index
-        scf.for %arg21 = %c1 to %25 step %c1 {
-          %29 = arith.muli %arg21, %28 : index
-          %30 = arith.addi %arg21, %c-1 : index
-          %31 = arith.muli %30, %28 : index
-          scf.for %arg22 = %c0 to %28 step %c1 {
-            %32 = arith.addi %arg22, %29 : index
-            %33 = memref.load %arg20[%32] : memref<?xf32>
-            %34 = memref.load %arg10[%32] : memref<?xf32>
-            %35 = memref.load %arg16[%32] : memref<?xf32>
-            %36 = arith.addi %arg22, %31 : index
-            %37 = memref.load %arg16[%36] : memref<?xf32>
-            %38 = arith.addf %35, %37 : f32
-            %39 = arith.mulf %34, %38 : f32
-            %40 = arith.mulf %39, %27 : f32
-            %41 = arith.addf %33, %40 : f32
-            memref.store %41, %arg20[%32] : memref<?xf32>
+        scf.for %arg21 = %c1 to %5 step %c1 {
+          %16 = arith.muli %arg21, %9 : index
+          %17 = arith.addi %arg21, %c-1 : index
+          %18 = arith.muli %17, %9 : index
+          scf.for %arg22 = %c0 to %9 step %c1 {
+            %19 = arith.addi %arg22, %16 : index
+            %20 = memref.load %arg20[%19] : memref<?xf32>
+            %21 = memref.load %arg10[%19] : memref<?xf32>
+            %22 = memref.load %arg16[%19] : memref<?xf32>
+            %23 = arith.addi %arg22, %18 : index
+            %24 = memref.load %arg16[%23] : memref<?xf32>
+            %25 = arith.addf %22, %24 : f32
+            %26 = arith.mulf %21, %25 : f32
+            %27 = arith.mulf %26, %15 : f32
+            %28 = arith.addf %20, %27 : f32
+            memref.store %28, %arg20[%19] : memref<?xf32>
           } {constants = [], locals = [], mlirclang.direction = "forward", mlirclang.indvar = "i", mlirclang.lb_src = "0", mlirclang.loop_kind = "scf.for", mlirclang.ub_src = "im"}
         } {constants = [], locals = [], mlirclang.direction = "forward", mlirclang.indvar = "j", mlirclang.lb_src = "1", mlirclang.loop_kind = "scf.for", mlirclang.ub_src = "jm"}
       }

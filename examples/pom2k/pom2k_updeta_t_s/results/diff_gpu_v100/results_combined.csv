@@ -1,0 +1,2 @@
+timestamp,kernel,target,size,samples,cpu_model,gpu_model,status,mismatched_arrays,old_median_ms,new_median_ms,cuda_median_ms,speedup,speedup_new_vs_cuda,raw_output_file
+"2026-11-09T12:03:17Z","ext_updeta_t_s_","gpu_v100","2048x2048x20","20","Intel(R) Xeon(R) Gold 6226R CPU @ 2.90GHz","Tesla V100S-PCIE-32GB","PASS","0","4.079","4.017","4.024","1.015","1.002","/home/mkozma/mlir_onlab/examples/pom2k/pom2k_updeta_t_s/results/diff_gpu_v100/raw/20261109T120317Z.log"

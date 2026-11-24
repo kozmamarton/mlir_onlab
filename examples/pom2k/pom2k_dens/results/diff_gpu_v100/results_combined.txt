@@ -1,0 +1,40 @@
+ext_dens_ differential benchmark
+timestamp_utc: 2026-11-09T12:04:10Z
+target: gpu_v100
+size: 2048x2048x20
+samples: 20
+cpu_model: Intel(R) Xeon(R) Gold 6226R CPU @ 2.90GHz
+gpu_model: Tesla V100S-PCIE-32GB
+status: PASS
+raw_output_file: /home/mkozma/mlir_onlab/examples/pom2k/pom2k_dens/results/diff_gpu_v100/raw/20261109T120410Z.log
+----------------------------------------------------------------
+kernel: ext_dens_
+target: gpu_v100
+gpu: Tesla V100S-PCIE-32GB (sm_70, device 0)
+prefetch: yes
+size: im=2048 jm=2048 kb=20
+samples: 20
+compare: old/new bitwise, */cuda rtol=1e-05 atol=1e-06
+global grav = 0.580879629
+global im = 2048
+global jm = 2048
+global kbm1 = 19
+global rhoref = 1.44663072
+
+arg  name         type ext      elements   mm_old_new  mm_old_cuda  mm_new_cuda tol_old_cuda tol_new_cuda      max_abs      max_rel written
+0    si           f32  3D       83886080            0            0            0            0            0            0            0 no
+1    ti           f32  3D       83886080            0            0            0            0            0            0            0 no
+2    rhoo         f32  3D       83886080            0            0            0            0            0            0            0 yes
+3    h            f32  2D        4194304            0            0            0            0            0            0            0 no
+4    fsm          f32  2D        4194304            0            0            0            0            0            0            0 no
+5    zz           f32  3D       83886080            0            0            0            0            0            0            0 no
+6    tbias        f32  3D       83886080            0            0            0            0            0            0            0 no
+7    sbias        f32  3D       83886080            0            0            0            0            0            0            0 no
+
+result: PASS (0 of 8 arrays fail; old/new 0, old/cuda 0, new/cuda 0)
+time_old_ms: median 2.302 avg 2.303 min 2.290
+time_new_ms: median 2.309 avg 2.308 min 2.292
+time_cuda_ms: median 2.022 avg 2.022 min 2.009
+speedup_new_vs_old (median): 0.997
+speedup_new_vs_cuda (median): 0.876
+SUMMARY kernel=ext_dens_ status=PASS mismatched_arrays=0 arrays=8 mm_old_new=0 mm_old_cuda=0 mm_new_cuda=0 old_median_ms=2.302 new_median_ms=2.309 cuda_median_ms=2.022 speedup=0.997 speedup_new_vs_cuda=0.876

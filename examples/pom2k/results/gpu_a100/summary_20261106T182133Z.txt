@@ -1,0 +1,25 @@
+pom2k differential benchmarks (old = without custom fusion pass, new = with it, cuda = native CUDA reference)
+generated_at_utc: 2026-11-06T18:25:36Z
+target: gpu_a100
+size: 2048x2048x20
+samples: 5
+cpu_model: AMD EPYC 7F72 24-Core Processor
+gpu_model: NVIDIA A100-PCIE-40GB
+logs: /home/mkozma/mlir_onlab/examples/pom2k/results/gpu_a100/logs_20261106T182133Z
+
+kernel                             status         mismatched old_median_ms new_median_ms cuda_median_ms  speedup speedup_vs_cuda
+ext_aam_                           PASS           0                 1.692        1.698        1.203    0.996         0.708
+ext_advq_                          PASS           0                 7.472        6.269        6.782    1.192         1.082
+ext_update_u_v_                    PASS           0                 3.201        3.210        3.164    0.997         0.986
+ext_advt1_                         PASS           0                 9.091        9.054        8.557    1.004         0.945
+ext_baropg_                        PASS           0                 6.105        5.758        5.852    1.060         1.016
+ext_advave_                        PASS           0                 0.952        0.853        0.768    1.116         0.901
+ext_apply_filter_                  PASS           0                 0.517        0.522        0.468    0.991         0.896
+ext_bcond_3_                       PASS           0                 1.291        1.286        1.259    1.004         0.979
+ext_smol_adif_                     PASS           0                 4.530        4.757        3.942    0.952         0.829
+ext_proft_                         PASS           0                 3.956        3.929        3.772    1.007         0.960
+ext_profu_                         PASS           0                 4.031        4.008        3.917    1.006         0.977
+
+PASS: 11
+FAIL: 0
+OTHER: 0

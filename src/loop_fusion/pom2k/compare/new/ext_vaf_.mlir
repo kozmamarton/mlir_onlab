@@ -111,28 +111,22 @@ module attributes {dlti.dl_spec = #dlti.dl_spec<"dlti.endianness" = "little", i6
       %77 = arith.subf %75, %76 : f32
       %78 = arith.mulf %22, %77 : f32
       %79 = arith.addf %74, %78 : f32
-      memref.store %79, %reinterpret_cast_16[%arg17, %arg18] : memref<?x?xf32, strided<[?, 1]>>
       %80 = memref.load %reinterpret_cast_17[%arg17, %arg18] : memref<?x?xf32, strided<[?, 1]>>
-      %81 = memref.load %reinterpret_cast_10[%arg17, %arg18] : memref<?x?xf32, strided<[?, 1]>>
-      %82 = arith.addf %80, %81 : f32
-      %83 = memref.load %reinterpret_cast_17[%34, %arg18] : memref<?x?xf32, strided<[?, 1]>>
-      %84 = arith.addf %82, %83 : f32
-      %85 = memref.load %reinterpret_cast_10[%34, %arg18] : memref<?x?xf32, strided<[?, 1]>>
-      %86 = arith.addf %84, %85 : f32
-      %87 = memref.load %reinterpret_cast_18[%arg17, %arg18] : memref<?x?xf32, strided<[?, 1]>>
-      %88 = arith.mulf %86, %87 : f32
-      %89 = memref.load %reinterpret_cast_4[%arg17, %arg18] : memref<?x?xf32, strided<[?, 1]>>
-      %90 = arith.mulf %88, %89 : f32
-      %91 = arith.mulf %18, %79 : f32
-      %92 = arith.subf %90, %91 : f32
-      %93 = memref.load %reinterpret_cast_11[%arg17, %arg18] : memref<?x?xf32, strided<[?, 1]>>
-      %94 = arith.addf %80, %93 : f32
-      %95 = arith.addf %94, %83 : f32
-      %96 = memref.load %reinterpret_cast_11[%34, %arg18] : memref<?x?xf32, strided<[?, 1]>>
-      %97 = arith.addf %95, %96 : f32
-      %98 = arith.mulf %97, %89 : f32
-      %99 = arith.divf %92, %98 : f32
-      memref.store %99, %reinterpret_cast_16[%arg17, %arg18] : memref<?x?xf32, strided<[?, 1]>>
+      %81 = arith.addf %80, %58 : f32
+      %82 = memref.load %reinterpret_cast_17[%34, %arg18] : memref<?x?xf32, strided<[?, 1]>>
+      %83 = arith.addf %81, %82 : f32
+      %84 = arith.addf %83, %59 : f32
+      %85 = memref.load %reinterpret_cast_18[%arg17, %arg18] : memref<?x?xf32, strided<[?, 1]>>
+      %86 = arith.mulf %84, %85 : f32
+      %87 = arith.mulf %86, %22 : f32
+      %88 = arith.mulf %18, %79 : f32
+      %89 = arith.subf %87, %88 : f32
+      %90 = arith.addf %80, %61 : f32
+      %91 = arith.addf %90, %82 : f32
+      %92 = arith.addf %91, %63 : f32
+      %93 = arith.mulf %92, %22 : f32
+      %94 = arith.divf %89, %93 : f32
+      memref.store %94, %reinterpret_cast_16[%arg17, %arg18] : memref<?x?xf32, strided<[?, 1]>>
       scf.reduce 
     }
     return
